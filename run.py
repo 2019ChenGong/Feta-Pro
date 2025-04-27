@@ -17,7 +17,8 @@ def main(config):
 
     sensitive_train_loader, sensitive_val_loader, sensitive_test_loader, public_train_loader, config = load_data(config)
 
-    model.curiosity_pretrain(public_train_loader, config.pretrain)
+    # model.curiosity_pretrain(public_train_loader, config.pretrain)
+    model.pretrain(public_train_loader, config.pretrain)
 
     model.train(sensitive_train_loader, config.train)
 

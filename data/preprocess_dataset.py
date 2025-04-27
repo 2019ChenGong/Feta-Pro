@@ -300,6 +300,12 @@ def main(config):
         elif data_name == "emnist":
             _ = torchvision.datasets.EMNIST(root=data_dir, train=True, split="letters", download=True)
             return
+        elif data_name == "lsun":
+            sensitive_set = torchvision.datasets.ImageFolder(root=config.train_path, transform=transforms.ToTensor())
+            torch.manual_seed(0)
+            train_size = int(len(sensitive_set) * 0.8)
+            test_size = len(sensitive_set) - train_size
+            sensitive_train_set, sensitive_test_set = torch.utils.data.random_split(sensitive_set, [train_size, test_size])
         elif config.train_path != '' and config.test_path != '':
             sensitive_train_set = torchvision.datasets.ImageFolder(root=config.train_path, transform=transforms.ToTensor())
             sensitive_test_set = torchvision.datasets.ImageFolder(root=config.test_path, transform=transforms.ToTensor())
@@ -339,7 +345,7 @@ def main(config):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_name', nargs="*", default=["mnist", "fmnist", "cifar10", "cifar100", "celeba", "camelyon", "imagenet", "places365", "emnist"], help='List of datasets to use. Default is all provided datasets.')
+    parser.add_argument('--data_name', nargs="*", default=["mnist", "fmnist", "cifar10", "cifar100", "celeba", "camelyon", "imagenet", "places365", "emnist", "lsun"], help='List of datasets to use. Default is all provided datasets.')
     parser.add_argument('--resolution', default=32, type=int, help='Resolution of the images. Default is 32.')
     parser.add_argument('--c', default=3, type=int, help='Number of color channels in the images. Default is 3 (RGB).')
     parser.add_argument('--fid_batch_size', default=500, type=int, help='Batch size for FID calculation. Default is 500.')
