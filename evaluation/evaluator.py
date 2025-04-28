@@ -116,14 +116,14 @@ class Evaluator(object):
         if synthetic_images.shape[1] == 3 and self.config.sensitive_data.num_channels == 1:
             synthetic_images = 0.299 * synthetic_images[:, 2:, ...] + 0.587 * synthetic_images[:, 1:2, ...] + 0.114 * synthetic_images[:, :1, ...]
         
-        fid, is_mean, fld, p, r, ir = self.visual_metric(synthetic_images, synthetic_labels, sensitive_train_loader, sensitive_test_loader)
+        fid, is_mean, fld, p, r = self.visual_metric(synthetic_images, synthetic_labels, sensitive_train_loader, sensitive_test_loader)
         logging.info("The FID of synthetic images is {}".format(fid))
         logging.info("The Inception Score of synthetic images is {}".format(is_mean))
         logging.info("The Precision and Recall of synthetic images is {} and {}".format(p, r))
         logging.info("The FLD of synthetic images is {}".format(fld))
-        logging.info("The ImageReward of synthetic images is {}".format(ir))
+        # logging.info("The ImageReward of synthetic images is {}".format(ir))
 
-        return fid, is_mean, p, r, fld, ir
+        return fid, is_mean, p, r, fld
     
     def visual_metric(self, synthetic_images, synthetic_labels, sensitive_train_loader, sensitive_test_loader):
 
@@ -177,23 +177,23 @@ class Evaluator(object):
 
         # Load the image reward model.
         rm_model = RM.load("ImageReward-v1.0")
-        ir = 0
-        prompt = get_prompt(self.config.sensitive_data.name)
+        # ir = 0
+        # prompt = get_prompt(self.config.sensitive_data.name)
 
-        # Compute the image reward score for each class without tracking gradients.
-        with torch.no_grad():
-            for cls in range(num_classes):
+        # # Compute the image reward score for each class without tracking gradients.
+        # with torch.no_grad():
+        #     for cls in range(num_classes):
 
-                # Select images for the current class, scale to 0-255, and convert to unsigned 8-bit integers.
-                imgs = (synthetic_images[synthetic_labels==cls] * 255.).astype('uint8')
-                imgs = np.transpose(imgs, (0, 2, 3, 1))
-                if imgs.shape[-1] == 1:
-                    imgs = np.repeat(imgs, 3, axis=-1)
-                imgs = [Image.fromarray(img) for img in imgs]
-                score = rm_model.score(prompt[cls], imgs)
-                ir += np.sum(score)
+        #         # Select images for the current class, scale to 0-255, and convert to unsigned 8-bit integers.
+        #         imgs = (synthetic_images[synthetic_labels==cls] * 255.).astype('uint8')
+        #         imgs = np.transpose(imgs, (0, 2, 3, 1))
+        #         if imgs.shape[-1] == 1:
+        #             imgs = np.repeat(imgs, 3, axis=-1)
+        #         imgs = [Image.fromarray(img) for img in imgs]
+        #         score = rm_model.score(prompt[cls], imgs)
+        #         ir += np.sum(score)
         
-        ir /= len(synthetic_images)
+        # ir /= len(synthetic_images)
 
         is_mean, _ = compute_inception_score_from_logits(gen_logit)
         fid = FID().compute_metric(train_feat, None, gen_feat)
@@ -201,7 +201,7 @@ class Evaluator(object):
         p = PrecisionRecall(mode="Precision").compute_metric(train_feat, None, gen_feat) # Default precision
         r = PrecisionRecall(mode="Recall", num_neighbors=5).compute_metric(train_feat, None, gen_feat)
 
-        return fid, is_mean, fld, p, r, ir
+        return fid, is_mean, fld, p, r
     
     def cal_acc(self, model_name, synthetic_images, synthetic_labels, sensitive_val_loader, sensitive_test_loader):
 
