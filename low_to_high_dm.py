@@ -35,25 +35,25 @@ def main(config, opt):
     syn_data = torch.from_numpy(syn_data).float().to(device)  # Ensure float32 and move to device
 
     # debug: random sample 2000
-    num_samples = 2000
-    indices = torch.randperm(syn_data.shape[0], device=device)[:num_samples]  # 随机索引
-    syn_data = syn_data[indices]
+    # num_samples = 2000
+    # indices = torch.randperm(syn_data.shape[0], device=device)[:num_samples]  # 随机索引
+    # syn_data = syn_data[indices]
 
     # Interpolate to 64x64
     syn_data = F.interpolate(syn_data, size=[64, 64])
 
     # Define label (ensure it's a tensor if required by model)
-    label = torch.tensor(syn_labels)  # Adjust based on model requirements
+    # label = torch.tensor(syn_labels)  # Adjust based on model requirements
+    label = None
 
     # Generate new samples
     with torch.no_grad():
-        new_samples = model.api._image_variation(syn_data, label, variation_degree=99)  # variation_degree in (0, 100)
+        new_samples = model.api._image_variation(syn_data, label, variation_degree=config.model.variation_degree)  # variation_degree in (0, 100)
 
     if isinstance(new_samples, np.ndarray):
         new_samples = torch.from_numpy(new_samples).float().to(device)
 
     # Normalize to [0, 1] for saving
-    new_samples = new_samples / 2 + 0.5
     new_samples = new_samples.clamp(0., 1.)
     
 
@@ -62,23 +62,17 @@ def main(config, opt):
 
     # new_samples = np.array(new_samples)
 
-    batch_size = 100
-    output_dir = "sampled_images"
-    os.makedirs(output_dir, exist_ok=True)
-    for i in range(0, num_samples, batch_size):
-        batch = new_samples[i:i + batch_size]
-        output_path = os.path.join(output_dir, f"sampled_batch_{i // batch_size}.png")
-        save_image(batch, output_path, nrow=10) 
+    # batch_size = 100
+    # output_dir = "sampled_images"
+    # os.makedirs(output_dir, exist_ok=True)
+    # for i in range(0, num_samples, batch_size):
+    #     batch = new_samples[i:i + batch_size]
+    #     output_path = os.path.join(output_dir, f"sampled_batch_{i // batch_size}.png")
+    #     save_image(batch, output_path, nrow=10) 
 
     # Save to npz file
-    # output_npz_path = os.path.join(opt.input_path, "sampled_data.npz")
-    # try:
-    #     syn_data_np = syn_data.cpu().numpy()
-    #     np.savez_compressed(output_npz_path, x=syn_data_np, y=syn_labels)
-    # except Exception as e:
-    #     return
-    # np.savez_compressed(output_npz_path, x=new_samples, y=syn_labels)
-    # print(f'Saved {len(new_samples)} high-resolution images to {output_npz_path}')
+    os.makedirs(os.path.join(config.setup.workdir, 'gen'))
+    np.savez(os.path.join(config.setup.workdir, 'gen', "gen.npz"), x=new_samples.detach().cpu().numpy(), y=syn_labels)
 
     print('Finished')
 
@@ -93,7 +87,15 @@ if __name__ == '__main__':
     parser.add_argument('--resume_exp', '-re', default=None)
     parser.add_argument('--config_suffix', '-cs', default="")
     parser.add_argument('--input_path', '-ip', default="")
+    parser.add_argument('--variation_degree', '-vd', type=int, default=0)
     opt, unknown = parser.parse_known_args()
     config = parse_config(opt, unknown)
+    config.model['variation_degree'] = opt.variation_degree
+
+    nowTime = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    if opt.resume_exp is not None:
+        config.setup.workdir = "exp/{}/{}".format(str.lower(opt.method), opt.resume_exp)
+    else:
+        config.setup.workdir = "exp/{}/{}_eps{}{}{}-{}".format(str.lower(opt.method), opt.data_name, opt.epsilon, opt.config_suffix, opt.exp_description+'_vd'+str(opt.variation_degree), nowTime)
 
     run(lambda config: main(config, opt), config)
