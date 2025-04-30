@@ -47,7 +47,7 @@ def main(config, opt):
 
     # Generate new samples
     with torch.no_grad():
-        new_samples = model.api._image_variation(syn_data, label, variation_degree=50)  # variation_degree in (0, 100)
+        new_samples = model.api._image_variation(syn_data, label, variation_degree=99)  # variation_degree in (0, 100)
 
     if isinstance(new_samples, np.ndarray):
         new_samples = torch.from_numpy(new_samples).float().to(device)

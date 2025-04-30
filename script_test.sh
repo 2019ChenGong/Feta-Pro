@@ -2,4 +2,4 @@ python inference_realesrgan.py -n RealESRGAN_x4plus -i input_cus/low_resolution_
 
 python inference_realesrgan.py -n RealESRGAN_x2plus -i input_cus/privimaged_lr_64/gen/gen.npz -n RealESRGAN_x2plus -o input_cus/privimaged_hr_128/gen/ --face_enhance
 
-python low_to_high_dm.py --exp_path Real-ESRGAN/input_cus/pdp-diffusion_lr
+python low_to_high_dm.py -m PE -ip Real-ESRGAN/input_cus/pdp-diffusion_lr
