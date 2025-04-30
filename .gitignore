@@ -63,5 +63,6 @@ fidelity.sh
 utility.sh
 
 Real-ESRGAN
+sampled_images
 
 *slurm*
