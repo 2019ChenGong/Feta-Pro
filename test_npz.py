@@ -83,8 +83,8 @@ def sample_and_save_npz(npz_path, output_dir, num_samples=20):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Sample images from a .npz file and save as PNG')
-    parser.add_argument('-i', '--input', type=str, default='exp/pe/celeba_male_32_eps10.0_vd80-2025-04-30-09-03-06/gen/gen.npz', help='Path to the .npz file')
-    parser.add_argument('-o', '--output', type=str, default='exp/pe/celeba_male_32_eps10.0_vd80-2025-04-30-09-03-06/gen//', help='Output directory for PNG images')
+    parser.add_argument('-i', '--input', type=str, default='exp/pe/celeba_male_32_eps10.0_vd80-2025-04-30-18-55-54/gen/gen.npz', help='Path to the .npz file')
+    parser.add_argument('-o', '--output', type=str, default='exp/pe/celeba_male_32_eps10.0_vd80-2025-04-30-18-55-54/gen/', help='Output directory for PNG images')
     parser.add_argument('--num_samples', type=int, default=30, help='Number of images to sample')
     args = parser.parse_args()
 

@@ -40,7 +40,7 @@ def main(config, opt):
     # syn_data = syn_data[indices]
 
     # Interpolate to 64x64
-    syn_data = F.interpolate(syn_data, size=[64, 64])
+    # syn_data = F.interpolate(syn_data, size=[64, 64])
 
     # Define label (ensure it's a tensor if required by model)
     # label = torch.tensor(syn_labels)  # Adjust based on model requirements
