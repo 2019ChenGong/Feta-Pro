@@ -9,3 +9,5 @@ python low_to_high_dm.py -m PE -ip Real-ESRGAN/input_cus/privimaged_lr_64 model.
 # python eval.py --method PrivImage --data_name celeba_male_32 --epsilon 10.0 --exp_path exp/pe/celeba_male_32_eps10.0_vd90-2025-04-30-16-55-26
 
 python run.py -m PE -dn cifar10_32 train.initial_sample=/p/fzv6enresearch/DPImageBench/exp/privimage/cifar10_32_eps10.0val_cn1e-3-2024-12-03-00-13-54/gen/gen.npz -ed pe+privimage
+
+CUDA_VISIBLE_DEVICES=0,1,2,3 python run.py -m PE setup.n_gpus_per_node=4 -dn mnist_28 -e 1.0 train.initial_sample=/p/fzv6enresearch/DPImageBench/exp/dp-feta/mnist_28_eps10.0val_central_mean-2025-03-19-07-56-07/gen/gen.npz -ed pe+privimage

@@ -64,15 +64,18 @@ class PE(DPSynther):
         """
         super().__init__()  # Call the constructor of the parent class
         api_class = get_api_class_from_name(config.api)  # Get the API class based on the name provided in the config
-        self.api_params = config.api_params
-        api_args = []  # Initialize an empty list to hold API arguments
-        for k in config.api_params:  # Iterate over the API parameters in the configuration
-            api_args.append('--' + k)  # Append the parameter key as a command-line argument
-            api_args.append(str(config.api_params[k]))  # Append the parameter value as a command-line argument
-        self.api = api_class.from_command_line_args(api_args)  # Initialize the API with the constructed command-line arguments
+        if config.api == 'sd':
+            self.api = api_class.from_dict_args(config.api_params)
+        else:
+            api_args = []  # Initialize an empty list to hold API arguments
+            for k in config.api_params:  # Iterate over the API parameters in the configuration
+                api_args.append('--' + k)  # Append the parameter key as a command-line argument
+                api_args.append(str(config.api_params[k]))  # Append the parameter value as a command-line argument
+            self.api = api_class.from_command_line_args(api_args)  # Initialize the API with the constructed command-line arguments
         self.feature_extractor = config.feature_extractor  # Set the feature extractor from the configuration
         self.samples = None  # Initialize the samples attribute to None
         self.labels = None  # Initialize the labels attribute to None
+        self.api_params = config.api_params
 
 
     def train(self, sensitive_dataloader, config):
@@ -138,8 +141,29 @@ class PE(DPSynther):
         if 'initial_sample' in config:
             syn = np.load(config.initial_sample)
             samples, additional_info = syn["x"][:config.num_samples_schedule[0]], syn["y"][:config.num_samples_schedule[0]]
-            samples = F.interpolate(torch.Tensor(samples), size=[self.api_params.model_image_size, self.api_params.model_image_size]).clamp(0., 1.).numpy()
-            samples = np.around(np.clip((samples * 255.), a_min=0, a_max=255)).astype(np.uint8)
+            
+            samples_tensor = torch.Tensor(samples)
+            print("Original samples shape:", samples_tensor.shape) 
+
+            if samples_tensor.dim() == 3:  
+                samples_tensor = samples_tensor.unsqueeze(1) 
+            elif samples_tensor.dim() != 4:
+                raise ValueError(f"Unexpected samples shape: {samples_tensor.shape}")
+
+            if samples_tensor.shape[1] == 1:  
+                samples_tensor = samples_tensor.repeat(1, 3, 1, 1)  
+                print("Converted grayscale to RGB, new shape:", samples_tensor.shape) 
+
+            model_image_size = self.api_params.model_image_size if 'model_image_size' in self.api_params else self.api_params.network.image_size
+            samples_tensor = F.interpolate(
+                samples_tensor,
+                size=[model_image_size, model_image_size],
+                mode='bilinear',
+                align_corners=False
+            ).clamp(0., 1.)  
+
+            samples = np.around(np.clip((samples_tensor.numpy() * 255.), a_min=0, a_max=255)).astype(np.uint8)
+
             samples = samples.transpose(0, 2, 3, 1)
             logging.info(str(samples.shape))
         else:

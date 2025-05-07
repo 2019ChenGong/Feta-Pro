@@ -116,16 +116,22 @@ def parse_config(opt, unknown):
     cli = OmegaConf.from_dotlist(unknown)
     config = OmegaConf.merge(*configs, cli)
     config.train.dp.epsilon = float(opt.epsilon)
+    nowTime = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    if opt.resume_exp is not None:
+        config.setup.workdir = "exp/{}/{}".format(str.lower(opt.method), opt.resume_exp)
+    else:
+        config.setup.workdir = "exp/{}/{}_eps{}{}{}-{}".format(str.lower(opt.method), opt.data_name, opt.epsilon, opt.config_suffix, opt.exp_description, nowTime)
     if not os.path.exists(config_path):
         config.sensitive_data.data_name = opt.data_name
         config.sensitive_data.train_path = os.path.join("dataset", opt.data_name, "train_32.zip")
         config.sensitive_data.test_path = os.path.join("dataset", opt.data_name, "test_32.zip")
         config.sensitive_data.fid_stats = os.path.join("dataset", opt.data_name, "fid_stats_32.npz")
-    if opt.method == "PE":
+    if opt.method in ["PE", "PE-SD"]:
+        config.train.tmp_folder = config.sensitive_data.name
         config.train.private_num_classes = config.sensitive_data.n_classes
         return config
     config.model.private_num_classes = config.sensitive_data.n_classes
     config.model.public_num_classes = config.public_data.n_classes
-    # if config.public_data.name is None:
-    #     config.model.public_num_classes = config.model.private_num_classes
+    if config.public_data.name is None or opt.method in ['PrivImage', 'DP-FETA']:
+        config.model.public_num_classes = config.model.private_num_classes
     return config
