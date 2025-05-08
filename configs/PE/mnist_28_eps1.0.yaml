@@ -52,12 +52,14 @@ train:
   - 60000
   - 60000
   - 60000
+  - 60000
   variation_degree_schedule:
-  - 10
-  - 10
-  - 10
-  - 10
-  - 10
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
   initial_prompt: null
   image_size: 64x64
   lookahead_degree: 8

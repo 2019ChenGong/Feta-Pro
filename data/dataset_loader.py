@@ -2,11 +2,10 @@ import os
 import torch
 import torch.nn.functional as F
 import torchvision
-from torch.utils.data import random_split
+from torch.utils.data import random_split, TensorDataset
 from torchvision import transforms
 import numpy as np
 import logging
-import torch.distributed as dist
 
 
 from data.stylegan3.dataset import ImageFolderDataset
@@ -178,25 +177,17 @@ def load_data(config):
             else:
                 public_train_set = SpecificClassEMNIST(public_train_set_, specific_class)
         elif config.public_data.name == "central":
-            import random
-            # class random_aug(object):
-            #     def __init__(self, magnitude, num_ops):
-            #         self.mag = magnitude
-            #         self.no = num_ops
-            #     def __call__(self, img):
-            #         mag = random.choice([i for i in range(1, self.mag+1)])
-            #         return transforms.RandAugment(num_ops=self.no, magnitude=mag)(img)
-
-            #     def __repr__(self):
-            #         return self.__class__.__name__
             trans = [
-                    # random_aug(magnitude=3, num_ops=2),
                     transforms.ToTensor(),
                 ]
             if config.public_data.num_channels == 1:
                 trans = [transforms.Grayscale(num_output_channels=1)] + trans
             trans = transforms.Compose(trans)
             public_train_set = torchvision.datasets.ImageFolder(root=config.public_data.train_path, transform=trans)
+        elif config.public_data.name == "npz":
+            syn = np.load(config.public_data.train_path)
+            syn_data, syn_labels = syn["x"], syn["y"]
+            public_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
         else:
             raise NotImplementedError('public data {} is not yet implemented.'.format(config.public_data.name))
     

@@ -166,6 +166,7 @@ class PE(DPSynther):
 
             samples = samples.transpose(0, 2, 3, 1)
             logging.info(str(samples.shape))
+            
         else:
             samples, additional_info = self.api.image_random_sampling(
                 prompts=config.initial_prompt,
