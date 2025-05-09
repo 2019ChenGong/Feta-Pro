@@ -80,7 +80,7 @@ class PE(DPSynther):
 
     def train(self, sensitive_dataloader, config):
         # Create a directory to store logs
-        os.mkdir(config.log_dir)
+        os.makedirs(config.log_dir, exist_ok=True)
         tmp_folder = config.tmp_folder
 
         # Calculate the noise multiplier for differential privacy
@@ -100,11 +100,9 @@ class PE(DPSynther):
         # Iterate over the sensitive data loader to collect samples and labels
         for x, y in sensitive_dataloader:
             if len(y.shape) == 2:
-                # Normalize pixel values and convert one-hot labels to class indices
                 x = x.to(torch.float32) / 255.
                 y = torch.argmax(y, dim=1)
             if x.shape[1] == 1:
-                # Convert grayscale images to RGB
                 x = x.repeat(1, 3, 1, 1)
             all_private_samples.append(x.cpu().numpy())
             all_private_labels.append(y.cpu().numpy())
@@ -113,7 +111,7 @@ class PE(DPSynther):
         all_private_samples = np.concatenate(all_private_samples)
         all_private_labels = np.concatenate(all_private_labels)
 
-        # Clip and round the pixel values to ensure they are within the valid range
+        # Clip and round the pixel values
         all_private_samples = np.around(np.clip(all_private_samples * 255, a_min=0, a_max=255)).astype(np.uint8)
         all_private_samples = np.transpose(all_private_samples, (0, 2, 3, 1))
 
@@ -143,16 +141,16 @@ class PE(DPSynther):
             samples, additional_info = syn["x"][:config.num_samples_schedule[0]], syn["y"][:config.num_samples_schedule[0]]
             
             samples_tensor = torch.Tensor(samples)
-            print("Original samples shape:", samples_tensor.shape) 
+            print("Original samples shape:", samples_tensor.shape)
 
-            if samples_tensor.dim() == 3:  
-                samples_tensor = samples_tensor.unsqueeze(1) 
+            if samples_tensor.dim() == 3:
+                samples_tensor = samples_tensor.unsqueeze(1)
             elif samples_tensor.dim() != 4:
                 raise ValueError(f"Unexpected samples shape: {samples_tensor.shape}")
 
-            if samples_tensor.shape[1] == 1:  
-                samples_tensor = samples_tensor.repeat(1, 3, 1, 1)  
-                print("Converted grayscale to RGB, new shape:", samples_tensor.shape) 
+            if samples_tensor.shape[1] == 1:
+                samples_tensor = samples_tensor.repeat(1, 3, 1, 1)
+                print("Converted grayscale to RGB, new shape:", samples_tensor.shape)
 
             model_image_size = self.api_params.model_image_size if 'model_image_size' in self.api_params else self.api_params.network.image_size
             samples_tensor = F.interpolate(
@@ -160,13 +158,18 @@ class PE(DPSynther):
                 size=[model_image_size, model_image_size],
                 mode='bilinear',
                 align_corners=False
-            ).clamp(0., 1.)  
+            ).clamp(0., 1.)
 
             samples = np.around(np.clip((samples_tensor.numpy() * 255.), a_min=0, a_max=255)).astype(np.uint8)
-
             samples = samples.transpose(0, 2, 3, 1)
-            logging.info(str(samples.shape))
-            
+            original_samples = np.copy(samples)
+            # Add variant dimension to original_samples
+            original_samples = np.expand_dims(original_samples, axis=1)
+
+            logging.info(f'samples.shape after transpose: {samples.shape}')
+            logging.info(f'original_samples.shape after expand_dims: {original_samples.shape}')
+            if samples.ndim != 4 or original_samples.ndim != 5:
+                raise ValueError(f"Expected samples to have 4 dims and original_samples to have 5 dims, got shapes {samples.shape}, {original_samples.shape}")
         else:
             samples, additional_info = self.api.image_random_sampling(
                 prompts=config.initial_prompt,
@@ -184,10 +187,8 @@ class PE(DPSynther):
             num_samples_per_class = samples.shape[0] // private_num_classes
 
             if config.lookahead_degree == 0:
-                # If no lookahead, expand dimensions of samples
                 packed_samples = np.expand_dims(samples, axis=1)
             else:
-                # Perform image variation to generate multiple variations per sample
                 logging.info('Running image variation')
                 packed_samples = self.api.image_variation(
                     images=samples,
@@ -197,12 +198,26 @@ class PE(DPSynther):
                     variation_degree=config.variation_degree_schedule[t]
                 )
 
+            # Check packed_samples shape
+            logging.info(f'packed_samples.shape: {packed_samples.shape}')
+            if packed_samples.ndim != 5:
+                raise ValueError(f"Expected packed_samples to have 5 dims, got shape {packed_samples.shape}")
+
+            # NEW: Check data difference between packed_samples and original_samples
+            if 'initial_sample' in config:
+                pixel_diff = np.mean(np.abs(packed_samples[:, 0] - original_samples[:, 0]))
+                logging.info(f'Mean pixel difference between packed_samples and original_samples: {pixel_diff:.4f}')
+
             # Extract features from the generated samples
             packed_features = []
             logging.info('Running feature extraction')
             for i in range(packed_samples.shape[1]):
+                data = packed_samples[:, i]
+                logging.info(f'packed_samples[:, {i}].shape: {data.shape}')
+                if data.ndim != 4:
+                    raise ValueError(f"Expected packed_samples[:, {i}] to have 4 dims, got shape {data.shape}")
                 sub_packed_features = extract_features(
-                    data=packed_samples[:, i],
+                    data=data,
                     tmp_folder=tmp_folder,
                     num_workers=2,
                     model_name=self.feature_extractor,
@@ -213,25 +228,72 @@ class PE(DPSynther):
                 packed_features.append(sub_packed_features)
             packed_features = np.mean(packed_features, axis=0)
 
+            if 'initial_sample' in config:
+                logging.info('Running original feature extraction')
+                logging.info(f'original_samples.shape: {original_samples.shape}')
+                if original_samples.ndim != 5:
+                    raise ValueError(f"Expected original_samples to have 5 dims, got shape {original_samples.shape}")
+                original_packed_features = []
+                for i in range(original_samples.shape[1]):
+                    data = original_samples[:, i]
+                    logging.info(f'original_samples[:, {i}].shape: {data.shape}')
+                    if data.ndim != 4:
+                        raise ValueError(f"Expected original_samples[:, {i}] to have 4 dims, got shape {data.shape}")
+                    sub_original_packed_features = extract_features(
+                        data=data,
+                        tmp_folder=tmp_folder,
+                        num_workers=2,
+                        model_name=self.feature_extractor,
+                        res=config.private_image_size,
+                        batch_size=config.feature_extractor_batch_size
+                    )
+                    logging.info(f'sub_original_packed_features.shape: {sub_original_packed_features.shape}')
+                    original_packed_features.append(sub_original_packed_features)
+                original_packed_features = np.mean(original_packed_features, axis=0)
+
+                # Combine packed_features and original_packed_features
+                logging.info('Combining packed and original features')
+                combined_features = np.concatenate([packed_features, original_packed_features], axis=0)
+                packed_indices = np.arange(packed_features.shape[0])
+                original_indices = np.arange(packed_features.shape[0], combined_features.shape[0])
+
             # Compute histograms for each class
             logging.info('Computing histogram')
             count = []
             for class_i, class_ in enumerate(private_classes):
-                sub_count, sub_clean_count = dp_nn_histogram(
-                    public_features=packed_features[
-                        num_samples_per_class * class_i:num_samples_per_class * (class_i + 1)],
-                    private_features=all_private_features[all_private_labels == class_],
-                    noise_multiplier=self.noise_factor,
-                    num_nearest_neighbor=config.num_nearest_neighbor,
-                    mode=config.nn_mode,
-                    threshold=config.count_threshold
-                )
-                # log_count(
-                #     sub_count,
-                #     sub_clean_count,
-                #     f'{config.log_dir}/{t}/count_class{class_}.npz'
-                # )
-                count.append(sub_count)
+                if 'initial_sample' in config:
+                    sub_count, sub_clean_count = dp_nn_histogram(
+                        public_features=combined_features[
+                            num_samples_per_class * class_i:num_samples_per_class * (class_i + 1) * 2
+                        ],
+                        private_features=all_private_features[all_private_labels == class_],
+                        noise_multiplier=self.noise_factor,
+                        num_nearest_neighbor=config.num_nearest_neighbor,
+                        mode=config.nn_mode,
+                        threshold=config.count_threshold
+                    )
+                    count.append(sub_count)
+
+                    # MODIFIED: Fix count analysis logic
+                    packed_count_sum = np.sum(sub_count[:num_samples_per_class])
+                    original_count_sum = np.sum(sub_count[num_samples_per_class:])
+                    logging.info(f'Class {class_}: packed_count_sum={packed_count_sum:.2f}, original_count_sum={original_count_sum:.2f}')
+                    # Original (replaced):
+                    # sub_packed_indices = packed_indices[num_samples_per_class * class_i:num_samples_per_class * (class_i + 1)]
+                    # sub_original_indices = original_indices[num_samples_per_class * class_i:num_samples_per_class * (class_i + 1)]
+                    # packed_count_sum = np.sum(sub_count[sub_packed_indices % num_samples_per_class])
+                    # original_count_sum = np.sum(sub_count[sub_original_indices % num_samples_per_class])
+                else:
+                    sub_count, sub_clean_count = dp_nn_histogram(
+                        public_features=packed_features[
+                            num_samples_per_class * class_i:num_samples_per_class * (class_i + 1)],
+                        private_features=all_private_features[all_private_labels == class_],
+                        noise_multiplier=self.noise_factor,
+                        num_nearest_neighbor=config.num_nearest_neighbor,
+                        mode=config.nn_mode,
+                        threshold=config.count_threshold
+                    )
+                    count.append(sub_count)
             count = np.concatenate(count)
 
             # Visualize the results for each class
@@ -247,7 +309,7 @@ class PE(DPSynther):
             # Generate new indices based on the computed histograms
             logging.info('Generating new indices')
             assert config.num_samples_schedule[t] % config.private_num_classes == 0
-            new_num_samples_per_class = config.num_samples_schedule[t] // config.private_num_classes
+            new_num_samples_per_class = config.num_samples_schedule[t] // private_num_classes
             new_indices = []
             for class_i in private_classes:
                 sub_count = count[num_samples_per_class * class_i:num_samples_per_class * (class_i + 1)]
