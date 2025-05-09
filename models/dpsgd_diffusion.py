@@ -172,7 +172,7 @@ class DP_Diffusion(DPSynther):
             sampler=DistributedSampler(public_dataloader.dataset), 
             pin_memory=True, 
             drop_last=True, 
-            num_workers=16
+            num_workers=0
         )
 
         # Initialize the loss function based on the configuration.

@@ -95,12 +95,12 @@ class Evaluator(object):
         torch.cuda.empty_cache()
 
         # Calculate visual metrics: FID, Inception Score, FLD, precision, recall, and ImageReward.
-        fid, is_mean, fld, p, r, ir = self.visual_metric(synthetic_images, synthetic_labels, sensitive_train_loader, sensitive_test_loader)
+        fid, is_mean, fld, p, r = self.visual_metric(synthetic_images, synthetic_labels, sensitive_train_loader, sensitive_test_loader)
         logging.info("The FID of synthetic images is {}".format(fid))
         logging.info("The Inception Score of synthetic images is {}".format(is_mean))
         logging.info("The Precision and Recall of synthetic images is {} and {}".format(p, r))
         logging.info("The FLD of synthetic images is {}".format(fld))
-        logging.info("The ImageReward of synthetic images is {}".format(ir))
+        # logging.info("The ImageReward of synthetic images is {}".format(ir))
 
     def eval_fidelity(self, synthetic_images, synthetic_labels, sensitive_train_loader, sensitive_val_loader, sensitive_test_loader):
 

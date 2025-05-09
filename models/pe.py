@@ -262,10 +262,11 @@ class PE(DPSynther):
             count = []
             for class_i, class_ in enumerate(private_classes):
                 if 'initial_sample' in config:
+                    packed_features_i = packed_features[num_samples_per_class * class_i:num_samples_per_class * (class_i + 1)]
+                    original_packed_features_i = original_packed_features[additional_info == class_]
+                    combined_feat = np.concatenate([packed_features_i, original_packed_features_i], axis=0)
                     sub_count, sub_clean_count = dp_nn_histogram(
-                        public_features=combined_features[
-                            num_samples_per_class * class_i:num_samples_per_class * (class_i + 1) * 2
-                        ],
+                        public_features=combined_feat,
                         private_features=all_private_features[all_private_labels == class_],
                         noise_multiplier=self.noise_factor,
                         num_nearest_neighbor=config.num_nearest_neighbor,
@@ -273,10 +274,23 @@ class PE(DPSynther):
                         threshold=config.count_threshold
                     )
                     count.append(sub_count)
+                    # sub_count, sub_clean_count = dp_nn_histogram(
+                    #     public_features=combined_features[
+                    #         num_samples_per_class * class_i:num_samples_per_class * (class_i + 1) * 2
+                    #     ],
+                    #     private_features=all_private_features[all_private_labels == class_],
+                    #     noise_multiplier=self.noise_factor,
+                    #     num_nearest_neighbor=config.num_nearest_neighbor,
+                    #     mode=config.nn_mode,
+                    #     threshold=config.count_threshold
+                    # )
+                    # count.append(sub_count)
 
                     # MODIFIED: Fix count analysis logic
-                    packed_count_sum = np.sum(sub_count[:num_samples_per_class])
-                    original_count_sum = np.sum(sub_count[num_samples_per_class:])
+                    packed_count_sum = np.sum(sub_count[:len(packed_features_i)])
+                    original_count_sum = np.sum(sub_count[len(packed_features_i):])
+                    # packed_count_sum = np.sum(sub_count[:num_samples_per_class])
+                    # original_count_sum = np.sum(sub_count[num_samples_per_class:])
                     logging.info(f'Class {class_}: packed_count_sum={packed_count_sum:.2f}, original_count_sum={original_count_sum:.2f}')
                     # Original (replaced):
                     # sub_packed_indices = packed_indices[num_samples_per_class * class_i:num_samples_per_class * (class_i + 1)]
