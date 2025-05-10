@@ -286,7 +286,6 @@ class PE(DPSynther):
                     # )
                     # count.append(sub_count)
 
-                    # MODIFIED: Fix count analysis logic
                     packed_count_sum = np.sum(sub_count[:len(packed_features_i)])
                     original_count_sum = np.sum(sub_count[len(packed_features_i):])
                     # packed_count_sum = np.sum(sub_count[:num_samples_per_class])
