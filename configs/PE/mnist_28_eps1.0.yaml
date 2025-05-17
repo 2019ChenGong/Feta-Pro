@@ -47,12 +47,12 @@ train:
   private_image_size: 28
   private_num_classes: 10
   num_samples_schedule:
-  - 60000
-  - 60000
-  - 60000
-  - 60000
-  - 60000
-  - 60000
+  - 6000
+  - 6000
+  - 6000
+  - 6000
+  - 6000
+  - 6000
   variation_degree_schedule:
   - 0
   - 0
@@ -62,7 +62,7 @@ train:
   - 2
   initial_prompt: null
   image_size: 64x64
-  lookahead_degree: 8
+  lookahead_degree: 1
   num_nearest_neighbor: 1
   nn_mode: L2
   count_threshold: 24.0

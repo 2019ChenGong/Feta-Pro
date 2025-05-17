@@ -578,18 +578,10 @@ class DP_Diffusion(DPSynther):
 
         # Initialize the Privacy Engine for differential privacy.
         privacy_engine = PrivacyEngine()
-        if config.dp.sdq is None:
+        if config.dp.privacy_history is None:
             account_history = None
-            alpha_history = None
         else:
             account_history = [tuple(item) for item in config.dp.privacy_history]
-            if config.dp.alpha_num == 0:
-                alpha_history = None
-            else:
-                alpha = np.arange(config.dp.alpha_num) / config.dp.alpha_num
-                alpha = alpha * (config.dp.alpha_max - config.dp.alpha_min)
-                alpha += config.dp.alpha_min 
-                alpha_history = list(alpha)
 
         # Make the model, optimizer, and data loader private.
         model, optimizer, dataset_loader = privacy_engine.make_private_with_epsilon(
@@ -602,7 +594,6 @@ class DP_Diffusion(DPSynther):
             max_grad_norm=config.dp.max_grad_norm,
             noise_multiplicity=config.loss.n_noise_samples,
             account_history=account_history,
-            alpha_history=alpha_history,
         )
 
         # Initialize the loss function based on the configuration.

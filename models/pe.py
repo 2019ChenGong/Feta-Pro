@@ -186,6 +186,50 @@ class PE(DPSynther):
             assert samples.shape[0] % private_num_classes == 0
             num_samples_per_class = samples.shape[0] // private_num_classes
 
+            if t == len(config.num_samples_schedule) - 1:
+                samples = np.concatenate([samples, original_samples[:, 0]], axis=0)
+                labels = [np.array([class_i] * num_samples_per_class) for class_i, class_ in enumerate(private_classes)]
+                labels.append(additional_info)
+                labels = np.concatenate(labels, axis=0)
+                sub_packed_features = extract_features(
+                    data=samples,
+                    tmp_folder=tmp_folder,
+                    num_workers=2,
+                    model_name=self.feature_extractor,
+                    res=config.private_image_size,
+                    batch_size=config.feature_extractor_batch_size
+                )
+                count = []
+                for class_i, class_ in enumerate(private_classes):
+                    sub_count, sub_clean_count = dp_nn_histogram(
+                        public_features=sub_packed_features[labels==class_i],
+                        private_features=all_private_features[all_private_labels == class_],
+                        noise_multiplier=self.noise_factor,
+                        num_nearest_neighbor=config.num_nearest_neighbor,
+                        mode=config.nn_mode,
+                        threshold=config.count_threshold
+                    )
+                    count.append(sub_count)
+                # count = np.concatenate(count)
+
+                new_num_samples_per_class = config.num_samples_schedule[t] // private_num_classes
+                new_indices = []
+                for class_i in private_classes:
+                    sub_count = count[class_i]
+                    sub_new_indices = np.random.choice(
+                        np.where(labels==class_i)[0],
+                        size=new_num_samples_per_class,
+                        p=sub_count / np.sum(sub_count)
+                    )
+                    new_indices.append(sub_new_indices)
+                new_indices = np.concatenate(new_indices)
+                samples = samples[new_indices]
+                labels = labels[new_indices]
+
+                self.samples = np.transpose(samples.astype('float'), (0, 3, 1, 2)) / 255.
+                self.labels = labels
+                return
+
             if config.lookahead_degree == 0:
                 packed_samples = np.expand_dims(samples, axis=1)
             else:
@@ -261,7 +305,7 @@ class PE(DPSynther):
             logging.info('Computing histogram')
             count = []
             for class_i, class_ in enumerate(private_classes):
-                if 'initial_sample' in config:
+                if 'initial_sample' in config and False:
                     packed_features_i = packed_features[num_samples_per_class * class_i:num_samples_per_class * (class_i + 1)]
                     original_packed_features_i = original_packed_features[additional_info == class_]
                     combined_feat = np.concatenate([packed_features_i, original_packed_features_i], axis=0)
