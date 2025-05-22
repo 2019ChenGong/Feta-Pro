@@ -322,7 +322,7 @@ def load_data(config):
             syn = np.load(config.public_data.train_path)
             syn_data, syn_labels = syn["x"], syn["y"]
             public_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
-        elif config.public_data.name == "cen_npz":
+        elif config.public_data.name in ["cen_merf", "merf_cen"]:
 
             if 'central' in config.public_data:
                 central_train_set = CentralDataset(sensitive_train_loader.dataset, num_classes=config.sensitive_data.n_classes, c_type=config.public_data.name.split('_')[-1], **config.public_data.central)
@@ -334,14 +334,17 @@ def load_data(config):
             
             syn = np.load(config.public_data.train_path)
             syn_data, syn_labels = syn["x"], syn["y"]
-            npz_train_set = TensorDataset(torch.from_numpy(syn_data).float(), syn_labels)
-            # npz_train_set = random_split(syn_data, [len(central_train_set)*10, len(npz_train_set)-len(central_train_set)*10])
-            
-            public_train_set = ConcatDataset([npz_train_set, central_train_set])
+            merf_train_set = TensorDataset(torch.from_numpy(syn_data).float(), syn_labels)
+
         else:
             raise NotImplementedError('public data {} is not yet implemented.'.format(config.public_data.name))
-    
-        public_train_loader = torch.utils.data.DataLoader(dataset=public_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16)
+
+        if config.public_data.name == "cen_merf":
+            public_train_loader = (torch.utils.data.DataLoader(dataset=central_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16), torch.utils.data.DataLoader(dataset=merf_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16))
+        elif config.public_data.name == "merf_cen":
+            public_train_loader = (torch.utils.data.DataLoader(dataset=merf_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16), torch.utils.data.DataLoader(dataset=central_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16))
+        else:
+            public_train_loader = torch.utils.data.DataLoader(dataset=public_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16)
 
     if config.sensitive_data.name is None:
         sensitive_train_loader = None

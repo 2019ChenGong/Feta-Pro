@@ -6,10 +6,10 @@ import numpy as np
 import torch.distributed as dist
 from torch.utils.data.distributed import DistributedSampler
 from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.utils.data import Dataset, DataLoader
 import pickle
 import torchvision
 import tqdm
-import random
 
 from models.DP_Diffusion.model.ncsnpp import NCSNpp
 from models.DP_Diffusion.utils.util import set_seeds, make_dir, save_checkpoint, sample_random_image_batch, compute_fid
@@ -20,9 +20,6 @@ from models.DP_Diffusion.denoiser import EDMDenoiser, VPSDEDenoiser, VESDEDenois
 from models.DP_Diffusion.samplers import ddim_sampler, edm_sampler
 from models.DP_Diffusion.generate_base import generate_batch
 
-from models.DP_Diffusion.rnd import Rnd
-
-
 import importlib
 opacus = importlib.import_module('opacus')
 
@@ -32,7 +29,7 @@ from opacus.distributed import DifferentiallyPrivateDistributedDataParallel as D
 
 from models.synthesizer import DPSynther
 
-class DP_Diffusion(DPSynther):
+class DP_Diffusion_Ind(DPSynther):
     def __init__(self, config, device):
         """
         Initializes the model with the provided configuration and device settings.
@@ -62,6 +59,7 @@ class DP_Diffusion(DPSynther):
         self.public_num_classes = config.public_num_classes  # Number of public classes
         label_dim = max(self.private_num_classes, self.public_num_classes)  # Determine the maximum label dimension
         self.network.label_dim = label_dim  # Set the label dimension for the network
+        self.network.label_dim = 1000
 
         # Initialize the denoiser based on the specified name and network
         if self.denoiser_name == 'edm':
@@ -102,8 +100,6 @@ class DP_Diffusion(DPSynther):
             self.ema.load_state_dict(state['ema'])  # Load the EMA state dictionary
             del state, new_state_dict  # Clean up memory
 
-        self.is_pretrain = True  # Flag to indicate pretraining status
-
     
     def pretrain(self, public_dataloader, config):
         """
@@ -114,14 +110,13 @@ class DP_Diffusion(DPSynther):
             config (dict): Configuration dictionary containing various settings and hyperparameters.
         """
         if public_dataloader is None:
-            # If no public dataloader is provided, set pretraining flag to False and return.
-            self.is_pretrain = False
+            # If no public dataloader is provided, return.
             return
         
         # Set the number of classes in the loss function to the number of private classes.
-        config.loss.n_classes = self.private_num_classes
+        config.loss.n_classes = self.public_num_classes
         if config.cond:
-            # If conditional training is enabled, set the label unconditioning probability.
+            # If conditional training is enabled, set the label unconditioning probability to 0.1. Conditional training with a low unconditioning probability usually performs better.
             config.loss['label_unconditioning_prob'] = 0.1
         else:
             # If conditional training is disabled, set the label unconditioning probability to 1.0.
@@ -172,7 +167,7 @@ class DP_Diffusion(DPSynther):
             sampler=DistributedSampler(public_dataloader.dataset), 
             pin_memory=True, 
             drop_last=True, 
-            num_workers=0
+            num_workers=16 if config.batch_size // self.global_size > 100 else 0
         )
 
         # Initialize the loss function based on the configuration.
@@ -191,6 +186,7 @@ class DP_Diffusion(DPSynther):
         inception_model = InceptionFeatureExtractor()
         inception_model.model = inception_model.model.to(self.device)
 
+        # Define the sampler function for generating images.
         def sampler(x, y=None):
             if self.sampler.type == 'ddim':
                 return ddim_sampler(x, y, model, **self.sampler)
@@ -240,7 +236,7 @@ class DP_Diffusion(DPSynther):
                         ema.restore(model.parameters())
 
                         if self.global_rank == 0:
-                            logging.info('FID at iteration %d: %.6f' % (state['step'], fid))
+                            logging.info('FID between synthetic images and sensitive images at iteration %d: %.6f' % (state['step'], fid))
                     model.train()
                 dist.barrier()
 
@@ -287,224 +283,6 @@ class DP_Diffusion(DPSynther):
         del model
         torch.cuda.empty_cache()
 
-    def curiosity_pretrain(self, public_dataloader, config):
-        """
-        Pre-trains the model using the provided public dataloader and configuration.
-
-        Args:
-            public_dataloader (DataLoader): The dataloader for the public dataset.
-            config (dict): Configuration dictionary containing various settings and hyperparameters.
-        """
-        if public_dataloader is None:
-            # If no public dataloader is provided, set pretraining flag to False and return.
-            self.is_pretrain = False
-            return
-        
-        # Set the number of classes in the loss function to the number of private classes.
-        config.loss.n_classes = self.private_num_classes
-        if config.cond:
-            # If conditional training is enabled, set the label unconditioning probability.
-            config.loss['label_unconditioning_prob'] = 0.1
-        else:
-            # If conditional training is disabled, set the label unconditioning probability to 1.0.
-            config.loss['label_unconditioning_prob'] = 1.0        
-
-        # Set the CUDA device based on the local rank.
-        torch.cuda.device(self.local_rank)
-        self.device = 'cuda:%d' % self.local_rank
-
-        # Define directories for storing samples and checkpoints.
-        sample_dir = os.path.join(config.log_dir, 'samples')
-        checkpoint_dir = os.path.join(config.log_dir, 'checkpoints')
-
-        if self.global_rank == 0:
-            # Create necessary directories if the global rank is 0.
-            make_dir(config.log_dir)
-            make_dir(sample_dir)
-            make_dir(checkpoint_dir)
-
-        # Wrap the model with DistributedDataParallel (DDP) for distributed training.
-        model = DDP(self.model, device_ids=[self.local_rank])
-        ema = ExponentialMovingAverage(model.parameters(), decay=self.ema_rate)
-
-        # Initialize the optimizer based on the configuration.
-        if config.optim.optimizer == 'Adam':
-            optimizer = torch.optim.Adam(model.parameters(), **config.optim.params)
-        elif config.optim.optimizer == 'SGD':
-            optimizer = torch.optim.SGD(model.parameters(), **config.optim.params)
-        else:
-            raise NotImplementedError("Optimizer not supported")
-
-        # Initialize the training state.
-        state = dict(model=model, ema=ema, optimizer=optimizer, step=0)
-
-        if self.global_rank == 0:
-            # Log the number of trainable parameters and training details if the global rank is 0.
-            model_parameters = filter(lambda p: p.requires_grad, model.parameters())
-            n_params = sum([np.prod(p.size()) for p in model_parameters])
-            logging.info('Number of trainable parameters in model: %d' % n_params)
-            logging.info('Number of total epochs: %d' % config.n_epochs)
-            logging.info('Starting training at step %d' % state['step'])
-        dist.barrier()
-
-        # Create a distributed data loader for the public dataset.
-        dataset_loader = torch.utils.data.DataLoader(
-            dataset=public_dataloader.dataset, 
-            batch_size=config.batch_size // self.global_size, 
-            sampler=DistributedSampler(public_dataloader.dataset), 
-            pin_memory=True, 
-            drop_last=True, 
-            num_workers=16
-        )
-
-        # Initialize the loss function based on the configuration.
-        if config.loss.version == 'edm':
-            loss_fn = EDMLoss(**config.loss).get_loss
-        elif config.loss.version == 'vpsde':
-            loss_fn = VPSDELoss(**config.loss).get_loss
-        elif config.loss.version == 'vesde':
-            loss_fn = VESDELoss(**config.loss).get_loss
-        elif config.loss.version == 'v':
-            loss_fn = VLoss(**config.loss).get_loss
-        else:
-            raise NotImplementedError("Loss function version not supported")
-
-        # Initialize the Inception model for feature extraction.
-        inception_model = InceptionFeatureExtractor()
-        inception_model.model = inception_model.model.to(self.device)
-
-        def sampler(x, y=None):
-            if self.sampler.type == 'ddim':
-                return ddim_sampler(x, y, model, **self.sampler)
-            elif self.sampler.type == 'edm':
-                return edm_sampler(x, y, model, **self.sampler)
-            else:
-                raise NotImplementedError("Sampler type not supported")
-
-        # Define the shape of the batches for sampling and FID computation.
-        snapshot_sampling_shape = (self.sampler.snapshot_batch_size,
-                                self.network.num_in_channels, 
-                                self.network.image_size, 
-                                self.network.image_size)
-        
-        fid_sampling_shape = (self.sampler.fid_batch_size, 
-                            self.network.num_in_channels, 
-                            self.network.image_size, 
-                            self.network.image_size)
-    
-
-
-        # Init RND
-        curiosity_driven_rate = config.curiosity_rate
-        logging.info(f'Curiosity module initialized with curiosity_driven_rate: {curiosity_driven_rate}')
-        self.rnd = Rnd(input_dim=(self.network.num_in_channels, self.network.image_size, self.network.image_size), device=self.device)
-
-        # Training loop
-        for epoch in range(config.n_epochs):
-            dataset_loader.sampler.set_epoch(epoch)
-            for _, (train_x, train_y) in enumerate(dataset_loader):
-                train_x = train_x.to(self.device)
-                train_y = train_y.to(self.device)
-                
-                if epoch % 10 == 0:
-                    # Generate synthetic batch
-                    gen_x, gen_y = generate_batch(sampler, (train_x.shape[0], self.network.num_in_channels, self.network.image_size, self.network.image_size), 
-                                                self.device, self.private_num_classes, self.private_num_classes)
-
-                    # Compute curiosity scores using Rnd.forward
-                    gen_x = gen_x.to(self.device)
-                    rnd_loss, gen_x_loss = self.rnd.forward(gen_x)  # Get both batch loss and per-sample losses
-
-                    # Log RND loss only once per iteration
-                    if self.global_rank == 0:
-                        logging.info('Rnd loss at iteration %d: %.6f' % (state['step'], rnd_loss.item()))
-
-                    # Select novel images based on curiosity scores
-                    _, selected_idx = torch.topk(gen_x_loss, k=int(train_x.shape[0] * curiosity_driven_rate))
-                    self.selected_gen_x = gen_x[selected_idx].to(self.device)
-                    self.selected_gen_y = gen_y[selected_idx].to(self.device)
-
-                    # Replace part of original images with high-curiosity synthetic images
-                    replace_idx = random.sample(range(train_x.shape[0]), self.selected_gen_x.shape[0])
-                    train_x[replace_idx] = self.selected_gen_x
-                    train_y[replace_idx] = self.selected_gen_y
-
-                # Save snapshots and checkpoints at specified intervals.
-                if state['step'] % config.snapshot_freq == 0 and state['step'] >= config.snapshot_threshold and self.global_rank == 0:
-                    logging.info('Saving snapshot checkpoint and sampling single batch at iteration %d.' % state['step'])
-
-                    model.eval()
-                    with torch.no_grad():
-                        ema.store(model.parameters())
-                        ema.copy_to(model.parameters())
-                        sample_random_image_batch(snapshot_sampling_shape, sampler, os.path.join(
-                            sample_dir, 'iter_%d' % state['step']), self.device, self.private_num_classes)
-                        ema.restore(model.parameters())
-                    model.train()
-
-                    save_checkpoint(os.path.join(checkpoint_dir, 'snapshot_checkpoint.pth'), state)
-                dist.barrier()
-
-                # Compute FID at specified intervals.
-                if state['step'] % config.fid_freq == 0 and state['step'] >= config.fid_threshold:
-                    model.eval()
-                    with torch.no_grad():
-                        ema.store(model.parameters())
-                        ema.copy_to(model.parameters())
-                        fid = compute_fid(config.fid_samples, self.global_size, fid_sampling_shape, sampler, inception_model, self.fid_stats, self.device, self.private_num_classes)
-                        ema.restore(model.parameters())
-
-                        if self.global_rank == 0:
-                            logging.info('FID at iteration %d: %.6f' % (state['step'], fid))
-                    model.train()
-                dist.barrier()
-
-                # Save checkpoints at specified intervals.
-                if state['step'] % config.save_freq == 0 and state['step'] >= config.save_threshold and self.global_rank == 0:
-                    checkpoint_file = os.path.join(
-                        checkpoint_dir, 'checkpoint_%d.pth' % state['step'])
-                    save_checkpoint(checkpoint_file, state)
-                    logging.info('Saving checkpoint at iteration %d' % state['step'])
-                dist.barrier()
-
-                # Prepare the input data for training.
-                if len(train_y.shape) == 2:
-                    train_x = train_x.to(torch.float32) / 255.
-                    train_y = torch.argmax(train_y, dim=1)
-                train_x, train_y = train_x.to(self.device) * 2. - 1., train_y.to(self.device)
-                optimizer.zero_grad(set_to_none=True)
-                loss = torch.mean(loss_fn(model, train_x, train_y))
-                loss.backward()
-                optimizer.step()
-
-                # Log main loss at specified intervals
-                if (state['step'] + 1) % config.log_freq == 0 and self.global_rank == 0:
-                    logging.info('Loss: %.4f, step: %d' % (loss.item(), state['step'] + 1))
-                dist.barrier()
-
-                state['step'] += 1
-                state['ema'].update(model.parameters())
-
-            if self.global_rank == 0:
-                logging.info('Completed Epoch %d' % (epoch + 1))
-
-
-        # Save the final checkpoint.
-        if self.global_rank == 0:
-            checkpoint_file = os.path.join(checkpoint_dir, 'final_checkpoint.pth')
-            save_checkpoint(checkpoint_file, state)
-            logging.info('Saving final checkpoint.')
-        dist.barrier()
-
-        # Apply the EMA weights to the model and store the EMA object.
-        ema.copy_to(self.model.parameters())
-        self.ema = ema
-
-        # Clean up the model and free GPU memory.
-        del model
-        torch.cuda.empty_cache()
-
-
     def train(self, sensitive_dataloader, config):
         """
         Trains the model using the provided sensitive data loader and configuration.
@@ -524,8 +302,9 @@ class DP_Diffusion(DPSynther):
         # Set the CUDA device based on the local rank.
         torch.cuda.device(self.local_rank)
         self.device = 'cuda:%d' % self.local_rank
-        # Set the number of classes for the loss function.
-        config.loss.n_classes = self.private_num_classes
+
+        generate_noise = None
+        generate_y = None
 
         # Define directories for saving samples and checkpoints.
         sample_dir = os.path.join(config.log_dir, 'samples')
@@ -598,7 +377,7 @@ class DP_Diffusion(DPSynther):
 
         # Initialize the loss function based on the configuration.
         if config.loss.version == 'edm':
-            loss_fn = EDMLoss(**config.loss).get_loss
+            loss_fn = EDMLoss(**config.loss).get_loss_1
         elif config.loss.version == 'vpsde':
             loss_fn = VPSDELoss(**config.loss).get_loss
         elif config.loss.version == 'vesde':
@@ -615,7 +394,7 @@ class DP_Diffusion(DPSynther):
         # Define the sampler function for generating images.
         def sampler(x, y=None):
             if self.sampler.type == 'ddim':
-                return ddim_sampler(x, y, model, **self.sampler)
+                return ddim_sampler(x, y, model, **self.sampler, noise=new_dataset.noise)
             elif self.sampler.type == 'edm':
                 return edm_sampler(x, y, model, **self.sampler)
             else:
@@ -635,7 +414,7 @@ class DP_Diffusion(DPSynther):
                     optimizer=optimizer,
                     n_splits=config.n_splits if config.n_splits > 0 else None) as memory_safe_data_loader:
 
-                for _, (train_x, train_y) in enumerate(memory_safe_data_loader):
+                for _, (train_x, train_y, train_noise) in enumerate(memory_safe_data_loader):
                     if state['step'] % config.snapshot_freq == 0 and state['step'] >= config.snapshot_threshold and self.global_rank == 0:
                         # Save a snapshot checkpoint and sample a batch of images.
                         logging.info(
@@ -646,7 +425,7 @@ class DP_Diffusion(DPSynther):
                             ema.store(model.parameters())
                             ema.copy_to(model.parameters())
                             sample_random_image_batch(snapshot_sampling_shape, sampler, os.path.join(
-                                sample_dir, 'iter_%d' % state['step']), self.device, self.private_num_classes)
+                                sample_dir, 'iter_%d' % state['step']), self.device, self.private_num_classes, generate_noise=generate_noise, generate_y=generate_y)
                             ema.restore(model.parameters())
                         model.train()
 
@@ -660,7 +439,7 @@ class DP_Diffusion(DPSynther):
                         with torch.no_grad():
                             ema.store(model.parameters())
                             ema.copy_to(model.parameters())
-                            fid = compute_fid(config.fid_samples, self.global_size, fid_sampling_shape, sampler, inception_model, self.fid_stats, self.device, self.private_num_classes)
+                            fid = compute_fid(config.fid_samples, self.global_size, fid_sampling_shape, sampler, inception_model, self.fid_stats, self.device, self.private_num_classes, generate_noise=generate_noise, generate_y=generate_y)
                             ema.restore(model.parameters())
 
                             if self.global_rank == 0:
@@ -684,10 +463,11 @@ class DP_Diffusion(DPSynther):
                     
                     x = train_x.to(self.device) * 2. - 1.
                     y = train_y.to(self.device).long()
+                    noise = train_noise.to(self.device)
 
                     # Perform a forward pass and backpropagation.
                     optimizer.zero_grad(set_to_none=True)
-                    loss = torch.mean(loss_fn(model, x, y))
+                    loss = torch.mean(loss_fn(model, x, noise, y))
                     loss.backward()
                     optimizer.step()
 
@@ -702,8 +482,8 @@ class DP_Diffusion(DPSynther):
                         state['ema'].update(model.parameters())
 
                 # Log the epsilon value after each epoch.
-                logging.info('Eps-value after %d epochs: %.4f' %
-                            (epoch + 1, privacy_engine.get_epsilon(config.dp.delta)))
+                if self.global_rank == 0:
+                    logging.info('Eps-value after %d epochs: %.4f' % (epoch + 1, privacy_engine.get_epsilon(config.dp.delta)))
 
         if self.global_rank == 0:
             # Save the final checkpoint.
@@ -715,261 +495,6 @@ class DP_Diffusion(DPSynther):
         # Update the EMA.
         self.ema = ema
 
-
-    def curiosity_train(self, sensitive_dataloader, config):
-        """
-        Trains the model using the provided sensitive data loader and configuration.
-
-        Args:
-            sensitive_dataloader (DataLoader): DataLoader containing the sensitive data.
-            config (Config): Configuration object containing various settings for training.
-
-        Returns:
-            None
-        """
-        if sensitive_dataloader is None or config.n_epochs == 0:
-            # If the dataloader is not provided or the number of epochs is zero, exit early.
-            return
-        
-        set_seeds(self.global_rank, config.seed)
-        # Set the CUDA device based on the local rank.
-        torch.cuda.device(self.local_rank)
-        self.device = 'cuda:%d' % self.local_rank
-        # Set the number of classes for the loss function.
-        config.loss.n_classes = self.private_num_classes
-
-        # Define directories for saving samples and checkpoints.
-        sample_dir = os.path.join(config.log_dir, 'samples')
-        checkpoint_dir = os.path.join(config.log_dir, 'checkpoints')
-
-        if self.global_rank == 0:
-            # Create necessary directories if this is the main process.
-            make_dir(config.log_dir)
-            make_dir(sample_dir)
-            make_dir(checkpoint_dir)
-        
-        if config.partly_finetune:
-            # If partial fine-tuning is enabled, freeze certain layers.
-            trainable_parameters = []
-            for name, param in self.model.named_parameters():
-                layer_idx = int(name.split('.')[2])
-                if layer_idx > 3 and 'NIN' not in name:
-                    param.requires_grad = False
-                    if self.global_rank == 0:
-                        logging.info('{} is frozen'.format(name))
-                else:
-                    trainable_parameters.append(param)
-        else:
-            # Otherwise, all parameters are trainable.
-            trainable_parameters = self.model.parameters()
-
-        # Wrap the model with DPDDP for distributed training with differential privacy.
-        model = DPDDP(self.model)
-        # Initialize Exponential Moving Average (EMA) for model parameters.
-        ema = ExponentialMovingAverage(model.parameters(), decay=self.ema_rate)
-
-        # Initialize the optimizer based on the configuration.
-        if config.optim.optimizer == 'Adam':
-            optimizer = torch.optim.Adam(trainable_parameters, **config.optim.params)
-        elif config.optim.optimizer == 'SGD':
-            optimizer = torch.optim.SGD(model.parameters(), **config.optim.params)
-        else:
-            raise NotImplementedError("Optimizer not supported")
-
-        # Initialize the state dictionary to keep track of the training process.
-        state = dict(model=model, ema=ema, optimizer=optimizer, step=0)
-
-        if self.global_rank == 0:
-            # Log the number of trainable parameters and other training details.
-            model_parameters = filter(lambda p: p.requires_grad, self.model.parameters())
-            n_params = sum([np.prod(p.size()) for p in model_parameters])
-            logging.info('Number of trainable parameters in model: %d' % n_params)
-            logging.info('Number of total epochs: %d' % config.n_epochs)
-            logging.info('Starting training at step %d' % state['step'])
-
-        # Initialize the Privacy Engine for differential privacy.
-        privacy_engine = PrivacyEngine()
-        if config.dp.sdq is None:
-            account_history = None
-            alpha_history = None
-        else:
-            account_history = [tuple(item) for item in config.dp.privacy_history]
-            if config.dp.alpha_num == 0:
-                alpha_history = None
-            else:
-                alpha = np.arange(config.dp.alpha_num) / config.dp.alpha_num
-                alpha = alpha * (config.dp.alpha_max - config.dp.alpha_min)
-                alpha += config.dp.alpha_min 
-                alpha_history = list(alpha)
-
-        # Make the model, optimizer, and data loader private.
-        model, optimizer, dataset_loader = privacy_engine.make_private_with_epsilon(
-            module=model,
-            optimizer=optimizer,
-            data_loader=sensitive_dataloader,
-            target_delta=config.dp.delta,
-            target_epsilon=config.dp.epsilon,
-            epochs=config.n_epochs,
-            max_grad_norm=config.dp.max_grad_norm,
-            noise_multiplicity=config.loss.n_noise_samples,
-            account_history=account_history,
-            alpha_history=alpha_history,
-        )
-
-        # Initialize the loss function based on the configuration.
-        if config.loss.version == 'edm':
-            loss_fn = EDMLoss(**config.loss).get_loss
-        elif config.loss.version == 'vpsde':
-            loss_fn = VPSDELoss(**config.loss).get_loss
-        elif config.loss.version == 'vesde':
-            loss_fn = VESDELoss(**config.loss).get_loss
-        elif config.loss.version == 'v':
-            loss_fn = VLoss(**config.loss).get_loss
-        else:
-            raise NotImplementedError("Loss function not supported")
-
-        # Initialize the Inception model for feature extraction.
-        inception_model = InceptionFeatureExtractor()
-        inception_model.model = inception_model.model.to(self.device)
-
-        # Define the sampler function for generating images.
-        def sampler(x, y=None):
-            if self.sampler.type == 'ddim':
-                return ddim_sampler(x, y, model, **self.sampler)
-            elif self.sampler.type == 'edm':
-                return edm_sampler(x, y, model, **self.sampler)
-            else:
-                raise NotImplementedError("Sampler type not supported")
-
-        # Define the shapes for sampling images.
-        snapshot_sampling_shape = (self.sampler.snapshot_batch_size,
-                                self.network.num_in_channels, self.network.image_size, self.network.image_size)
-        fid_sampling_shape = (self.sampler.fid_batch_size, self.network.num_in_channels,
-                            self.network.image_size, self.network.image_size)
-
-        # Init RND
-        # curiosity_driven_rate = config.curiosity_rate
-        # logging.info(f'Curiosity module initialized with curiosity_driven_rate: {curiosity_driven_rate}')
-        # self.rnd = Rnd(input_dim=(self.network.num_in_channels, self.network.image_size, self.network.image_size), device=self.device)
-
-        # Start the training loop.
-        for epoch in range(config.n_epochs):
-            with BatchMemoryManager(
-                    data_loader=dataset_loader,
-                    max_physical_batch_size=config.dp.max_physical_batch_size,
-                    optimizer=optimizer,
-                    n_splits=config.n_splits if config.n_splits > 0 else None) as memory_safe_data_loader:
-
-                for _, (train_x, train_y) in enumerate(memory_safe_data_loader):
-                    train_x = train_x.to(self.device)
-                    train_y = train_y.to(self.device)
-                    
-                    if epoch % 2 == 0 and epoch > 100:
-                        # Generate synthetic batch
-                        gen_x, gen_y = generate_batch(sampler, (int(train_x.shape[0] / 3), self.network.num_in_channels, self.network.image_size, self.network.image_size), self.device, self.private_num_classes, self.private_num_classes)
-
-                        # Compute curiosity scores using Rnd.forward
-                        gen_x = gen_x.to(self.device)
-                        # rnd_loss, gen_x_loss = self.rnd.forward(gen_x)  # Get both batch loss and per-sample losses
-
-                        # Log RND loss only once per iteration
-                        # if self.global_rank == 0:
-                        #     logging.info('Rnd loss at iteration %d: %.6f' % (state['step'], rnd_loss.item()))
-
-                        # Select novel images based on curiosity scores
-                        # _, selected_idx = torch.topk(gen_x_loss, k=int(train_x.shape[0] * curiosity_driven_rate))
-                        # self.selected_gen_x = gen_x[selected_idx].to(self.device)
-                        # self.selected_gen_y = gen_y[selected_idx].to(self.device)
-                        self.selected_gen_x = gen_x.to(self.device)
-                        self.selected_gen_y = gen_y.to(self.device)
-
-                        # Replace part of original images with high-curiosity synthetic images
-                        # replace_idx = random.sample(range(train_x.shape[0]), self.selected_gen_x.shape[0])
-                        # train_x[replace_idx] = self.selected_gen_x
-                        # train_y[replace_idx] = self.selected_gen_y
-
-                        # Append to global dataset
-                        train_x = torch.cat((train_x, self.selected_gen_x), dim=0)
-                        train_y = torch.cat((train_y, self.selected_gen_y), dim=0)
-
-                    if state['step'] % config.snapshot_freq == 0 and state['step'] >= config.snapshot_threshold and self.global_rank == 0:
-                        # Save a snapshot checkpoint and sample a batch of images.
-                        logging.info(
-                            'Saving snapshot checkpoint and sampling single batch at iteration %d.' % state['step'])
-
-                        model.eval()
-                        with torch.no_grad():
-                            ema.store(model.parameters())
-                            ema.copy_to(model.parameters())
-                            sample_random_image_batch(snapshot_sampling_shape, sampler, os.path.join(
-                                sample_dir, 'iter_%d' % state['step']), self.device, self.private_num_classes)
-                            ema.restore(model.parameters())
-                        model.train()
-
-                        save_checkpoint(os.path.join(
-                            checkpoint_dir, 'snapshot_checkpoint.pth'), state)
-                    dist.barrier()
-
-                    if state['step'] % config.fid_freq == 0 and state['step'] >= config.fid_threshold:
-                        # Compute FID score and log it.
-                        model.eval()
-                        with torch.no_grad():
-                            ema.store(model.parameters())
-                            ema.copy_to(model.parameters())
-                            fid = compute_fid(config.fid_samples, self.global_size, fid_sampling_shape, sampler, inception_model, self.fid_stats, self.device, self.private_num_classes)
-                            ema.restore(model.parameters())
-
-                            if self.global_rank == 0:
-                                logging.info('FID at iteration %d: %.6f' % (state['step'], fid))
-                            dist.barrier()
-                        model.train()
-
-                    if state['step'] % config.save_freq == 0 and state['step'] >= config.save_threshold and self.global_rank == 0:
-                        # Save a checkpoint at regular intervals.
-                        checkpoint_file = os.path.join(
-                            checkpoint_dir, 'checkpoint_%d.pth' % state['step'])
-                        save_checkpoint(checkpoint_file, state)
-                        logging.info(
-                            'Saving checkpoint at iteration %d' % state['step'])
-                    dist.barrier()
-
-                    if len(train_y.shape) == 2:
-                        # Preprocess the input data.
-                        train_x = train_x.to(torch.float32) / 255.
-                        train_y = torch.argmax(train_y, dim=1)
-                    
-                    x = train_x.to(self.device) * 2. - 1.
-                    y = train_y.to(self.device).long()
-
-                    # Perform a forward pass and backpropagation.
-                    optimizer.zero_grad(set_to_none=True)
-                    loss = torch.mean(loss_fn(model, x, y))
-                    loss.backward()
-                    optimizer.step()
-
-                    if (state['step'] + 1) % config.log_freq == 0 and self.global_rank == 0:
-                        # Log the loss at regular intervals.
-                        logging.info('Loss: %.4f, step: %d' %
-                                    (loss, state['step'] + 1))
-                    dist.barrier()
-
-                    state['step'] += 1
-                    if not optimizer._is_last_step_skipped:
-                        state['ema'].update(model.parameters())
-
-                # Log the epsilon value after each epoch.
-                logging.info('Eps-value after %d epochs: %.4f' %
-                            (epoch + 1, privacy_engine.get_epsilon(config.dp.delta)))
-
-        if self.global_rank == 0:
-            # Save the final checkpoint.
-            checkpoint_file = os.path.join(checkpoint_dir, 'final_checkpoint.pth')
-            save_checkpoint(checkpoint_file, state)
-            logging.info('Saving final checkpoint.')
-        dist.barrier()
-
-        # Update the EMA.
-        self.ema = ema
 
     def generate(self, config):
         # Log the start of the generation process with the number of samples to be generated
@@ -1036,8 +561,8 @@ class DP_Diffusion(DPSynther):
             logging.info("Generation Finished!")
             
             # Concatenate all collected synthetic data and labels
-            syn_data = np.concatenate(syn_data)
-            syn_labels = np.concatenate(syn_labels)
+            syn_data = np.concatenate(syn_data)[:config.data_num]
+            syn_labels = np.concatenate(syn_labels)[:config.data_num]
             
             # Save the synthetic data and labels to a .npz file
             np.savez(os.path.join(config.log_dir, "gen.npz"), x=syn_data, y=syn_labels)
@@ -1056,3 +581,37 @@ class DP_Diffusion(DPSynther):
         else:
             # Return None for non-main processes
             return None, None
+
+
+class NewDataset(Dataset):
+    def __init__(self, sensitive_dataloader):
+        self.sensitive_dataset = sensitive_dataloader.dataset
+        data_shape = self.sensitive_dataset[0][0].shape
+        self.noise = torch.randn((len(self.sensitive_dataset), *data_shape))
+        # self.noise = torch.randn((1, *data_shape)).repeat(len(self.sensitive_dataset), 1, 1, 1) + torch.randn((len(self.sensitive_dataset), *data_shape)) * 0.1
+        # self.noise = torch.randn((1, *data_shape))
+
+        # self.mean_x = self.cal_mean_x(sensitive_dataloader)
+        # self.noise = torch.cat([self.mean_x[self.sensitive_dataset[i][1]] for i in range(len(self.sensitive_dataset))]) * 2 - 1
+        # self.noise = self.noise + torch.randn_like(self.noise) * 0.1
+
+
+    def __len__(self):
+        return len(self.sensitive_dataset)
+
+    def __getitem__(self, idx):
+        x, y = self.sensitive_dataset[idx]
+        return x, y, self.noise[idx]
+
+    def cal_mean_x(self, dataloader):
+        x, y = [], []
+        for xi, yi in dataloader:
+            x.append(xi)
+            y.append(yi)
+        x = torch.cat(x)
+        y = torch.cat(y)
+        mean_x = []
+        for cls in range(10):
+            mean_x.append(torch.mean(x[y==cls], dim=0, keepdim=True))
+        return mean_x
+

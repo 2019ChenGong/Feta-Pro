@@ -7,15 +7,46 @@ import torch.nn.functional as F
 import torchvision
 import numpy as np
 import logging
+from scipy.optimize import root_scalar
+import scipy
 
 import importlib
 opacus = importlib.import_module('opacus')
-from opacus.accountants.utils import get_noise_multiplier
+# from opacus.accountants.utils import get_noise_multiplier
 
 
 from models.synthesizer import DPSynther
 from models.DP_MERF.rff_mmd_approx import get_rff_losses
 from models.DP_GAN.generator import Generator
+
+def get_noise_multiplier(epsilon, num_steps, delta, min_noise_multiplier=1e-1, max_noise_multiplier=500, max_epsilon=1e7):
+
+    def delta_Gaussian(eps, mu):
+        # Compute delta of Gaussian mechanism with shift mu or equivalently noise scale 1/mu
+        if mu == 0:
+            return 0
+        if np.isinf(np.exp(eps)):
+            return 0
+        return scipy.stats.norm.cdf(-eps / mu + mu / 2) - np.exp(eps) * scipy.stats.norm.cdf(-eps / mu - mu / 2)
+
+    def eps_Gaussian(delta, mu):
+        # Compute eps of Gaussian mechanism with shift mu or equivalently noise scale 1/mu
+        def f(x):
+            return delta_Gaussian(x, mu) - delta
+        return root_scalar(f, bracket=[0, max_epsilon], method='brentq').root
+
+    def compute_epsilon(noise_multiplier, num_steps, delta):
+        return eps_Gaussian(delta, np.sqrt(num_steps) / noise_multiplier)
+
+    def objective(x):
+        return compute_epsilon(noise_multiplier=x, num_steps=num_steps, delta=delta) - epsilon
+
+    output = root_scalar(objective, bracket=[min_noise_multiplier, max_noise_multiplier], method='brentq')
+
+    if not output.converged:
+        raise ValueError("Failed to converge")
+
+    return output.root
 
 
 class DP_MERF(DPSynther):
@@ -79,7 +110,12 @@ class DP_MERF(DPSynther):
         os.mkdir(os.path.join(config.log_dir, "checkpoints"))
 
         # Define loss functions and compute noise factor
-        self.noise_factor = get_noise_multiplier(target_epsilon=config.dp.epsilon, target_delta=config.dp.delta, sample_rate=1., epochs=1)
+        # self.noise_factor = get_noise_multiplier(target_epsilon=config.dp.epsilon, target_delta=config.dp.delta, sample_rate=1., epochs=1)
+        self.noise_factor = get_noise_multiplier(
+            epsilon=config.dp.epsilon, 
+            delta=config.dp.delta, 
+            num_steps=1
+        )
         logging.info("The noise factor is {}".format(self.noise_factor))
 
         n_data = len(sensitive_dataloader.dataset)  # Number of data points in the sensitive dataset
