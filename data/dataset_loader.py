@@ -163,6 +163,7 @@ class CentralDataset(Dataset):
         dataloader = DPDataLoader.from_data_loader(dataloader)
         for _ in range(10000):
             for x, y in dataloader:
+                ds = 16 / x.shape[-1]
                 for cls in range(num_classes):
                     
                     x_cls = x if num_classes==1 else x[y==cls]
@@ -198,6 +199,7 @@ class CentralDataset(Dataset):
         dataloader = DPDataLoader.from_data_loader(dataloader)
         for _ in range(10000):
             for x, y in dataloader:
+                ds = 16 / x.shape[-1]
                 if x.shape[-1] == 28:
                     bins = 2
                 else:

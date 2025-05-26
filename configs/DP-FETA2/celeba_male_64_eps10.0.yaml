@@ -27,7 +27,7 @@ sensitive_data:
   n_classes: 2
   train_path: dataset/celeba/train_64_Male.zip
   test_path: dataset/celeba/test_64_Male.zip
-  fid_stats: dataset/celeba/fid_stats_64.npz
+  fid_stats: /p/fzv6enresearch/DPImageBench/dataset/celeba/fid_stats_64.npz
 model:
   ckpt: null
   denoiser_name: edm
@@ -39,8 +39,10 @@ model:
     num_out_channels: 3
     label_dim: 1000
     attn_resolutions:
+    - 16
     - 32
     ch_mult:
+    - 1
     - 2
     - 4
   sampler:
@@ -116,7 +118,7 @@ train:
   log_dir: null
   seed: 0
   batch_size: 4096
-  n_epochs: 100
+  n_epochs: 50
   partly_finetune: false
   log_freq: 100
   snapshot_freq: 2000
