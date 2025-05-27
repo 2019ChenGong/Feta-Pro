@@ -317,7 +317,8 @@ def load_data(config):
                 public_train_set = CentralDataset(sensitive_train_loader.dataset, num_classes=config.sensitive_data.n_classes, c_type=config.public_data.name.split('_')[-1], **config.public_data.central)
             else:
                 public_train_set = CentralDataset(sensitive_train_loader.dataset, num_classes=config.sensitive_data.n_classes, c_type=config.public_data.name.split('_')[-1])
-            config.train.dp['privacy_history'] = [public_train_set.privacy_history]
+            if public_train_set.privacy_history[0] != 0:
+                config.train.dp['privacy_history'] = [public_train_set.privacy_history]
             if config.setup.global_rank == 0:
                 logging.info("Additional privacy cost: {}".format(str(public_train_set.privacy_history)))
         elif config.public_data.name == "npz":

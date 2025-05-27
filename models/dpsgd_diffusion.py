@@ -578,10 +578,10 @@ class DP_Diffusion(DPSynther):
 
         # Initialize the Privacy Engine for differential privacy.
         privacy_engine = PrivacyEngine()
-        if config.dp.privacy_history is None:
-            account_history = None
-        else:
+        if 'privacy_history' in config.dp and config.dp.privacy_history is not None:
             account_history = [tuple(item) for item in config.dp.privacy_history]
+        else:
+            account_history = None
 
         # Make the model, optimizer, and data loader private.
         model, optimizer, dataset_loader = privacy_engine.make_private_with_epsilon(

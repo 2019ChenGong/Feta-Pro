@@ -111,11 +111,14 @@ class DP_MERF(DPSynther):
 
         # Define loss functions and compute noise factor
         # self.noise_factor = get_noise_multiplier(target_epsilon=config.dp.epsilon, target_delta=config.dp.delta, sample_rate=1., epochs=1)
-        self.noise_factor = get_noise_multiplier(
-            epsilon=config.dp.epsilon, 
-            delta=config.dp.delta, 
-            num_steps=1
-        )
+        if config.dp.epsilon > 99999:
+            self.noise_factor = 0.
+        else:
+            self.noise_factor = get_noise_multiplier(
+                epsilon=config.dp.epsilon, 
+                delta=config.dp.delta, 
+                num_steps=1
+            )
         logging.info("The noise factor is {}".format(self.noise_factor))
 
         n_data = len(sensitive_dataloader.dataset)  # Number of data points in the sensitive dataset

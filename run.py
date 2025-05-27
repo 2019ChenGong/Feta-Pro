@@ -34,7 +34,8 @@ def main(config):
         dist.barrier()
         syn = np.load(os.path.join(config.gen.merf.log_dir, 'gen.npz'))
         syn_data, syn_labels = syn["x"], syn["y"]
-        config.train.dp['privacy_history'].append([torch.load(os.path.join(config.gen.merf.log_dir, 'pc.pth')).item(), 1, 1])
+        if torch.load(os.path.join(config.gen.merf.log_dir, 'pc.pth')).item() != 0:
+            config.train.dp['privacy_history'].append([torch.load(os.path.join(config.gen.merf.log_dir, 'pc.pth')).item(), 1, 1])
     merf_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
     merf_train_loader = torch.utils.data.DataLoader(dataset=merf_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16)
 
