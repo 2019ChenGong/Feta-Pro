@@ -69,3 +69,7 @@ sampled_images
 
 mnist
 login_rivana.sh
+
+fid_curve.pdf
+fid_curve.py
+test.png
