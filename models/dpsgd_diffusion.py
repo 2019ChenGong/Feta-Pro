@@ -715,6 +715,215 @@ class DP_Diffusion(DPSynther):
         # Update the EMA.
         self.ema = ema
 
+    def cut_train(self, sensitive_dataloader, config):
+        """
+        Trains the model using the provided sensitive data loader and configuration.
+
+        Args:
+            sensitive_dataloader (DataLoader): DataLoader containing the sensitive data.
+            config (Config): Configuration object containing various settings for training.
+
+        Returns:
+            None
+        """
+        if sensitive_dataloader is None or config.n_epochs == 0:
+            # If the dataloader is not provided or the number of epochs is zero, exit early.
+            return
+        
+        set_seeds(self.global_rank, config.seed)
+        # Set the CUDA device based on the local rank.
+        torch.cuda.device(self.local_rank)
+        self.device = 'cuda:%d' % self.local_rank
+        # Set the number of classes for the loss function.
+        config.loss.n_classes = self.private_num_classes
+
+        # Define directories for saving samples and checkpoints.
+        sample_dir = os.path.join(config.log_dir, 'samples')
+        checkpoint_dir = os.path.join(config.log_dir, 'checkpoints')
+
+        if self.global_rank == 0:
+            # Create necessary directories if this is the main process.
+            make_dir(config.log_dir)
+            make_dir(sample_dir)
+            make_dir(checkpoint_dir)
+        
+        if config.partly_finetune:
+            # If partial fine-tuning is enabled, freeze certain layers.
+            trainable_parameters = []
+            for name, param in self.model.named_parameters():
+                layer_idx = int(name.split('.')[2])
+                if layer_idx > 3 and 'NIN' not in name:
+                    param.requires_grad = False
+                    if self.global_rank == 0:
+                        logging.info('{} is frozen'.format(name))
+                else:
+                    trainable_parameters.append(param)
+        else:
+            # Otherwise, all parameters are trainable.
+            trainable_parameters = self.model.parameters()
+
+        # Wrap the model with DPDDP for distributed training with differential privacy.
+        model = DPDDP(self.model)
+        # Initialize Exponential Moving Average (EMA) for model parameters.
+        ema = ExponentialMovingAverage(model.parameters(), decay=self.ema_rate)
+
+        # Initialize the optimizer based on the configuration.
+        if config.optim.optimizer == 'Adam':
+            optimizer = torch.optim.Adam(trainable_parameters, **config.optim.params)
+        elif config.optim.optimizer == 'SGD':
+            optimizer = torch.optim.SGD(model.parameters(), **config.optim.params)
+        else:
+            raise NotImplementedError("Optimizer not supported")
+
+        # Initialize the state dictionary to keep track of the training process.
+        state = dict(model=model, ema=ema, optimizer=optimizer, step=0)
+
+        if self.global_rank == 0:
+            # Log the number of trainable parameters and other training details.
+            model_parameters = filter(lambda p: p.requires_grad, self.model.parameters())
+            n_params = sum([np.prod(p.size()) for p in model_parameters])
+            logging.info('Number of trainable parameters in model: %d' % n_params)
+            logging.info('Number of total epochs: %d' % config.n_epochs)
+            logging.info('Starting training at step %d' % state['step'])
+
+        # Initialize the Privacy Engine for differential privacy.
+        privacy_engine = PrivacyEngine()
+        if 'privacy_history' in config.dp and config.dp.privacy_history is not None:
+            account_history = [tuple(item) for item in config.dp.privacy_history]
+        else:
+            account_history = None
+
+        # Make the model, optimizer, and data loader private.
+        model, optimizer, dataset_loader = privacy_engine.make_private_with_epsilon(
+            module=model,
+            optimizer=optimizer,
+            data_loader=sensitive_dataloader,
+            target_delta=config.dp.delta,
+            target_epsilon=config.dp.epsilon,
+            epochs=config.n_epochs,
+            max_grad_norm=config.dp.max_grad_norm,
+            noise_multiplicity=config.loss.n_noise_samples,
+            account_history=account_history,
+        )
+
+        # Initialize the loss function based on the configuration.
+        if config.loss.version == 'edm':
+            loss_fn = EDMLoss(**config.loss).get_loss_stage2
+        elif config.loss.version == 'vpsde':
+            loss_fn = VPSDELoss(**config.loss).get_loss
+        elif config.loss.version == 'vesde':
+            loss_fn = VESDELoss(**config.loss).get_loss
+        elif config.loss.version == 'v':
+            loss_fn = VLoss(**config.loss).get_loss
+        else:
+            raise NotImplementedError("Loss function not supported")
+
+        # Initialize the Inception model for feature extraction.
+        inception_model = InceptionFeatureExtractor()
+        inception_model.model = inception_model.model.to(self.device)
+
+        # Define the sampler function for generating images.
+        def sampler(x, y=None):
+            if self.sampler.type == 'ddim':
+                return ddim_sampler(x, y, model, **self.sampler)
+            elif self.sampler.type == 'edm':
+                return edm_sampler(x, y, model, **self.sampler)
+            else:
+                raise NotImplementedError("Sampler type not supported")
+
+        # Define the shapes for sampling images.
+        snapshot_sampling_shape = (self.sampler.snapshot_batch_size,
+                                self.network.num_in_channels, self.network.image_size, self.network.image_size)
+        fid_sampling_shape = (self.sampler.fid_batch_size, self.network.num_in_channels,
+                            self.network.image_size, self.network.image_size)
+
+        # Start the training loop.
+        for epoch in range(config.n_epochs):
+            with BatchMemoryManager(
+                    data_loader=dataset_loader,
+                    max_physical_batch_size=config.dp.max_physical_batch_size,
+                    optimizer=optimizer,
+                    n_splits=config.n_splits if config.n_splits > 0 else None) as memory_safe_data_loader:
+
+                for _, (train_x, train_y) in enumerate(memory_safe_data_loader):
+                    if state['step'] % config.snapshot_freq == 0 and state['step'] >= config.snapshot_threshold and self.global_rank == 0:
+                        # Save a snapshot checkpoint and sample a batch of images.
+                        logging.info(
+                            'Saving snapshot checkpoint and sampling single batch at iteration %d.' % state['step'])
+
+                        model.eval()
+                        with torch.no_grad():
+                            ema.store(model.parameters())
+                            ema.copy_to(model.parameters())
+                            sample_random_image_batch(snapshot_sampling_shape, sampler, os.path.join(
+                                sample_dir, 'iter_%d' % state['step']), self.device, self.private_num_classes)
+                            ema.restore(model.parameters())
+                        model.train()
+
+                        save_checkpoint(os.path.join(
+                            checkpoint_dir, 'snapshot_checkpoint.pth'), state)
+                    dist.barrier()
+
+                    if state['step'] % config.fid_freq == 0 and state['step'] >= config.fid_threshold:
+                        # Compute FID score and log it.
+                        model.eval()
+                        with torch.no_grad():
+                            ema.store(model.parameters())
+                            ema.copy_to(model.parameters())
+                            fid = compute_fid(config.fid_samples, self.global_size, fid_sampling_shape, sampler, inception_model, self.fid_stats, self.device, self.private_num_classes)
+                            ema.restore(model.parameters())
+
+                            if self.global_rank == 0:
+                                logging.info('FID at iteration %d: %.6f' % (state['step'], fid))
+                            dist.barrier()
+                        model.train()
+
+                    if state['step'] % config.save_freq == 0 and state['step'] >= config.save_threshold and self.global_rank == 0:
+                        # Save a checkpoint at regular intervals.
+                        checkpoint_file = os.path.join(
+                            checkpoint_dir, 'checkpoint_%d.pth' % state['step'])
+                        save_checkpoint(checkpoint_file, state)
+                        logging.info(
+                            'Saving checkpoint at iteration %d' % state['step'])
+                    dist.barrier()
+
+                    if len(train_y.shape) == 2:
+                        # Preprocess the input data.
+                        train_x = train_x.to(torch.float32) / 255.
+                        train_y = torch.argmax(train_y, dim=1)
+                    
+                    x = train_x.to(self.device) * 2. - 1.
+                    y = train_y.to(self.device).long()
+
+                    # Perform a forward pass and backpropagation.
+                    optimizer.zero_grad(set_to_none=True)
+                    loss = torch.mean(loss_fn(model, x, y, max_sigma=config.max_sigma))
+                    loss.backward()
+                    optimizer.step()
+
+                    if (state['step'] + 1) % config.log_freq == 0 and self.global_rank == 0:
+                        # Log the loss at regular intervals.
+                        logging.info('Loss: %.4f, step: %d' %
+                                    (loss, state['step'] + 1))
+                    dist.barrier()
+
+                    state['step'] += 1
+                    if not optimizer._is_last_step_skipped:
+                        state['ema'].update(model.parameters())
+
+                # Log the epsilon value after each epoch.
+                logging.info('Eps-value after %d epochs: %.4f' %
+                            (epoch + 1, privacy_engine.get_epsilon(config.dp.delta)))
+
+        if self.global_rank == 0:
+            # Save the final checkpoint.
+            checkpoint_file = os.path.join(checkpoint_dir, 'final_checkpoint.pth')
+            save_checkpoint(checkpoint_file, state)
+            logging.info('Saving final checkpoint.')
+        dist.barrier()
+
+        # Update the EMA.
+        self.ema = ema
 
     def curiosity_train(self, sensitive_dataloader, config):
         """

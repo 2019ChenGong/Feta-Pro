@@ -58,14 +58,23 @@ def main(config):
         config.pretrain.n_epochs = config.pretrain.n_epochs2
         config.pretrain.batch_size = config.pretrain.batch_size2
         model.pretrain(merf_train_loader, config.pretrain)
+    elif config.pretrain.mode == 'feta_merf_mix':
+        config.pretrain.n_epochs = config.pretrain.n_epochs2
+        config.pretrain.batch_size = config.pretrain.batch_size2
+        pretrain_set = ConcatDataset([merf_train_set, public_train_loader.dataset])
+        model.pretrain(torch.utils.data.DataLoader(dataset=pretrain_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16), config.pretrain)
     elif config.pretrain.mode == 'merf':
+        config.train.dp['privacy_history'] = config.train.dp['privacy_history'][-1:]
         config.pretrain.n_epochs = config.pretrain.n_epochs2
         config.pretrain.batch_size = config.pretrain.batch_size2
         model.pretrain(merf_train_loader, config.pretrain)
     else:
         raise NotImplementedError
+
     if 'syn4train' in config.train:
         model.curiosity_train(sensitive_train_loader, config.train)
+    elif 'cut_noise' in config.train:
+        model.cut_train(sensitive_train_loader, config.train)
     else:
         model.train(sensitive_train_loader, config.train)
 

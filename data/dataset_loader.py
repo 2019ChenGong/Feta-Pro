@@ -189,7 +189,7 @@ class CentralDataset(Dataset):
             if c == sample_num:
                 break
         
-        return torch.cat(central_x), central_y
+        return torch.cat(central_x), torch.tensor(central_y).long()
 
     def query_mode_image(self, sensitive_dataset, sample_num, sigma, batch_size, num_classes):
         c = 0
@@ -234,7 +234,7 @@ class CentralDataset(Dataset):
                     break
             if c == sample_num:
                 break
-        return torch.cat(central_x), central_y
+        return torch.cat(central_x), torch.tensor(central_y).long()
 
     def post_process(self, x):
         is_gray = x.shape[1] == 1

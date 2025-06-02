@@ -46,4 +46,27 @@
 
 # python run.py setup.n_gpus_per_node=4 eval.mode=val public_data.name=npz public_data.train_path=/p/fzv6enresearch/PE-Refine/exp/dp-merf/camelyon_32_eps0.1-2025-05-21-01-36-08/gen/gen.npz pretrain.n_epochs=10 pretrain.batch_size=256 -m DPDM -dn camelyon_32 -e 0.1 -ed val_eps0.1merf
 
-python run.py setup.n_gpus_per_node=4 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=1.0 public_data.central.sigma=5 -m DP-FETA2 -dn mnist_28 -e 10.0 -ed val
+# python run.py setup.n_gpus_per_node=4 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=1.0 public_data.central.sigma=5 -m DP-FETA2 -dn mnist_28 -e 10.0 -ed val
+
+# merf only
+
+# python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.25 public_data.central.sigma=20 pretrain.mode=merf -m DP-FETA2 -dn mnist_28 -e 1.0 -ed val_merf0.25_merfonly
+
+# python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.25 public_data.central.sigma=20 pretrain.mode=merf -m DP-FETA2 -dn fmnist_28 -e 1.0 -ed val_merf0.25_merfonly
+
+# python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.2 public_data.central.sigma=20 pretrain.mode=merf -m DP-FETA2 -dn celeba_male_32 -e 1.0 -ed val_merf0.2_merfonly
+
+# python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.15 public_data.central.sigma=20 pretrain.mode=merf -m DP-FETA2 -dn camelyon_32 -e 1.0 -ed val_merf0.15_merfonly
+
+# mix
+
+# python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.25 public_data.central.sigma=20 pretrain.mode=feta_merf_mix -m DP-FETA2 -dn mnist_28 -e 1.0 -ed val_fetasigma20_merf0.25_mix
+
+# python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.25 public_data.central.sigma=20 pretrain.mode=feta_merf_mix -m DP-FETA2 -dn fmnist_28 -e 1.0 -ed val_fetasigma20_merf0.25_mix
+
+# python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.2 public_data.central.sigma=15 pretrain.mode=feta_merf_mix -m DP-FETA2 -dn celeba_male_32 -e 1.0 -ed val_fetasigma15_merf0.2_mix
+
+# python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.15 public_data.central.sigma=10 pretrain.mode=feta_merf_mix -m DP-FETA2 -dn camelyon_32 -e 1.0 -ed val_fetasigma10_merf0.15_mix
+
+
+python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.25 public_data.central.sigma=20 pretrain.mode=feta_merf train.cut_noise=true train.max_sigma=20 -m DP-FETA2 -dn mnist_28 -e 1.0 -ed val_merf0.25_merfonly_cutnoise
