@@ -25,7 +25,7 @@ def main(config):
         syn = np.load(os.path.join(config.gen.merf.cache, 'gen.npz'))
         syn_data, syn_labels = syn["x"], syn["y"]
         config.train.dp['privacy_history'].append([torch.load(os.path.join(config.gen.merf.cache, 'pc.pth')).item(), 1, 1])
-    else:
+    elif config.pretrain.mode != 'feta_merf_nogan' and config.pretrain.mode != 'feta_merf_nogan2':
         if config.setup.global_rank == 0:
             merf_model = DP_MERF(config.model.merf, config.setup.local_rank)
             merf_model.train(sensitive_train_loader, config.train.merf)
@@ -36,8 +36,9 @@ def main(config):
         syn_data, syn_labels = syn["x"], syn["y"]
         if torch.load(os.path.join(config.gen.merf.log_dir, 'pc.pth')).item() != 0:
             config.train.dp['privacy_history'].append([torch.load(os.path.join(config.gen.merf.log_dir, 'pc.pth')).item(), 1, 1])
-    merf_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
-    merf_train_loader = torch.utils.data.DataLoader(dataset=merf_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16)
+    if config.pretrain.mode != 'feta_merf_nogan' and config.pretrain.mode != 'feta_merf_nogan2':
+        merf_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
+        merf_train_loader = torch.utils.data.DataLoader(dataset=merf_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16)
 
     model, config = load_model(config)
 
@@ -50,6 +51,37 @@ def main(config):
         config.pretrain.n_epochs = config.pretrain.n_epochs1
         config.pretrain.batch_size = config.pretrain.batch_size1
         model.pretrain(public_train_loader, config.pretrain)
+    elif config.pretrain.mode == 'feta_merf_nogan':
+        config.pretrain.n_epochs = config.pretrain.n_epochs1
+        config.pretrain.batch_size = config.pretrain.batch_size1
+        model.pretrain(public_train_loader, config.pretrain)
+        config.pretrain.log_dir = config.pretrain.log_dir + '_merf'
+        config.pretrain.n_epochs = config.pretrain.n_epochs2
+        config.pretrain.batch_size = config.pretrain.batch_size2
+        merf_model = DP_MERF(config.model.merf, config.setup.local_rank)
+        model.pretrain_merf(sensitive_train_loader, merf_model, config.pretrain, config.train.merf)
+        config.train.dp['privacy_history'].append([model.noise_factor, 1, 1])
+    elif config.pretrain.mode == 'feta_merf_nogan2':
+        config.pretrain.n_epochs = config.pretrain.n_epochs1
+        config.pretrain.batch_size = config.pretrain.batch_size1
+        model.pretrain(public_train_loader, config.pretrain)
+        config.pretrain.log_dir = config.pretrain.log_dir + '_merf'
+        config.pretrain.n_epochs = config.pretrain.n_epochs2
+        config.pretrain.batch_size = config.pretrain.batch_size2
+
+        merf_model = DP_MERF(config.model.merf, config.setup.local_rank)
+        model_sur, config_sur = load_model(config)
+        config_sur.gen.log_dir = config.pretrain.log_dir + "/gen"
+        model_sur.pretrain_merf(sensitive_train_loader, merf_model, config.pretrain, config.train.merf)
+        syn_data, syn_labels = model_sur.generate(config_sur.gen, config.model.sampler)
+        del model_sur
+        dist.barrier()
+        syn = np.load(os.path.join(config_sur.gen.log_dir, 'gen.npz'))
+        syn_data, syn_labels = syn["x"], syn["y"]
+        merf_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
+        merf_train_loader = torch.utils.data.DataLoader(dataset=merf_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16)
+        config.pretrain.log_dir = config.pretrain.log_dir + '_2'
+        model.pretrain(merf_train_loader, config.pretrain)
     elif config.pretrain.mode == 'feta_merf':
         config.pretrain.n_epochs = config.pretrain.n_epochs1
         config.pretrain.batch_size = config.pretrain.batch_size1

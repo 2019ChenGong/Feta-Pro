@@ -18,9 +18,10 @@ from models.DP_Diffusion.model.ema import ExponentialMovingAverage
 from models.DP_Diffusion.score_losses import EDMLoss, VPSDELoss, VESDELoss, VLoss
 from models.DP_Diffusion.denoiser import EDMDenoiser, VPSDEDenoiser, VESDEDenoiser, VDenoiser
 from models.DP_Diffusion.samplers import ddim_sampler, edm_sampler
-from models.DP_Diffusion.generate_base import generate_batch
+from models.DP_Diffusion.generate_base import generate_batch, generate_batch_grad
 
 from models.DP_Diffusion.rnd import Rnd
+from models.DP_MERF.rff_mmd_approx import data_label_embedding, get_rff_mmd_loss, noisy_dataset_embedding
 
 
 import importlib
@@ -271,6 +272,174 @@ class DP_Diffusion(DPSynther):
                 state['ema'].update(model.parameters())
             if self.global_rank == 0:
                 logging.info('Completed Epoch %d' % (epoch + 1))
+
+        # Save the final checkpoint.
+        if self.global_rank == 0:
+            checkpoint_file = os.path.join(checkpoint_dir, 'final_checkpoint.pth')
+            save_checkpoint(checkpoint_file, state)
+            logging.info('Saving final checkpoint.')
+        dist.barrier()
+
+        # Apply the EMA weights to the model and store the EMA object.
+        ema.copy_to(self.model.parameters())
+        self.ema = ema
+
+        # Clean up the model and free GPU memory.
+        del model
+        torch.cuda.empty_cache()
+    
+    def pretrain_merf(self, sensitive_dataloader, merf_model, config, config_merf):
+        """
+        Pre-trains the model using the provided public dataloader and configuration.
+
+        Args:
+            public_dataloader (DataLoader): The dataloader for the public dataset.
+            config (dict): Configuration dictionary containing various settings and hyperparameters.
+        """
+
+        # Set the CUDA device based on the local rank.
+        torch.cuda.device(self.local_rank)
+        self.device = 'cuda:%d' % self.local_rank
+
+        # Define directories for storing samples and checkpoints.
+        sample_dir = os.path.join(config.log_dir, 'samples')
+        checkpoint_dir = os.path.join(config.log_dir, 'checkpoints')
+
+        if self.global_rank == 0:
+            # Create necessary directories if the global rank is 0.
+            make_dir(config.log_dir)
+            make_dir(sample_dir)
+            make_dir(checkpoint_dir)
+
+        from models.dp_merf import get_noise_multiplier
+        if config_merf.dp.epsilon > 99999:
+            self.noise_factor = 0.
+        else:
+            self.noise_factor = get_noise_multiplier(
+                epsilon=config_merf.dp.epsilon, 
+                delta=config_merf.dp.delta, 
+                num_steps=1
+            )
+        logging.info("The noise factor is {}".format(self.noise_factor))
+        
+        n_data = len(sensitive_dataloader.dataset)  # Number of data points in the sensitive dataset
+        rff_sigma = [float(sig) for sig in merf_model.rff_sigma.split(',')]
+        if self.global_rank == 0:
+            _, w_freq = get_rff_mmd_loss(merf_model.n_feat, merf_model.d_rff, rff_sigma[0], self.local_rank, merf_model.private_num_classes, self.noise_factor, sensitive_dataloader.batch_size, merf_model.mmd_type)
+
+            noisy_emb = noisy_dataset_embedding(sensitive_dataloader, w_freq, merf_model.d_rff, self.local_rank, merf_model.private_num_classes, self.noise_factor, merf_model.mmd_type, pca_vecs=None, cond=True)
+            torch.save({'w_freq': w_freq.w.cpu(), 'noisy_emb': noisy_emb.cpu()}, os.path.join(config.log_dir, 'merf_cache.pth'))
+
+ 
+        dist.barrier()
+        merf_cache = torch.load(os.path.join(config.log_dir, 'merf_cache.pth'))
+        w_freq, noisy_emb = merf_cache['w_freq'].to(self.local_rank), merf_cache['noisy_emb'].to(self.local_rank)
+        from collections import namedtuple
+        rff_param_tuple = namedtuple('rff_params', ['w', 'b'])
+        w_freq_param = rff_param_tuple(w=w_freq, b=None)
+
+        def rff_mmd_loss(gen_enc, gen_labels):
+            gen_emb = data_label_embedding(gen_enc, gen_labels, w_freq_param, merf_model.mmd_type)
+            return torch.sum((noisy_emb - gen_emb) ** 2)
+
+        # Wrap the model with DistributedDataParallel (DDP) for distributed training.
+        model = DDP(self.model, device_ids=[self.local_rank])
+        ema = ExponentialMovingAverage(model.parameters(), decay=self.ema_rate)
+
+        # Initialize the optimizer based on the configuration.
+        if config.optim.optimizer == 'Adam':
+            optimizer = torch.optim.Adam(model.parameters(), **config.optim.params)
+        elif config.optim.optimizer == 'SGD':
+            optimizer = torch.optim.SGD(model.parameters(), **config.optim.params)
+        else:
+            raise NotImplementedError("Optimizer not supported")
+
+        # Initialize the training state.
+        state = dict(model=model, ema=ema, optimizer=optimizer, step=0)
+
+        if self.global_rank == 0:
+            # Log the number of trainable parameters and training details if the global rank is 0.
+            model_parameters = filter(lambda p: p.requires_grad, model.parameters())
+            n_params = sum([np.prod(p.size()) for p in model_parameters])
+            logging.info('Number of trainable parameters in model: %d' % n_params)
+            logging.info('Number of total epochs: %d' % config.n_epochs)
+            logging.info('Starting training at step %d' % state['step'])
+        dist.barrier()
+
+        # Initialize the Inception model for feature extraction.
+        inception_model = InceptionFeatureExtractor()
+        inception_model.model = inception_model.model.to(self.device)
+
+        def sampler(x, y=None):
+            if self.sampler.type == 'ddim':
+                return ddim_sampler(x, y, model, **self.sampler)
+            elif self.sampler.type == 'edm':
+                return edm_sampler(x, y, model, **self.sampler)
+            else:
+                raise NotImplementedError("Sampler type not supported")
+
+        # Define the shape of the batches for sampling and FID computation.
+        snapshot_sampling_shape = (self.sampler.snapshot_batch_size,
+                                self.network.num_in_channels, 
+                                self.network.image_size, 
+                                self.network.image_size)
+        fid_sampling_shape = (self.sampler.fid_batch_size, 
+                            self.network.num_in_channels, 
+                            self.network.image_size, 
+                            self.network.image_size)
+
+        # Training loop over the specified number of epochs.
+        n_iter = n_data // config.batch_size
+        for epoch in range(config.n_epochs):
+            for batch_idx in range(n_iter):
+                # Prepare the input data for training.
+                gen_samples, gen_y = generate_batch_grad(sampler, (config.batch_size // self.global_size, self.network.num_in_channels, self.network.image_size, self.network.image_size), 
+                                            self.device, self.private_num_classes, self.private_num_classes)
+                gen_one_hots = torch.nn.functional.one_hot(gen_y, num_classes=self.private_num_classes)
+                gen_samples = gen_samples.reshape(config.batch_size // self.global_size, -1)
+                loss = rff_mmd_loss(gen_samples, gen_one_hots)
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+
+                # Log the loss at specified intervals.
+                if (state['step'] + 1) % config.log_freq == 0 and self.global_rank == 0:
+                    logging.info('Loss: %.4f, step: %d' % (loss, state['step'] + 1))
+                dist.barrier()
+
+                state['step'] += 1
+                state['ema'].update(model.parameters())
+            if self.global_rank == 0:
+                logging.info('Completed Epoch %d' % (epoch + 1))
+            
+            # Save snapshots and checkpoints at specified intervals.
+            if self.global_rank == 0:
+                logging.info('Saving snapshot checkpoint and sampling single batch at iteration %d.' % state['step'])
+
+                model.eval()
+                with torch.no_grad():
+                    ema.store(model.parameters())
+                    ema.copy_to(model.parameters())
+                    sample_random_image_batch(snapshot_sampling_shape, sampler, os.path.join(
+                        sample_dir, 'iter_%d' % state['step']), self.device, self.private_num_classes)
+                    ema.restore(model.parameters())
+                model.train()
+
+                save_checkpoint(os.path.join(checkpoint_dir, 'snapshot_checkpoint.pth'), state)
+            dist.barrier()
+
+            # Compute FID at specified intervals.
+            model.eval()
+            with torch.no_grad():
+                ema.store(model.parameters())
+                ema.copy_to(model.parameters())
+                fid = compute_fid(config.fid_samples, self.global_size, fid_sampling_shape, sampler, inception_model, self.fid_stats, self.device, self.private_num_classes)
+                ema.restore(model.parameters())
+
+                if self.global_rank == 0:
+                    logging.info('FID at iteration %d: %.6f' % (state['step'], fid))
+            model.train()
+            dist.barrier()
 
         # Save the final checkpoint.
         if self.global_rank == 0:
@@ -1180,7 +1349,7 @@ class DP_Diffusion(DPSynther):
         # Update the EMA.
         self.ema = ema
 
-    def generate(self, config):
+    def generate(self, config, sampler_config=None):
         # Log the start of the generation process with the number of samples to be generated
         logging.info("start to generate {} samples".format(config.data_num))
         
@@ -1202,11 +1371,12 @@ class DP_Diffusion(DPSynther):
         self.ema.copy_to(model.parameters())
 
         # Define a function to handle different types of samplers
+        sampler_config = self.sampler_acc if sampler_config is None else sampler_config
         def sampler_acc(x, y=None):
-            if self.sampler_acc.type == 'ddim':
-                return ddim_sampler(x, y, model, **self.sampler_acc)
-            elif self.sampler_acc.type == 'edm':
-                return edm_sampler(x, y, model, **self.sampler_acc)
+            if sampler_config.type == 'ddim':
+                return ddim_sampler(x, y, model, **sampler_config)
+            elif sampler_config.type == 'edm':
+                return edm_sampler(x, y, model, **sampler_config)
             else:
                 raise NotImplementedError("Sampler type not supported")
 

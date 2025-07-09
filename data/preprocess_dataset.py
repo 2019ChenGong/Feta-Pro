@@ -310,6 +310,8 @@ def main(config):
                 _ = torchvision.datasets.EMNIST(root=data_dir, train=True, split="letters", download=True)
                 return
             elif data_name == "lsun":
+                sensitive_train_set = torchvision.datasets.LSUN(root=data_dir, classes="bedroom_train")
+                sensitive_test_set = torchvision.datasets.LSUN(root=data_dir, classes="bedroom_test")
                 sensitive_set = torchvision.datasets.ImageFolder(root=config.train_path, transform=transforms.ToTensor())
                 torch.manual_seed(0)
                 train_size = int(len(sensitive_set) * 0.8)

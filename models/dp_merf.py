@@ -111,7 +111,9 @@ class DP_MERF(DPSynther):
 
         # Define loss functions and compute noise factor
         # self.noise_factor = get_noise_multiplier(target_epsilon=config.dp.epsilon, target_delta=config.dp.delta, sample_rate=1., epochs=1)
-        if config.dp.epsilon > 99999:
+        if 'sigma' in config.dp:
+            self.noise_factor = config.dp.sigma
+        elif config.dp.epsilon > 99999:
             self.noise_factor = 0.
         else:
             self.noise_factor = get_noise_multiplier(
@@ -122,7 +124,7 @@ class DP_MERF(DPSynther):
         logging.info("The noise factor is {}".format(self.noise_factor))
 
         n_data = len(sensitive_dataloader.dataset)  # Number of data points in the sensitive dataset
-        sr_loss, mb_loss, _ = get_rff_losses(sensitive_dataloader, self.n_feat, self.d_rff, self.rff_sigma, self.device, self.private_num_classes, self.noise_factor, self.mmd_type)
+        sr_loss, mb_loss, _ = get_rff_losses(sensitive_dataloader, self.n_feat, self.d_rff, self.rff_sigma, self.device, self.private_num_classes, self.noise_factor / 2, self.mmd_type)
 
         # Initialize optimizer
         optimizer = torch.optim.Adam(list(self.gen.parameters()), lr=config.lr)
