@@ -228,3 +228,10 @@ print(eps, alpha)
 
 # print(get_noise_multiplier2(0.05, 1, delta))
 # print(get_noise_multiplier(target_epsilon=0.25, target_delta=delta, sample_rate=1.0, epochs=1, epsilon_tolerance=0.0001))
+
+
+# from opacus.accountants.rdp import RDPAccountant
+# accountant = RDPAccountant()
+# accountant.history = [(sigma, batch_size / number_of_sensitive_images, number_of_central_images_per_class)]
+# eps = accountant.get_epsilon(delta=delta)
+# print(eps)

@@ -19,6 +19,8 @@ from models.DP_Diffusion.score_losses import EDMLoss, VPSDELoss, VESDELoss, VLos
 from models.DP_Diffusion.denoiser import EDMDenoiser, VPSDEDenoiser, VESDEDenoiser, VDenoiser
 from models.DP_Diffusion.samplers import ddim_sampler, edm_sampler
 from models.DP_Diffusion.generate_base import generate_batch, generate_batch_grad
+from models.dp_merf import DP_MERF as Freq_Model
+from torch.utils.data import random_split, TensorDataset, Dataset, DataLoader, ConcatDataset
 
 from models.DP_Diffusion.rnd import Rnd
 from models.DP_MERF.rff_mmd_approx import data_label_embedding, get_rff_mmd_loss, noisy_dataset_embedding
@@ -34,7 +36,7 @@ from opacus.distributed import DifferentiallyPrivateDistributedDataParallel as D
 from models.synthesizer import DPSynther
 
 class DP_Diffusion(DPSynther):
-    def __init__(self, config, device):
+    def __init__(self, config, device, all_config):
         """
         Initializes the model with the provided configuration and device settings.
 
@@ -57,6 +59,7 @@ class DP_Diffusion(DPSynther):
         self.fid_stats = config.fid_stats  # FID statistics configuration
 
         self.config = config  # Store the entire configuration
+        self.all_config = all_config
         self.device = 'cuda:%d' % self.local_rank  # Set the device based on local rank
 
         self.private_num_classes = config.private_num_classes  # Number of private classes
@@ -117,6 +120,9 @@ class DP_Diffusion(DPSynther):
         if public_dataloader is None:
             # If no public dataloader is provided, set pretraining flag to False and return.
             self.is_pretrain = False
+            return
+        if True:
+            self.time_dataloader = public_dataloader
             return
         
         # Set the number of classes in the loss function to the number of private classes.
@@ -673,6 +679,41 @@ class DP_Diffusion(DPSynther):
         del model
         torch.cuda.empty_cache()
 
+    def warm_up(self, sensitive_train_loader, config):
+        if self.all_config.setup.global_rank == 0:
+            freq_model = Freq_Model(self.all_config.model.merf, self.all_config.setup.local_rank)
+            freq_model.train(sensitive_train_loader, self.all_config.train.merf)
+            syn_data, syn_labels = freq_model.generate(self.all_config.gen.merf)
+            torch.save(torch.tensor([freq_model.noise_factor]), os.path.join(self.all_config.gen.merf.log_dir, 'pc.pth'))
+        dist.barrier()
+        syn = np.load(os.path.join(self.all_config.gen.merf.log_dir, 'gen.npz'))
+        syn_data, syn_labels = syn["x"], syn["y"]
+        if torch.load(os.path.join(self.all_config.gen.merf.log_dir, 'pc.pth')).item() != 0:
+            config.train.dp['privacy_history'].append([torch.load(os.path.join(config.gen.merf.log_dir, 'pc.pth')).item(), 1, 1])
+        freq_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
+        freq_train_loader = torch.utils.data.DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16)
+
+        if self.all_config.pretrain.mode == 'freq_time':
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs2
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size2
+            self.pretrain(freq_train_loader, self.all_config.pretrain)
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs1
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size1
+            self.pretrain(self.time_dataloader, self.all_config.pretrain)
+        elif self.all_config.pretrain.mode == 'time_freq':
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs1
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size1
+            self.pretrain(self.time_dataloader, self.all_config.pretrain)
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_freq'
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs2
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size2
+            self.pretrain(freq_train_loader, self.all_configig.pretrain)
+        else:
+            raise NotImplementedError
+    
+        return config
+
 
     def train(self, sensitive_dataloader, config):
         """
@@ -688,6 +729,9 @@ class DP_Diffusion(DPSynther):
         if sensitive_dataloader is None or config.n_epochs == 0:
             # If the dataloader is not provided or the number of epochs is zero, exit early.
             return
+
+        if True:
+            config = self.warm_up(sensitive_dataloader, config)
         
         set_seeds(self.global_rank, config.seed)
         # Set the CUDA device based on the local rank.
