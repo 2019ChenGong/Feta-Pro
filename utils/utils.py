@@ -138,4 +138,6 @@ def parse_config(opt, unknown):
         config.train.merf.log_dir = config.setup.workdir + "/train_merf"
         config.gen.merf.log_dir = config.setup.workdir + "/gen_merf"
         config.gen.merf.n_classes = config.sensitive_data.n_classes
+        config.public_data.central.sigma = config.train.sigma_time
+        config.train.merf.dp.sigma = config.train.sigma_freq
     return config
