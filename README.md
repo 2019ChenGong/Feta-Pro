@@ -1,4 +1,7 @@
 <div align=center>
+  
+# From Easy to Hard++: Promoting Differentially Private Image Synthesis Through Time-Frequency Curriculum
+</div>
 
 ## 1. Contents
   - [1. Contents](#1-contents)
@@ -597,4 +600,4 @@ Other processes are the same.
 
 ## Acknowledgement
  
-Part of code is borrowed from [DP-MERF](https://github.com/ParkLabML/DP-MERF), [DP-Kernel](https://github.com/antoninschrab/dpkernel), [DP-NTK](https://github.com/Justinyangjy/DP-NTK), [GS-WGAN](https://github.com/DingfanChen/Private-Set), [DPAGN](https://github.com/illidanlab/dpgan), [PE](https://github.com/microsoft/DPSDA), [DPDM](https://github.com/nv-tlabs/DPDM), [DP-LDM](https://github.com/SaiyueLyu/DP-LDM), [DP-LORA](https://github.com/EzzzLi/DP-LORA), [PrivImage](https://github.com/SunnierLee/DP-ImaGen). We have elaborate them on the Appendix B.1 of our paper. We sincerely thank them for their contributions to the community.
+Part of code is borrowed from [DPImageBench](https://github.com/2019ChenGong/DPImageBench). We sincerely thank them for their contributions to the community.
