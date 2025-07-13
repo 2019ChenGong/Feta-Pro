@@ -540,7 +540,7 @@ class DP_Diffusion(DPSynther):
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_freq'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
-            self.pretrain(freq_train_loader, self.all_configig.pretrain, run=True)
+            self.pretrain(freq_train_loader, self.all_config.pretrain, run=True)
         else:
             raise NotImplementedError
     
