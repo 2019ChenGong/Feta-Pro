@@ -512,8 +512,8 @@ class DP_Diffusion(DPSynther):
         torch.cuda.empty_cache()
 
     def warm_up(self, sensitive_train_loader, config):
-        if self.all_config.setup.global_rank == 0:
-            freq_model = Freq_Model(self.all_config.model.merf, self.all_config.setup.local_rank, self.all_config.train.sigma_sensitivity_ratio)
+        if self.global_rank == 0:
+            freq_model = Freq_Model(self.all_config.model.merf, self.global_rank, self.all_config.train.sigma_sensitivity_ratio)
             freq_model.train(sensitive_train_loader, self.all_config.train.merf)
             syn_data, syn_labels = freq_model.generate(self.all_config.gen.merf)
             torch.save(torch.tensor([freq_model.noise_factor]), os.path.join(self.all_config.gen.merf.log_dir, 'pc.pth'))

@@ -69,8 +69,18 @@
 # python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.15 public_data.central.sigma=10 pretrain.mode=feta_merf_mix -m DP-FETA2 -dn camelyon_32 -e 1.0 -ed val_fetasigma10_merf0.15_mix
 
 
-python run.py setup.n_gpus_per_node=4 setup.master_port=6660 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.25 public_data.central.sigma=20 pretrain.mode=feta_merf train.cut_noise=true train.max_sigma=20 -m DP-FETA2 -dn mnist_28 -e 1.0 -ed val_merf0.25_merfonly_cutnoise
+python run.py setup.n_gpus_per_node=2 setup.master_port=6662 eval.mode=val public_data.name=null pretrain.n_epochs_time=1000 pretrain.n_epochs_freq=10 pretrain.batch_size_time=50 pretrain.batch_size_freq=256 train.sigma_freq=8.2 train.sigma_sensitivity_ratio=1.0 train.sigma_time=5 pretrain.mode=time_freq -m DP-FETA2 -dn celeba_male_32 -e 10.0 -ed val_time5_freq8.2
 
-python run.py setup.n_gpus_per_node=4 eval.mode=val pretrain.n_epochs1=1000 pretrain.
-n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=0.05 public_data.central.sigma=20 pretrain.mode=feta_merf -m DP
--FETA2 -dn fmnist_28 -e 1.0 -ed val_merfeps1.0_fetasigma20_merf0.05
+python run.py setup.n_gpus_per_node=2 setup.master_port=6662 eval.mode=val public_data.name=null pretrain.n_epochs_time=1000 pretrain.n_epochs_freq=10 pretrain.batch_size_time=50 pretrain.batch_size_freq=256 train.sigma_freq=8.2 train.sigma_sensitivity_ratio=1.0 train.sigma_time=5 pretrain.mode=time_freq -m DP-FETA2 -dn celeba_male_32 -e 10.0 -ed val_time5_freq8.2
+
+python run.py setup.n_gpus_per_node=2 setup.master_port=6662 eval.mode=val public_data.name=null pretrain.n_epochs_time=1000 pretrain.n_epochs_freq=10 pretrain.batch_size_time=50 pretrain.batch_size_freq=256 train.sigma_freq=8.2 train.sigma_sensitivity_ratio=1.0 train.sigma_time=5 pretrain.mode=time_freq -m DP-FETA2 -dn celeba_male_32 -e 10.0 -ed val_time5_freq8.2
+
+python run.py setup.n_gpus_per_node=2 setup.master_port=6662 eval.mode=val public_data.name=null pretrain.n_epochs_time=1000 pretrain.n_epochs_freq=10 pretrain.batch_size_time=50 pretrain.batch_size_freq=256 train.sigma_freq=8.2 train.sigma_sensitivity_ratio=1.0 train.sigma_time=5 pretrain.mode=time_freq -m DP-FETA2 -dn celeba_male_32 -e 10.0 -ed val_time5_freq8.2
+
+python run.py setup.n_gpus_per_node=2 setup.master_port=6662 eval.mode=val public_data.name=null pretrain.n_epochs_time=1000 pretrain.n_epochs_freq=10 pretrain.batch_size_time=50 pretrain.batch_size_freq=256 train.sigma_freq=8.2 train.sigma_sensitivity_ratio=1.0 train.sigma_time=5 pretrain.mode=time_freq -m DP-FETA2 -dn celeba_male_32 -e 10.0 -ed val_time5_freq8.2
+
+python run.py setup.n_gpus_per_node=2 setup.master_port=6662 eval.mode=val public_data.name=null pretrain.n_epochs_time=1000 pretrain.n_epochs_freq=10 pretrain.batch_size_time=50 pretrain.batch_size_freq=256 train.sigma_freq=8.2 train.sigma_sensitivity_ratio=1.0 train.sigma_time=5 pretrain.mode=time_freq -m DP-FETA2 -dn celeba_male_32 -e 10.0 -ed val_time5_freq8.2
+
+python run.py setup.n_gpus_per_node=2 setup.master_port=6662 eval.mode=val public_data.name=null pretrain.n_epochs_time=1000 pretrain.n_epochs_freq=10 pretrain.batch_size_time=50 pretrain.batch_size_freq=256 train.sigma_freq=8.2 train.sigma_sensitivity_ratio=1.0 train.sigma_time=5 pretrain.mode=time_freq -m DP-FETA2 -dn celeba_male_32 -e 10.0 -ed val_time5_freq8.2
+
+python run.py setup.n_gpus_per_node=2 setup.master_port=6662 eval.mode=val public_data.name=null pretrain.n_epochs_time=1000 pretrain.n_epochs_freq=10 pretrain.batch_size_time=50 pretrain.batch_size_freq=256 train.sigma_freq=8.2 train.sigma_sensitivity_ratio=1.0 train.sigma_time=5 pretrain.mode=time_freq -m DP-FETA2 -dn celeba_male_32 -e 10.0 -ed val_time5_freq8.2

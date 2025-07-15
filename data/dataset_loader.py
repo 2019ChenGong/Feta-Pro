@@ -275,7 +275,7 @@ def load_data(config):
     if config.setup.global_rank == 0:
         logging.info("delta is reset as {}".format(config.train.dp.delta))
     
-    return sensitive_train_loader, sensitive_val_loader, sensitive_test_loader, None, config
+    # return sensitive_train_loader, sensitive_val_loader, sensitive_test_loader, None, config
 
     # load public dataset
     if config.public_data.name is None:
