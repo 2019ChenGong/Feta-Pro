@@ -50,7 +50,7 @@ def get_noise_multiplier(epsilon, num_steps, delta, min_noise_multiplier=1e-1, m
 
 
 class DP_MERF(DPSynther):
-    def __init__(self, config, device):
+    def __init__(self, config, device, sensitivity_ratio=1.0):
         super().__init__()
         # Initialize class variables based on the provided configuration
         self.config = config
@@ -64,6 +64,7 @@ class DP_MERF(DPSynther):
         self.d_rff = config.d_rff  # Dimension of random Fourier features
         self.rff_sigma = config.rff_sigma  # Sigma for random Fourier features
         self.mmd_type = config.mmd_type  # Type of Maximum Mean Discrepancy (MMD)
+        self.sensitivity_ratio = sensitivity_ratio
 
         # Initialize the generator network
         self.gen = Generator(img_size=self.img_size, num_classes=label_dim, **config.Generator).to(device)
@@ -124,7 +125,7 @@ class DP_MERF(DPSynther):
         logging.info("The noise factor is {}".format(self.noise_factor))
 
         n_data = len(sensitive_dataloader.dataset)  # Number of data points in the sensitive dataset
-        sr_loss, mb_loss, _ = get_rff_losses(sensitive_dataloader, self.n_feat, self.d_rff, self.rff_sigma, self.device, self.private_num_classes, self.noise_factor / 2, self.mmd_type)
+        sr_loss, mb_loss, _ = get_rff_losses(sensitive_dataloader, self.n_feat, self.d_rff, self.rff_sigma, self.device, self.private_num_classes, self.noise_factor * self.sensitivity_ratio, self.mmd_type)
 
         # Initialize optimizer
         optimizer = torch.optim.Adam(list(self.gen.parameters()), lr=config.lr)
