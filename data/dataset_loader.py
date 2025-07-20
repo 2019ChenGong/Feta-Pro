@@ -24,6 +24,7 @@ class random_aug(object):
         self.no = num_ops
     def __call__(self, img):
         mag = random.choice([i for i in range(1, self.mag+1)])
+        return img
         return transforms.RandAugment(num_ops=self.no, magnitude=mag)(img)
 
     def __repr__(self):
