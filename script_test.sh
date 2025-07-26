@@ -87,3 +87,5 @@ python run.py setup.n_gpus_per_node=2 setup.master_port=6662 eval.mode=val publi
 
 
 python run.py setup.n_gpus_per_node=3 eval.mode=val pretrain.n_epochs_time=1000 pretrain.n_epochs_freq=20 pretrain.batch_size_time=50 pretrain.batch_size_freq=256 train.sigma_freq=32.6 train.sigma_time=20 pretrain.mode=time_freq train.sigma_sensitivity_ratio=0.5 -m DP-FETA2 -dn cifar10_32 -e 1.0 -ed val_time5_freq32.6_1merf
+
+python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val train.merf.lr=0.001 train.merf.epochs=10 pretrain.n_epochs_time=1000 pretrain.n_epochs_freq=10 pretrain.batch_size_time=50 pretrain.batch_size_freq=256 train.sigma_freq=25.0 train.sigma_sensitivity_ratio=0.5 train.sigma_time=15 pretrain.mode=time_freq model.public_num_classes=1000 -m DP-FETA2 -dn cifar10_32 -e 1.0 -ed val_time15_freq25.0_1merf

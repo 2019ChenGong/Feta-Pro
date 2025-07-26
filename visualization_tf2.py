@@ -16,7 +16,7 @@ from utils.utils import initialize_environment, run, parse_config
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--config_dir', default="configs")
-parser.add_argument('--method', '-m', default="DP-FETA2")
+parser.add_argument('--method', '-m', default="DP-FETA")
 parser.add_argument('--epsilon', '-e', default="10.0")
 parser.add_argument('--data_name', '-dn', default="cifar10_32")
 parser.add_argument('--exp_description', '-ed', default="")
@@ -31,7 +31,7 @@ merf_path = {
 }
 
 # 子图的小标题
-row_titles = ["Freq.", "Time"]
+row_titles = ["Freq.", "Spat."]
 
 # Create a single figure and a set of subplots with a 4:3 aspect ratio
 fig, axes = plt.subplots(3, 1, figsize=(7.5, 5.5))
@@ -49,7 +49,6 @@ dataset_titles = {
     'celeba_male_32': 'CelebA'
 }
 
-# 遍历每个子图
 for i, ax in enumerate(axes):
     dataset = ['mnist_28', 'fmnist_28', 'celeba_male_32'][i]
     opt.data_name = dataset
@@ -64,7 +63,7 @@ for i, ax in enumerate(axes):
     config.model.global_size = config.setup.global_size
     config.pretrain.batch_size = 50
     config.public_data.central.sample_num = 25
-    config.public_data.central.sigma = 5
+    config.public_data.central.sigma = 1.5
     sensitive_train_loader, sensitive_val_loader, sensitive_test_loader, public_train_loader, config = load_data(config)
     for time_x, time_y in public_train_loader:
         break
@@ -82,8 +81,13 @@ for i, ax in enumerate(axes):
         row1_tensor = F.interpolate(row1_tensor, size=(32, 32))
         row2_tensor = F.interpolate(row2_tensor, size=(32, 32))
     else:  # CelebA
-        row1_tensor = time_x[:10]
-        row2_tensor = freq_x[:10]
+        for cls in range(2):
+            tensor1 = time_x[time_y==cls][0:5]
+            tensor2 = freq_x[freq_y==cls][0:5]
+            row1_tensor.append(tensor1)
+            row2_tensor.append(tensor2)
+        row1_tensor = torch.cat(row1_tensor)
+        row2_tensor = torch.cat(row2_tensor)
         # Ensure CelebA tensors have 4 dimensions (add channel dim if needed)
         if row1_tensor.dim() == 3:
             row1_tensor = row1_tensor.unsqueeze(1)  # Add channel dim: [10, H, W] -> [10, 1, H, W]

@@ -132,12 +132,12 @@ def parse_config(opt, unknown):
         return config
     config.model.private_num_classes = config.sensitive_data.n_classes
     config.model.public_num_classes = config.public_data.n_classes
-    if config.public_data.name is None or opt.method in ['PrivImage', 'DP-FETA', 'DPDM', 'DP-FETA2']:
+    if config.public_data.name is None or opt.method in ['PrivImage', 'DP-FETA', 'DPDM']:
         config.model.public_num_classes = config.model.private_num_classes
     if opt.method == 'DP-FETA2':
         config.train.merf.log_dir = config.setup.workdir + "/train_merf"
         config.gen.merf.log_dir = config.setup.workdir + "/gen_merf"
         config.gen.merf.n_classes = config.sensitive_data.n_classes
-        # config.public_data.central.sigma = config.train.sigma_time
-        # config.train.merf.dp.sigma = config.train.sigma_freq
+        config.public_data.central.sigma = config.train.sigma_time
+        config.train.merf.dp.sigma = config.train.sigma_freq
     return config

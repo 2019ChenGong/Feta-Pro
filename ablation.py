@@ -96,18 +96,72 @@ def create_multi_bars(ax, labels, datas, method, tick_step=1, group_gap=0.2, bar
 # plt.tight_layout()
 # plt.subplots_adjust(left=None, bottom=None, right=None, top=0.75, wspace=0.2, hspace=0.3)
 
-methods = ['DPDM', 'FETA-Pro$_{mix}$', 'FETA-Pro$_{f}$', 'DP-FETA', 'FETA-Pro$_{ft}$', 'FETA-Pro']
-colors = ['#FFBE7A', '#8ECFC9', '#82B0D2', '#E0CBEF', '#FA7F6F', '#F7B7D2']
+methods = ['DPDM', 'DP-FETA', 'FETA-Pro$_f$', 'FETA-Pro$_{mix}$', 'FETA-Pro$_{ft}$', 'FETA-Pro']
+colors = ['#FFBE7A', '#E0CBEF', '#82B0D2', '#8ECFC9', '#FA7F6F', '#F7B7D2']
 xlabels = ['MNIST', 'F-MNIST', 'CelebA', 'Camelyon']
 
-accs_mnist = [89.2, 95.6, 96.7, 96.7, 96.8, 97.1]
-fids_mnist = [36.1, 13.7, 10.1, 9.8, 11.1, 8.8]
-accs_fmnist = [76.4, 81.7, 81.8, 81.5, 82.2, 82.3]
-fids_fmnist = [53.5, 31.4, 29.8, 31.1, 31.0, 27.9]
-accs_celeba = [74.5, 82.3, 78.2, 78.0, 84.5, 88.5]
-fids_celeba = [153.9, 60.2, 60.8, 58.0, 79.3, 51.8]
-accs_camelyon = [80.6, 77.3, 79.9, 78.2, 83.3, 83.4]
-fids_camelyon = [111.9, 52.8, 39.6, 45.2, 37.7, 29.4]
+
+accs_mnist = [89.2, 96.7, 96.7, 95.6, 96.8, 97.3]
+fids_mnist = [36.1, 9.8, 10.1, 13.7, 11.1, 8.0]
+accs_fmnist = [76.4, 81.5, 81.8, 81.7, 82.2, 83.4]
+fids_fmnist = [53.5, 31.1, 29.8, 31.4, 31.0, 27.8]
+accs_celeba = [74.5, 78.0, 78.2, 82.3, 84.5, 90.0]
+fids_celeba = [153.9, 58.0, 60.8, 60.2, 79.3, 48.0]
+accs_camelyon = [80.6, 78.2, 79.9, 77.3, 83.3, 84.0]
+fids_camelyon = [111.9, 45.2, 39.6, 52.8, 37.7, 31.0]
+
+
+raw_data = '''89.2	36.1	95.6	13.7	96.7	10.1	96.7	9.8	96.8	11.1	97.3	8.0
+76.4	53.5	81.7	31.4	81.8	29.8	81.5	31.1	82.2	31	83.4	27.8
+74.5	153.9	82.3	60.2	78.2	60.8	78	58	84.5	79.3	90.0	48.0
+80.6	111.9	77.3	52.8	77.9	39.6	79.9	45.2	83.3	37.7	84.0	31.0'''
+raw_data = raw_data.split('\n')
+for i, raw_data_i in enumerate(raw_data):
+    raw_data_i = raw_data_i.split()
+    if i == 0:
+        for j, raw_data_i_j in enumerate(raw_data_i):
+            idx = j // 2
+            if idx == 2:
+                idx = 3
+            elif idx == 3:
+                idx = 2
+            if j % 2 == 0:
+                accs_mnist[idx] = float(raw_data_i_j)
+            else:
+                fids_mnist[idx] = float(raw_data_i_j)
+    elif i == 1:
+        for j, raw_data_i_j in enumerate(raw_data_i):
+            idx = j // 2
+            if idx == 2:
+                idx = 3
+            elif idx == 3:
+                idx = 2
+            if j % 2 == 0:
+                accs_fmnist[idx] = float(raw_data_i_j)
+            else:
+                fids_fmnist[idx] = float(raw_data_i_j)
+    elif i == 2:
+        for j, raw_data_i_j in enumerate(raw_data_i):
+            idx = j // 2
+            if idx == 2:
+                idx = 3
+            elif idx == 3:
+                idx = 2
+            if j % 2 == 0:
+                accs_celeba[idx] = float(raw_data_i_j)
+            else:
+                fids_celeba[idx] = float(raw_data_i_j)
+    elif i == 3:
+        for j, raw_data_i_j in enumerate(raw_data_i):
+            idx = j // 2
+            if idx == 2:
+                idx = 3
+            elif idx == 3:
+                idx = 2
+            if j % 2 == 0:
+                accs_camelyon[idx] = float(raw_data_i_j)
+            else:
+                fids_camelyon[idx] = float(raw_data_i_j)
 
     
 fig = plt.figure(figsize=(19, 6), dpi=200)
@@ -138,22 +192,22 @@ axes[0, 0].set_ylabel('FID', fontsize=fontsize, weight='normal', labelpad=15)
 axes[1, 0].set_ylabel('Acc (%)', fontsize=fontsize, weight='normal', labelpad=4.5)
 
 axes[0, 0].set_ylim([0, 45])
-axes[0, 1].set_ylim([0, 60])
+axes[0, 1].set_ylim([20, 60])
 # axes[0, 2].set_ylim([20, 80])
 # axes[0, 3].set_ylim([20, 80])
 axes[0, 2].set_ylim([0, 180]) 
 axes[0, 3].set_ylim([0, 130])
-axes[1, 0].set_ylim([70, 105])
+axes[1, 0].set_ylim([85, 105])
 # axes[1, 0].plot([baseline_x + index*bar_span, baseline_x + index*bar_span], [70,])
-axes[1, 1].set_ylim([70, 90])
+axes[1, 1].set_ylim([75, 90])
 axes[1, 2].set_ylim([70, 100])
-axes[1, 3].set_ylim([70, 90])
+axes[1, 3].set_ylim([75, 90])
 
 # leg = fig.legend(lines, labels, loc='upper center', ncol=8, facecolor='white', edgecolor='black', shadow=True, columnspacing=3, borderaxespad=0.1)
 # for legobj in leg.legendHandles:
 #     legobj.set_linewidth(3.0)
 leg = fig.legend(lines, labels, loc='upper center', ncol=6, facecolor='white', edgecolor='black', shadow=True, columnspacing=1, borderaxespad=0.4, fontsize=20)
-for legobj in leg.legend_handles:
+for legobj in leg.legendHandles:
     legobj.set_linewidth(1.0)
 
 plt.tight_layout()
