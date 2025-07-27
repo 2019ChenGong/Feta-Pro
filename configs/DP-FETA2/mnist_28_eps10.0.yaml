@@ -76,7 +76,7 @@ model:
     labels: 10
   private_num_classes: 10
   public_num_classes: 1000
-  merf:
+  freq:
     img_size: 28
     Generator:
       z_dim: 60
@@ -157,7 +157,7 @@ train:
     epsilon: 10.0
     max_physical_batch_size: 8192
   n_splits: 32
-  merf:
+  freq:
     epochs: 5
     batch_size: 100
     lr: 0.01
@@ -174,7 +174,7 @@ gen:
   data_num: 60000
   batch_size: 1000
   log_dir: null
-  merf:
+  freq:
     data_num: 60000
     batch_size: 1000
     log_dir: null

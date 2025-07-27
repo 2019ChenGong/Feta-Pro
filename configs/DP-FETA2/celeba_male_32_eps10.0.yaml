@@ -71,7 +71,7 @@ model:
     guid_scale: 0.0
   private_num_classes: 2
   public_num_classes: 1000
-  merf:
+  freq:
     img_size: 32
     Generator:
       z_dim: 60
@@ -147,7 +147,7 @@ train:
     epsilon: 10.0
     max_physical_batch_size: 8192
   n_splits: 64
-  merf:
+  freq:
     epochs: 5
     batch_size: 100
     lr: 0.0001
@@ -164,7 +164,7 @@ gen:
   data_num: 60000
   batch_size: 1000
   log_dir: null
-  merf:
+  freq:
     data_num: 60000
     batch_size: 1000
     log_dir: null

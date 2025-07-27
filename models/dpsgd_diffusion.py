@@ -72,7 +72,7 @@ class DP_Diffusion(DPSynther):
         label_dim = max(self.private_num_classes, self.public_num_classes)  # Determine the maximum label dimension
         self.network.label_dim = label_dim  # Set the label dimension for the network
 
-        self.freq_model = Freq_Model(self.all_config.model.merf, self.device, self.all_config.train.sigma_sensitivity_ratio)
+        self.freq_model = Freq_Model(self.all_config.model.freq, self.device, self.all_config.train.sigma_sensitivity_ratio)
 
         # Initialize the denoiser based on the specified name and network
         if self.denoiser_name == 'edm':
@@ -303,18 +303,37 @@ class DP_Diffusion(DPSynther):
     def warm_up(self, sensitive_train_loader, config):
         if self.global_rank == 0:
             # freq_model = Freq_Model(self.all_config.model.merf, self.device, self.all_config.train.sigma_sensitivity_ratio)
-            self.freq_model.train(sensitive_train_loader, self.all_config.train.merf)
-            syn_data, syn_labels = self.freq_model.generate(self.all_config.gen.merf)
-            torch.save(torch.tensor([self.freq_model.noise_factor]), os.path.join(self.all_config.gen.merf.log_dir, 'pc.pth'))
+            self.freq_model.train(sensitive_train_loader, self.all_config.train.freq)
+            syn_data, syn_labels = self.freq_model.generate(self.all_config.gen.freq)
+            torch.save(torch.tensor([self.freq_model.noise_factor]), os.path.join(self.all_config.gen.freq.log_dir, 'pc.pth'))
         dist.barrier()
         # return config
-        # syn = np.load(os.path.join(self.all_config.gen.merf.log_dir, 'gen.npz'))
-        # syn_data, syn_labels = syn["x"], syn["y"]
-        # if torch.load(os.path.join(self.all_config.gen.merf.log_dir, 'pc.pth')).item() != 0:
-        #     config.dp['privacy_history'].append([torch.load(os.path.join(self.all_config.gen.merf.log_dir, 'pc.pth')).item(), 1, 1])
-        # freq_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
-        # freq_train_loader = torch.utils.data.DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16)
-    
+        syn = np.load(os.path.join(self.all_config.gen.freq.log_dir, 'gen.npz'))
+        syn_data, syn_labels = syn["x"], syn["y"]
+        if torch.load(os.path.join(self.all_config.gen.freq.log_dir, 'pc.pth')).item() != 0:
+            config.dp['privacy_history'].append([torch.load(os.path.join(self.all_config.gen.freq.log_dir, 'pc.pth')).item(), 1, 1])
+        freq_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
+        freq_train_loader = torch.utils.data.DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16)
+
+        if self.all_config.pretrain.mode == 'freq_time':
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
+            self.pretrain(freq_train_loader, self.all_config.pretrain, run=True)
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
+            self.pretrain(self.time_dataloader, self.all_config.pretrain, run=True)
+        elif self.all_config.pretrain.mode == 'time_freq':
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
+            self.pretrain(self.time_dataloader, self.all_config.pretrain, run=True)
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_freq'
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
+            self.pretrain(freq_train_loader, self.all_config.pretrain, run=True)
+        else:
+            raise NotImplementedError
+        
         return config
 
     def train(self, sensitive_dataloader, config):
