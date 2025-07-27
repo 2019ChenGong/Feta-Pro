@@ -22,8 +22,6 @@
     - [4.5 Results Visualization](#45-results-visualization)
   - [Acknowledgment](#acknowledgement)
 
-### Todo
-
 ## 2. Introduction
 
 ### 2.1 Currently Supported Algorithms
