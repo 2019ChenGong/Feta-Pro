@@ -1,8 +1,11 @@
 <div align=center>
+
 # From Easy to Hard++: Promoting Differentially Private Image Synthesis Through Time-Frequency Curriculum
 </div>
 
-This is the official implementation of paper FETA-Pro. FETA-Pro proposes a spatial-frequency curriculum, which leverages frequency domain features to capture global structures and textures of images, complementing spatial domain features. To address the challenges of learning caused by heterogeneity between spatial and frequency domain features, FETA-Pro extracts frequency domain features using the Fourier Transformer under DP, and introduces an __auxiliary generator__ to produce images aligned the noisy features. Then, DP synthesizers use synthetic images for warm-up. We conduct experiments to show that across five sensitive image datasets, FETA-Pro achieves, on average, 24.5\% higher fidelity and 2.8\% greater utility compared to the state-of-the-art method under a privacy budget of $\epsilon = 1$.
+This is the official implementation of paper FETA-Pro. FETA-Pro proposes a spatial-frequency curriculum, which leverages frequency domain features to capture global structures and textures of images, complementing spatial domain features. To address the challenges of learning caused by heterogeneity between spatial and frequency domain features, FETA-Pro extracts frequency domain features using the Fourier Transformer under DP, and introduces an __auxiliary generator__ to produce images aligned the noisy features. Then, DP synthesizers use synthetic images for warm-up. 
+
+We conduct experiments to show that across five sensitive image datasets, FETA-Pro achieves, on average, 24.5\% higher fidelity and 2.8\% greater utility compared to the state-of-the-art method under a privacy budget of $\epsilon = 1$.
 
 ## 1. Contents
   - [1. Contents](#1-contents)
