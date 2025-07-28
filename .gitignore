@@ -76,3 +76,6 @@ test.png
 
 w_freq_10.pt
 w_freq_1000.pt
+
+low_to_high_dm.py
+low_to_high_resolution.py
