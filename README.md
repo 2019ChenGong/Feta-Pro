@@ -16,8 +16,8 @@ We conduct experiments to show that across five sensitive image datasets, FETA-P
 ## 1. Contents
   - [1. Contents](#1-contents)
   - [2. Introduction](#2-introduction)
-    - [2.1 Currently Supported Algorithms](#21-currently-supported-algorithms)
-    - [2.2 Currently Supported Datasets](#22-currently-supported-datasets)
+    - [2.1 Baselines](#21-baselines)
+    - [2.2 Investigated-Datasets](#22-investigated-datasets)
   - [3. Repo Contents](#3-repo-contents)
   - [4. Quick Start](#4-quick-start)
     - [4.1 Install DPImageBench](#41-install-dpimagebench)
