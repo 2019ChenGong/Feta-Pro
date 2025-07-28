@@ -212,6 +212,6 @@ for legobj in leg.legendHandles:
 
 plt.tight_layout()
 plt.subplots_adjust(left=None, bottom=None, right=None, top=0.8, wspace=0.2, hspace=0.3)
-fig.savefig("test.png", bbox_inches='tight')
+fig.savefig("ablation.png", bbox_inches='tight')
 fig.savefig("ablation.pdf", bbox_inches='tight')
 print(matplotlib.get_cachedir())

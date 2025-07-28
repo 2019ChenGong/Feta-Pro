@@ -30,7 +30,6 @@ merf_path = {
     'celeba_male_32': '/p/fzv6enresearch/PE-Refine/exp/dp-feta2/celeba_male_32_eps10.0val_time5_freq8.2_1merf-2025-07-15-09-05-10/gen_merf/gen.npz'
 }
 
-# 子图的小标题
 row_titles = ["Freq.", "Spat."]
 
 # Create a single figure and a set of subplots with a 4:3 aspect ratio
