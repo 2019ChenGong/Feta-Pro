@@ -7,6 +7,12 @@ This is the official implementation of paper FETA-Pro. FETA-Pro proposes a spati
 
 We conduct experiments to show that across five sensitive image datasets, FETA-Pro achieves, on average, 24.5\% higher fidelity and 2.8\% greater utility compared to the state-of-the-art method under a privacy budget of $\epsilon = 1$.
 
+<div align=center>
+<img src="./plot/FETA-Pro-framework.pdf" width = "1000" alt="Synthetic images by algorithms in DPImageBench with epsilon=10" align=center />
+</div>
+
+<p align="center">The framework of \toolname. During warm-up, \toolname{} extracts spatial features to train the synthesizer. Then, \toolname{} introduces auxiliary generators to generate images aligning the noisy frequency features, and training synthesizers on these synthetic images. Then, we train warm-up synthesizers on sensitive images using DP-SGD.</p>
+
 ## 1. Contents
   - [1. Contents](#1-contents)
   - [2. Introduction](#2-introduction)
@@ -508,7 +514,6 @@ INFO - evaluator.py - 2024-11-13 21:50:27,195 - The FID of synthetic images is 2
 INFO - evaluator.py - 2024-11-13 21:50:27,200 - The Inception Score of synthetic images is 7.621163845062256
 INFO - evaluator.py - 2024-11-13 21:50:27,200 - The Precision and Recall of synthetic images is 0.5463906526565552 and 0.555840015411377
 INFO - evaluator.py - 2024-11-13 21:50:27,200 - The FLD of synthetic images is 7.258963584899902
-INFO - evaluator.py - 2024-11-13 21:50:27,200 - The ImageReward of synthetic images is -2.049745370597344
 ```
 The first line shows the accuracy of the downstream task when noise is added to the validation results of the sensitive dataset for classifier selection (`model.eval = val`), across three studied classification outcomes. 
 
