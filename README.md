@@ -287,75 +287,7 @@ CUDA_VISIBLE_DEVICES=0,1,2 python run.py \
 
 #### For the implementation of the results reported in Figures 5, 6, and Table 11 (RQ2), the performance is analyzed by varying the epsilon and model size.
 
-If users wish to change the size of the synthesizer, the following parameters should be considered.
 
-- `train.dp.n_split`: the number of gradient accumulations for saving GPU memory usage. For example, if your server allows to train a 4M DPDM with `batch_size=4096` and `train.dp.n_split=32`. When you want to train an 80M DPDM with the same `batch_size`, you may need to increase `train.dp.n_split` into 512,
-- Change the model size: For diffusion based model, please change `model.network.ch_mult`, `model.network.attn_resolutions` and `model.network.nf` to adjust the synthesizer size. For GAN based model, please change `model.Generator.g_conv_dim` to adjust the synthesizer size.
-
-In our experiments, we list the model sizes and corresponding hyper-parameter settings as follows.
-
-| Standard Diffusion Model size |  Hyper-parameters |
-| -------------- | ------------------------------------------------------------ |
-| 3.8M |  `model.network.ch_mult=[2,4] model.network.attn_resolutions=[16] model.network.nf=32` |
-| 11.1M |  `model.network.ch_mult=[1,2,3] model.network.attn_resolutions=[16,8] model.network.nf=64` |
-| 19.6M |  `model.network.ch_mult=[1,2,2,4] model.network.attn_resolutions=[16,8,4] model.network.nf=64` |
-| 44.2M |  `model.network.ch_mult=[1,2,2,4] model.network.attn_resolutions=[16,8,4] model.network.nf=96` |
-| 78.5M |  `model.network.ch_mult=[1,2,2,4] model.network.attn_resolutions=[16,8,4] model.network.nf=128` |
-
-| Latent Diffusion Model size |  Hyper-parameters |
-| -------------- | ------------------------------------------------------------ |
-| 3.9M |  `model.network.ch_mult=[1,2,2] model.network.attn_resolutions=[16,8,4] model.network.nf=32` |
-| 11.9M |  `model.network.ch_mult=[1,2,2] model.network.attn_resolutions=[16,8,4] model.network.nf=64` |
-| 23.6M |  `model.network.ch_mult=[1,2,2,4] model.network.attn_resolutions=[16,8,4] model.network.nf=64` |
-| 39.7M |  `model.network.ch_mult=[1,2,2,3] model.network.attn_resolutions=[16,8,4] model.network.nf=96` |
-| 77.4M |  `model.network.ch_mult=[1,1,2,4] model.network.attn_resolutions=[16,8,4] model.network.nf=128` |
-
-| GAN size |  Hyper-parameters |
-| -------------- | ------------------------------------------------------------ |
-| 3.8M |  `model.Generator.g_conv_dim=40` |
-| 6.6M |  `model.Generator.g_conv_dim=60` |
-| 10.0M |  `model.Generator.g_conv_dim=80` |
-| 14.3M |  `model.Generator.g_conv_dim=100` |
-| 19.4M |  `model.Generator.g_conv_dim=120` |
-
-> [!Note]
->
-> It is hard to control synthesizers with different foundational models so that they have exactly the same parameter sizes.
-
-For example:
-
-(1) Using DPDM with an 80M diffusion model.
-
-```
-python run.py setup.n_gpus_per_node=4 --method DPDM --data_name mnist_28 --epsilon 10.0 eval.mode=val \
- public_data.name=null \
- model.network.ch_mult=[1,2,2,4] \
- model.network.attn_resolutions=[16,8,4]
- model.network.nf=128 \
- train.dp.n_split=512 \
- --exp_description 80M 
-```
-
-(2) Using DP-LDM with an 80M diffusion model.
-
-```
-python run.py setup.n_gpus_per_node=1 --method DP-LDM --data_name mnist_28 --epsilon 10.0 eval.mode=val \
- public_data.name=imagenet \
- model.network.ch_mult=[1,1,2,4] \
- model.network.attn_resolutions=[16,8,4]
- model.network.nf=128 \
- train.dp.n_split=16 \
- --exp_description 80M 
-```
-
-(3) Using DPGAN with a 14M generator.
-
-```
-python run.py setup.n_gpus_per_node=4 --method DPGAN --data_name mnist_28 --epsilon 10.0 eval.mode=val \
- public_data.name=null \
- model.Generator.g_conv_dim=120 \
- --exp_description 14M 
-```
 
 We provide more implementation examples of edit the model size of synthesizers in the [scripts](./scripts/rq2.sh).
 
