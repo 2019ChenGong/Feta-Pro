@@ -8,7 +8,7 @@ This is the official implementation of paper FETA-Pro. FETA-Pro proposes a spati
 We conduct experiments to show that across five sensitive image datasets, FETA-Pro achieves, on average, 24.5\% higher fidelity and 2.8\% greater utility compared to the state-of-the-art method under a privacy budget of $\epsilon = 1$.
 
 <div align=center>
-<img src="./plot/FETA-Pro-framework.png" width = "500" alt="The framework of FETA-Pro. During warm-up, FETA-Pro extracts spatial features to train the synthesizer. Then, FETA-Pro introduces auxiliary generators to generate images aligning the noisy frequency features, and training synthesizers on these synthetic images. Then, we train warm-up synthesizers on sensitive images using DP-SGD" align=center />
+<img src="./plot/FETA-Pro-framework.png" width = "300" alt="The framework of FETA-Pro. During warm-up, FETA-Pro extracts spatial features to train the synthesizer. Then, FETA-Pro introduces auxiliary generators to generate images aligning the noisy frequency features, and training synthesizers on these synthetic images. Then, we train warm-up synthesizers on sensitive images using DP-SGD" align=center />
 </div>
 
 <p align="center">The framework of FETA-Pro. During warm-up, FETA-Pro extracts spatial features to train the synthesizer. Then, FETA-Pro introduces auxiliary generators to generate images aligning the noisy frequency features, and training synthesizers on these synthetic images. Then, we train warm-up synthesizers on sensitive images using DP-SGD.</p>
