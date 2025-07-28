@@ -34,9 +34,9 @@ We conduct experiments to show that across five sensitive image datasets, FETA-P
 
 ## 2. Introduction
 
-### 2.1 Currently Supported Algorithms
+### 2.1 Baselines
 
-We list currently supported DP image synthesis methods as follows.
+We list baselines as follows.
 
   | Methods |  Link                                                         |
   | -------------- | ------------------------------------------------------------ |
@@ -47,17 +47,13 @@ We list currently supported DP image synthesis methods as follows.
   | GS-WGAN            |  [\[NeuriPS 2020\] GS-WGAN: A Gradient-Sanitized Approach for Learning Differentially Private Generators](https://arxiv.org/pdf/2006.08265) |
   | DP-GAN            |  [\[arXiv 2020\] Differentially Private Generative Adversarial Network (arxiv.org)](https://arxiv.org/abs/1802.06739) |
   | DPDM          |  [\[TMLR 2023\] Differentially Private Diffusion Models](https://openreview.net/forum?id=ZPpQk7FJXF) |
-  | PDP-Diffusion       | [\[2302.13861\] Differentially Private Diffusion Models Generate Useful Synthetic Images (arxiv.org)](https://arxiv.org/abs/2302.13861) |
-  | DP-LDM            | [\[TMLR 2024\] Differentially Private Latent Diffusion Models](https://arxiv.org/abs/2305.15759) |
-  | DP-LoRA           | [\[arXiv 2024\] Differentially Private Fine-Tuning of Diffusion Models](https://arxiv.org/abs/2406.01355) |
-  | PrivImage       | [\[UESNIX Security 2024\] PrivImage: Differentially Private Synthetic Image Generation using Diffusion Models with Semantic-Aware Pretraining](https://www.usenix.org/conference/usenixsecurity24/presentation/li-kecen) |
+  | DP-FETA      |  [\[S&P 2025\] From Easy to Hard: Building a Shortcut for Differentially Private Image Synthesis](https://www.computer.org/csdl/proceedings-article/sp/2025/223600d656/26hiVDu7y5W) |
 
-### 2.2 Currently Supported Datasets
-We list the studied datasets as follows, which include seven sensitive datasets and two public datasets.
+### 2.2 Investigated Datasets
+We list the studied datasets as follows in our paper, which include five sensitive datasets.
   | Usage |  Dataset  |
   | ------- | --------------------- |
-  | Pretraining dataset | ImageNet_ILSVRC2012, Places365 |
-  | Sensitive dataset | MNIST, FashionMNIST, CIFAR-10, CIFAR-100, EuroSAT, CelebA, Camelyon |
+  | Sensitive dataset | MNIST, FashionMNIST, CIFAR-10, CelebA, Camelyon |
 
 ## 3. Repo Contents
 
