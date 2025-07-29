@@ -3804,10 +3804,10 @@ INFO - evaluator.py - 2025-07-16 04:42:59,748 - Epoch: 46 Train acc: 99.99090909
 INFO - evaluator.py - 2025-07-16 04:44:25,775 - Epoch: 47 Train acc: 99.9890909090909 Val acc: 88.4248282570369 Test acc74.37542975017189; Train loss: 0.0004571962216699665 Val loss: 0.6634378386265645
 INFO - evaluator.py - 2025-07-16 04:45:51,534 - Epoch: 48 Train acc: 100.0 Val acc: 88.72271870630433 Test acc73.56176942470776; Train loss: 0.0002605605196805713 Val loss: 0.6338442182590175
 INFO - evaluator.py - 2025-07-16 04:47:17,202 - Epoch: 49 Train acc: 99.99636363636364 Val acc: 88.84734634324275 Test acc72.69367407746962; Train loss: 0.00028119202302662996 Val loss: 0.6406533144275369
-INFO - evaluator.py - 2025-07-16 04:47:17,765 - The best acc of synthetic images on sensitive val and the corresponding acc on test dataset from resnext is 89.9446774879932 and 83.01340820536328
-INFO - evaluator.py - 2025-07-16 04:47:17,765 - The best acc of synthetic images on noisy sensitive val and the corresponding acc on test dataset from resnext is 89.9446774879932 and 83.01340820536328
-INFO - evaluator.py - 2025-07-16 04:47:17,765 - The best acc test dataset from resnext is 83.95885858354345
-INFO - evaluator.py - 2025-07-16 04:47:17,799 - The best acc of accuracy (adding noise to the results on the sensitive set of validation set) of synthetic images from resnet, wrn, and resnext are [79.43788677515471, 81.8989227595691, 83.01340820536328].
+INFO - evaluator.py - 2025-07-16 04:47:17,765 - The best acc of synthetic images on sensitive val and the corresponding acc on test dataset from resnext is 89.9446774879932 and 84.01340820536328
+INFO - evaluator.py - 2025-07-16 04:47:17,765 - The best acc of synthetic images on noisy sensitive val and the corresponding acc on test dataset from resnext is 89.9446774879932 and 84.01340820536328
+INFO - evaluator.py - 2025-07-16 04:47:17,765 - The best acc test dataset from resnext is 84.95885858354345
+INFO - evaluator.py - 2025-07-16 04:47:17,799 - The best acc of accuracy (adding noise to the results on the sensitive set of validation set) of synthetic images from resnet, wrn, and resnext are [79.43788677515471, 81.8989227595691, 84.01340820536328].
 INFO - evaluator.py - 2025-07-16 04:47:17,799 - The average and std of accuracy of synthetic images are 81.45 and 1.49
 INFO - dataset_loader.py - 2025-07-16 13:04:52,004 - train size: 269538 val size: 32898
 INFO - dataset_loader.py - 2025-07-16 13:04:52,006 - delta is reset as 2.966981886419575e-07
