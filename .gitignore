@@ -45,8 +45,6 @@ golden_pretrain.sh
 eps10_visual*
 visualization.py
 
-cifar10_32*
-
 Instruction*
 
 core*
