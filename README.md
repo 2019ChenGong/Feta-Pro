@@ -54,6 +54,9 @@ We list the studied datasets as follows in our paper, which include five sensiti
   | ------- | --------------------- |
   | Sensitive dataset | MNIST, FashionMNIST, CIFAR-10, CelebA, Camelyon |
 
+
+This repository is built upon DPImageBench. For more details, please refer to their [Repository](https://github.com/2019ChenGong/DPImageBench).
+
 ## 3. Repo Contents
 
 Below is the directory structure of the DPImageBench project, which organizes its two core functionalities within the `models/` and `evaluation/` directories. To enhance user understanding and showcase the toolkit's ease of use, we offer a variety of example scripts located in the `scripts/` directory.

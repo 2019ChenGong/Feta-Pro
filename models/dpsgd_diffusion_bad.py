@@ -568,10 +568,10 @@ class DP_Diffusion(DPSynther):
             config = self.warm_up(sensitive_dataloader, config)
         final_embeddings = self.model.model.all_modules[0].weight.data.clone().cpu().numpy()
         diff = final_embeddings - initial_embeddings
-        l2_distances = np.linalg.norm(diff, axis=1)  # 每行的 L2 范数
+        l2_distances = np.linalg.norm(diff, axis=1) 
 
         # 找出变化较大的 embedding 索引
-        threshold = 1e-6  # 可根据实际情况调整
+        threshold = 1e-6 
         changed_indices = np.where(l2_distances > threshold)[0]
 
         logging.info(f"共有 {len(changed_indices)} 个 embedding 发生了显著变化")
