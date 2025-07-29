@@ -112,6 +112,11 @@ pretrain:
     n_noise_samples: 1
     n_classes: 1000
   cond: true
+  n_epochs_time: 1000
+  n_epochs_freq: 10
+  batch_size_time: 50
+  batch_size_freq: 256
+  mode: time_freq
 train:
   log_dir: null
   seed: 0
@@ -160,6 +165,9 @@ train:
       epsilon: 1.0
       delta: 1e-6
     n_splits: 1
+  sigma_freq: 25.0
+  sigma_time: 15
+  sigma_sensitivity_ratio: 0.5
 gen:
   data_num: 60000
   batch_size: 1000

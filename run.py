@@ -10,32 +10,8 @@ from data.dataset_loader import load_data
 from utils.utils import initialize_environment, run, parse_config
 from evaluation.evaluator import Evaluator
 os.environ['MKL_NUM_THREADS'] = "1"
-def set_deterministic_seeds(seed=0):
-    """
-    设置所有随机种子以确保可复现性
-    """
-    # 固定 Python 内置 random
-    random.seed(seed)
-
-    # 固定 NumPy 随机种子
-    np.random.seed(seed)
-
-    # 固定 PyTorch CPU 随机种子
-    torch.manual_seed(seed)
-
-    # 固定 PyTorch GPU 随机种子（所有可用 GPU）
-    torch.cuda.manual_seed_all(seed)
-
-    # 强制使用确定性算法（重要！）
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False  # ⚠️ 必须关闭，否则会引入随机性
-
-    # 设置全局计算环境
-    os.environ['PYTHONHASHSEED'] = str(seed)
-
 
 def main(config):
-    # set_deterministic_seeds(0)
 
     initialize_environment(config)
     sensitive_train_loader, sensitive_val_loader, sensitive_test_loader, public_train_loader, config = load_data(config)
@@ -46,10 +22,10 @@ def main(config):
 
     model.train(sensitive_train_loader, config.train)
 
-    # syn_data, syn_labels = model.generate(config.gen)
+    syn_data, syn_labels = model.generate(config.gen)
 
-    # evaluator = Evaluator(config)
-    # evaluator.eval(syn_data, syn_labels, sensitive_train_loader, sensitive_val_loader, sensitive_test_loader)
+    evaluator = Evaluator(config)
+    evaluator.eval(syn_data, syn_labels, sensitive_train_loader, sensitive_val_loader, sensitive_test_loader)
     
 
 

@@ -1,5 +1,5 @@
 setup:
-  method: DP-Kernel
+  method: GS-WGAN
   run_type: normal
   n_gpus_per_node: 1
   n_nodes: 1
@@ -10,8 +10,8 @@ setup:
   workdir: null
 public_data:
   name: null
-  num_channels: 3
-  resolution: 32
+  num_channels: 1
+  resolution: 28
   n_classes: 1000
   train_path: dataset/imagenet/imagenet_32
   selective:
@@ -25,35 +25,55 @@ sensitive_data:
   test_path: dataset/cifar10/test_32.zip
   fid_stats: dataset/cifar10/fid_stats_32.npz
 model:
-  image_size: 32
+  ckpt: null
+  num_discriminators: 1000
+  c: 3
   Generator:
-    z_dim: 60
+    z_dim: 10
     g_shared_dim: 128
-    g_conv_dim: 60
+    g_conv_dim: 64
     attn_g_loc:
     - 2
     apply_attn: true
-  sigma_list:
-  - 1
-  - 2
-  - 4
-  - 8
-  - 16
+  img_size: 32
+  latent_type: bernoulli
   private_num_classes: 10
   public_num_classes: 1000
-  ckpt: null
 pretrain:
   log_dir: null
-  n_epochs: 1
-  lr: 5e-5
-  batch_size: 60
+  seed: 0
+  batch_size: 32
+  iterations: 2000
+  critic_iters: 5
+  L_epsilon: 0.001
+  L_gp: 10
+  print_step: 100
+  vis_step: 1000
+  save_step: 5000
   cond: true
 train:
-  max_iter: 200002
-  batch_size: 60
-  lr: 5e-5
-  vis_step: 10000
+  pretrain:
+    log_dir: null
+    label_random: false
+    seed: 0
+    batch_size: 32
+    iterations: 2000
+    critic_iters: 5
+    L_epsilon: 0.001
+    L_gp: 10
+    print_step: 100
+    vis_step: 1000
+    save_step: 5000
   log_dir: null
+  seed: 0
+  batch_size: 32
+  iterations: 20000
+  critic_iters: 5
+  L_epsilon: 0.001
+  L_gp: 10
+  print_step: 100
+  vis_step: 1000
+  save_step: 5000
   dp:
     epsilon: 1.0
     delta: 1e-5

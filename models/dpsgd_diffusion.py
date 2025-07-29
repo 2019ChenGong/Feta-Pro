@@ -72,7 +72,8 @@ class DP_Diffusion(DPSynther):
         label_dim = max(self.private_num_classes, self.public_num_classes)  # Determine the maximum label dimension
         self.network.label_dim = label_dim  # Set the label dimension for the network
 
-        self.freq_model = Freq_Model(self.all_config.model.freq, self.device, self.all_config.train.sigma_sensitivity_ratio)
+        if 'mode' in self.all_config.pretrain:
+            self.freq_model = Freq_Model(self.all_config.model.freq, self.device, self.all_config.train.sigma_sensitivity_ratio)
 
         # Initialize the denoiser based on the specified name and network
         if self.denoiser_name == 'edm':
@@ -313,7 +314,7 @@ class DP_Diffusion(DPSynther):
         if torch.load(os.path.join(self.all_config.gen.freq.log_dir, 'pc.pth')).item() != 0:
             config.dp['privacy_history'].append([torch.load(os.path.join(self.all_config.gen.freq.log_dir, 'pc.pth')).item(), 1, 1])
         freq_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
-        freq_train_loader = torch.utils.data.DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16)
+        freq_train_loader = DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16)
 
         if self.all_config.pretrain.mode == 'freq_time':
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
@@ -331,6 +332,16 @@ class DP_Diffusion(DPSynther):
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
             self.pretrain(freq_train_loader, self.all_config.pretrain, run=True)
+        elif self.all_config.pretrain.mode == 'freq':
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_freq'
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
+            self.pretrain(freq_train_loader, self.all_config.pretrain, run=True)
+        elif self.all_config.pretrain.mode == 'mix':
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
+            pretrain_set = ConcatDataset([freq_train_set, self.time_dataloader.dataset])
+            self.pretrain(DataLoader(dataset=pretrain_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16), self.all_config.pretrain, run=True)
         else:
             raise NotImplementedError
         
@@ -347,20 +358,9 @@ class DP_Diffusion(DPSynther):
         Returns:
             None
         """
-        # initial_embeddings = self.model.model.all_modules[0].weight.data.clone().cpu().numpy()
 
         if 'mode' in self.all_config.pretrain:
             config = self.warm_up(sensitive_dataloader, config)
-        # final_embeddings = self.model.model.all_modules[0].weight.data.clone().cpu().numpy()
-        # diff = final_embeddings - initial_embeddings
-        # l2_distances = np.linalg.norm(diff, axis=1)  # 每行的 L2 范数
-
-        # # 找出变化较大的 embedding 索引
-        # threshold = 1e-6  # 可根据实际情况调整
-        # changed_indices = np.where(l2_distances > threshold)[0]
-
-        # logging.info(f"共有 {len(changed_indices)} 个 embedding 发生了显著变化")
-        # logging.info("变化的 embedding 索引:", changed_indices)
         
         if sensitive_dataloader is None or config.n_epochs == 0:
             # If the dataloader is not provided or the number of epochs is zero, exit early.
