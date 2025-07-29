@@ -120,7 +120,3 @@ if __name__ == '__main__':
     config = parse_config(opt, unknown)
 
     run(main, config)
-
-# python run.py setup.n_gpus_per_node=4 setup.master_port=6667 eval.mode=val pretrain.n_epochs1=100 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=1.0 public_data.central.sigma=50 train.n_splits=256 pretrain.mode=feta_merf gen.merf.cache=/p/fzv6enresearch/PE-Refine/exp/dp-feta2/celeba_male_64_eps10.0val_merfeps1.0_fetasigma50-2025-05-24-12-40-10/gen_merf -m DP-FETA2 -dn celeba_male_64 -e 10.0 -ed val_merfeps1.0_fetasigma50
-
-# python run.py setup.n_gpus_per_node=4 setup.master_port=6667 eval.mode=val pretrain.n_epochs1=1000 pretrain.n_epochs2=10 pretrain.batch_size1=50 pretrain.batch_size2=256 train.merf.dp.epsilon=1.0 public_data.central.sigma=50 train.n_splits=256 pretrain.mode=feta_merf -m DP-FETA2 -dn celeba_male_128 -e 10.0 -ed val_merfeps1.0_fetasigma50
