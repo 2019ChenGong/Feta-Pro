@@ -454,14 +454,14 @@ The synthetic images can be found at the `./exp/<algorithm_name>/<file_name>/gen
 
 ### 4.5 Results Visualization
 
-We provide the plotting codes for results visualization in the folder `plot` of DPImageBench.
+We provide the plotting codes for results visualization in the folder `plot`.
 
-- `plot_eps_change.py`: plotting for Figure 5 and 10.
-- `plot_size_change.py`: plotting for Figure 6.
-- `plot_wo_pretrain_cond_cifar10.py`: plotting for Figure 7.
-- `plot_wo_pretrain_cond_fmnist.py`: plotting for Figure 9.
-- `plot_wo_pretrain_places_imagenet.py`: plotting for Figure 8.   
-- `visualization.py`: plotting for Figure 4. 
+- `ablation.py`: plotting for Figure 5 in RQ2.
+- `fid_curve.py`: plotting for Figure 4 in RQ1.
+- `plot_eps_changes.py`: plotting for Figure 7 in RQ3.
+- `plot_heatmap.py`: plotting for Figure 6 in RQ3.
+- `visualization_tf.py`: plotting for Figure 2.   
+- `visualization.py`: plotting for Figure 3 in RQ1. 
 
 
 ## Acknowledgement
