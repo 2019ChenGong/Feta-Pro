@@ -1,0 +1,2157 @@
+INFO - utils.py - 2025-07-13 14:32:46,550 - {'setup': {'method': 'dpsgd-diffusion', 'run_type': 'torchmp', 'n_gpus_per_node': 4, 'n_nodes': 1, 'node_rank': 0, 'master_address': '127.0.0.1', 'master_port': 6661, 'omp_n_threads': 8, 'workdir': 'exp/dp-feta2/fmnist_28_eps1.0val_time20_freq26.6_1merf-2025-07-13-14-32-34', 'local_rank': 0, 'global_rank': 0, 'global_size': 4, 'root_folder': '.'}, 'public_data': {'name': 'central_mean', 'num_channels': 1, 'resolution': 28, 'n_classes': 1000, 'train_path': 'dataset/imagenet/imagenet_32', 'selective': {'ratio': 1.0}, 'central': {'batch_size': 6000, 'sigma': 20, 'sample_num': 5}}, 'sensitive_data': {'name': 'fmnist', 'num_channels': 1, 'resolution': 28, 'n_classes': 10, 'train_path': 'dataset/fmnist/train_28.zip', 'test_path': 'dataset/fmnist/test_28.zip', 'fid_stats': 'dataset/fmnist/fid_stats_28.npz'}, 'model': {'ckpt': None, 'denoiser_name': 'edm', 'denoiser_network': 'song', 'ema_rate': 0.999, 'network': {'image_size': 28, 'num_in_channels': 1, 'num_out_channels': 1, 'label_dim': 1000, 'attn_resolutions': [14], 'ch_mult': [2, 2]}, 'sampler': {'type': 'ddim', 'stochastic': False, 'num_steps': 50, 'tmin': 0.002, 'tmax': 80.0, 'rho': 7.0, 'guid_scale': 0.0, 'snapshot_batch_size': 80, 'fid_batch_size': 256}, 'sampler_fid': {'type': 'edm', 's_churn': 50, 's_min': 0.025, 's_max': 50, 'num_steps': 1000, 'tmin': 0.002, 'tmax': 80.0, 'rho': 7.0, 'guid_scale': 1.0}, 'sampler_acc': {'type': 'edm', 's_churn': 10, 's_min': 0.025, 's_max': 50, 'num_steps': 1000, 'tmin': 0.002, 'tmax': 80.0, 'rho': 7.0, 'guid_scale': 0.0, 'labels': 10}, 'private_num_classes': 10, 'public_num_classes': 10, 'merf': {'img_size': 28, 'Generator': {'z_dim': 60, 'g_shared_dim': 128, 'g_conv_dim': 41, 'attn_g_loc': [2], 'apply_attn': True}, 'n_feat': 784, 'd_rff': 10000, 'rff_sigma': '105', 'mmd_type': 'sphere', 'private_num_classes': 10, 'public_num_classes': 1000, 'ckpt': None}, 'local_rank': 0, 'global_rank': 0, 'global_size': 4, 'fid_stats': 'dataset/fmnist/fid_stats_28.npz'}, 'pretrain': {'log_dir': 'exp/dp-feta2/fmnist_28_eps1.0val_time20_freq26.6_1merf-2025-07-13-14-32-34/pretrain', 'seed': 0, 'batch_size': 1024, 'n_epochs': 160, 'log_freq': 100, 'snapshot_freq': 2000, 'snapshot_threshold': 1, 'save_freq': 100000, 'save_threshold': 1, 'fid_freq': 2000, 'fid_samples': 5000, 'fid_threshold': 1, 'optim': {'optimizer': 'Adam', 'params': {'lr': 0.0003, 'weight_decay': 0.0}}, 'loss': {'version': 'edm', 'p_mean': -1.2, 'p_std': 1.2, 'n_noise_samples': 1, 'n_classes': 1000}, 'cond': True, 'n_epochs_time': 1000, 'n_epochs_freq': 10, 'batch_size_time': 50, 'batch_size_freq': 256, 'mode': 'time_freq'}, 'train': {'log_dir': 'exp/dp-feta2/fmnist_28_eps1.0val_time20_freq26.6_1merf-2025-07-13-14-32-34/train', 'seed': 0, 'batch_size': 4096, 'n_epochs': 150, 'partly_finetune': False, 'log_freq': 100, 'snapshot_freq': 2000, 'snapshot_threshold': 1, 'save_freq': 100000, 'save_threshold': 1, 'fid_freq': 2000, 'fid_samples': 5000, 'final_fid_samples': 60000, 'fid_threshold': 1, 'gen': False, 'gen_batch_size': 8192, 'optim': {'optimizer': 'Adam', 'params': {'lr': 0.0003, 'weight_decay': 0.0}}, 'loss': {'version': 'edm', 'p_mean': -1.2, 'p_std': 1.2, 'n_noise_samples': 32, 'n_classes': 10}, 'dp': {'sdq': None, 'privacy_history': [[5, 0.1, 75]], 'alpha_num': 0, 'max_grad_norm': 0.001, 'delta': 1e-05, 'epsilon': 1.0, 'max_physical_batch_size': 8192}, 'n_splits': 32, 'merf': {'epochs': 5, 'batch_size': 100, 'lr': 0.01, 'lr_decay': 0.9, 'log_interval': 10000, 'log_dir': 'exp/dp-feta2/fmnist_28_eps1.0val_time20_freq26.6_1merf-2025-07-13-14-32-34/train_merf', 'num_channels': 1, 'resolution': 28, 'dp': {'epsilon': 1.0, 'delta': 1e-05, 'sigma': 26.6}, 'n_splits': 1}, 'sigma_freq': 26.6, 'sigma_time': 20}, 'gen': {'data_num': 60000, 'batch_size': 1000, 'log_dir': 'exp/dp-feta2/fmnist_28_eps1.0val_time20_freq26.6_1merf-2025-07-13-14-32-34/gen', 'merf': {'data_num': 60000, 'batch_size': 1000, 'log_dir': 'exp/dp-feta2/fmnist_28_eps1.0val_time20_freq26.6_1merf-2025-07-13-14-32-34/gen_merf', 'num_channels': 1, 'resolution': 28, 'n_classes': 10}, 'n_classes': 10}, 'eval': {'batch_size': 1000, 'mode': 'val'}}
+INFO - dataset_loader.py - 2025-07-13 14:32:48,517 - train size: 55000 val size: 5000
+INFO - dataset_loader.py - 2025-07-13 14:32:48,518 - delta is reset as 1.6657508770018431e-06
+INFO - dataset_loader.py - 2025-07-13 14:33:12,487 - Additional privacy cost: [20, 0.10909090909090909, 5]
+INFO - dp_merf.py - 2025-07-13 14:33:15,017 - Number of trainable parameters in model: 1549226
+INFO - dp_merf.py - 2025-07-13 14:33:15,115 - The noise factor is 26.6
+INFO - dp_merf.py - 2025-07-13 14:33:50,933 - Train Epoch: 1 [0/55000]	Loss: 0.131859
+INFO - dp_merf.py - 2025-07-13 14:34:02,275 - Train Epoch: 2 [0/55000]	Loss: 0.033871
+INFO - dp_merf.py - 2025-07-13 14:34:13,596 - Train Epoch: 3 [0/55000]	Loss: 0.038004
+INFO - dp_merf.py - 2025-07-13 14:34:24,916 - Train Epoch: 4 [0/55000]	Loss: 0.031938
+INFO - dp_merf.py - 2025-07-13 14:34:36,233 - Train Epoch: 5 [0/55000]	Loss: 0.028662
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:54,693 - Number of trainable parameters in model: 1485217
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:54,693 - Number of total epochs: 1000
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:54,693 - Starting training at step 0
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,062 - Completed Epoch 1
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,114 - Completed Epoch 2
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,159 - Completed Epoch 3
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,206 - Completed Epoch 4
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,251 - Completed Epoch 5
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,296 - Completed Epoch 6
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,342 - Completed Epoch 7
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,388 - Completed Epoch 8
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,435 - Completed Epoch 9
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,481 - Completed Epoch 10
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,539 - Completed Epoch 11
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,597 - Completed Epoch 12
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,643 - Completed Epoch 13
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,701 - Completed Epoch 14
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,746 - Completed Epoch 15
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,804 - Completed Epoch 16
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,863 - Completed Epoch 17
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,910 - Completed Epoch 18
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:56,968 - Completed Epoch 19
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,013 - Completed Epoch 20
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,059 - Completed Epoch 21
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,104 - Completed Epoch 22
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,162 - Completed Epoch 23
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,207 - Completed Epoch 24
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,265 - Completed Epoch 25
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,310 - Completed Epoch 26
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,368 - Completed Epoch 27
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,426 - Completed Epoch 28
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,484 - Completed Epoch 29
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,542 - Completed Epoch 30
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,586 - Completed Epoch 31
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,632 - Completed Epoch 32
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,678 - Completed Epoch 33
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,738 - Completed Epoch 34
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,810 - Completed Epoch 35
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,855 - Completed Epoch 36
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,901 - Completed Epoch 37
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:57,959 - Completed Epoch 38
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,004 - Completed Epoch 39
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,049 - Completed Epoch 40
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,095 - Completed Epoch 41
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,140 - Completed Epoch 42
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,185 - Completed Epoch 43
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,230 - Completed Epoch 44
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,276 - Completed Epoch 45
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,322 - Completed Epoch 46
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,368 - Completed Epoch 47
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,413 - Completed Epoch 48
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,458 - Completed Epoch 49
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,505 - Completed Epoch 50
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,562 - Completed Epoch 51
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,609 - Completed Epoch 52
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,656 - Completed Epoch 53
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,701 - Completed Epoch 54
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,747 - Completed Epoch 55
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,795 - Completed Epoch 56
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,841 - Completed Epoch 57
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,887 - Completed Epoch 58
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,933 - Completed Epoch 59
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:58,979 - Completed Epoch 60
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,026 - Completed Epoch 61
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,073 - Completed Epoch 62
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,119 - Completed Epoch 63
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,165 - Completed Epoch 64
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,212 - Completed Epoch 65
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,258 - Completed Epoch 66
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,304 - Completed Epoch 67
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,349 - Completed Epoch 68
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,396 - Completed Epoch 69
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,443 - Completed Epoch 70
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,490 - Completed Epoch 71
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,537 - Completed Epoch 72
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,587 - Completed Epoch 73
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,633 - Completed Epoch 74
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,681 - Completed Epoch 75
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,728 - Completed Epoch 76
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,773 - Completed Epoch 77
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,818 - Completed Epoch 78
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,864 - Completed Epoch 79
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,910 - Completed Epoch 80
+INFO - dpsgd_diffusion.py - 2025-07-13 14:34:59,956 - Completed Epoch 81
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,002 - Completed Epoch 82
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,047 - Completed Epoch 83
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,094 - Completed Epoch 84
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,140 - Completed Epoch 85
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,185 - Completed Epoch 86
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,230 - Completed Epoch 87
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,276 - Completed Epoch 88
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,322 - Completed Epoch 89
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,368 - Completed Epoch 90
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,413 - Completed Epoch 91
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,458 - Completed Epoch 92
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,504 - Completed Epoch 93
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,550 - Completed Epoch 94
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,601 - Completed Epoch 95
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,646 - Completed Epoch 96
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,692 - Completed Epoch 97
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,738 - Completed Epoch 98
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,784 - Completed Epoch 99
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,824 - Loss: 0.8897, step: 100
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,830 - Completed Epoch 100
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,875 - Completed Epoch 101
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,920 - Completed Epoch 102
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:00,966 - Completed Epoch 103
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,011 - Completed Epoch 104
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,056 - Completed Epoch 105
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,102 - Completed Epoch 106
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,153 - Completed Epoch 107
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,201 - Completed Epoch 108
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,247 - Completed Epoch 109
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,292 - Completed Epoch 110
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,339 - Completed Epoch 111
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,385 - Completed Epoch 112
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,431 - Completed Epoch 113
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,478 - Completed Epoch 114
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,522 - Completed Epoch 115
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,568 - Completed Epoch 116
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,615 - Completed Epoch 117
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,662 - Completed Epoch 118
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,708 - Completed Epoch 119
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,753 - Completed Epoch 120
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,799 - Completed Epoch 121
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,846 - Completed Epoch 122
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,893 - Completed Epoch 123
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,939 - Completed Epoch 124
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:01,984 - Completed Epoch 125
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,029 - Completed Epoch 126
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,075 - Completed Epoch 127
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,120 - Completed Epoch 128
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,166 - Completed Epoch 129
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,212 - Completed Epoch 130
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,258 - Completed Epoch 131
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,304 - Completed Epoch 132
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,349 - Completed Epoch 133
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,394 - Completed Epoch 134
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,440 - Completed Epoch 135
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,486 - Completed Epoch 136
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,535 - Completed Epoch 137
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,582 - Completed Epoch 138
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,626 - Completed Epoch 139
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,673 - Completed Epoch 140
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,719 - Completed Epoch 141
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,764 - Completed Epoch 142
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,809 - Completed Epoch 143
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,855 - Completed Epoch 144
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,901 - Completed Epoch 145
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,949 - Completed Epoch 146
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:02,994 - Completed Epoch 147
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,040 - Completed Epoch 148
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,086 - Completed Epoch 149
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,132 - Completed Epoch 150
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,179 - Completed Epoch 151
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,225 - Completed Epoch 152
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,269 - Completed Epoch 153
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,316 - Completed Epoch 154
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,362 - Completed Epoch 155
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,408 - Completed Epoch 156
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,454 - Completed Epoch 157
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,500 - Completed Epoch 158
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,546 - Completed Epoch 159
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,592 - Completed Epoch 160
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,637 - Completed Epoch 161
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,683 - Completed Epoch 162
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,729 - Completed Epoch 163
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,775 - Completed Epoch 164
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,822 - Completed Epoch 165
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,868 - Completed Epoch 166
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,914 - Completed Epoch 167
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:03,960 - Completed Epoch 168
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,006 - Completed Epoch 169
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,051 - Completed Epoch 170
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,099 - Completed Epoch 171
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,144 - Completed Epoch 172
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,189 - Completed Epoch 173
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,234 - Completed Epoch 174
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,280 - Completed Epoch 175
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,325 - Completed Epoch 176
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,370 - Completed Epoch 177
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,416 - Completed Epoch 178
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,469 - Completed Epoch 179
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,516 - Completed Epoch 180
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,562 - Completed Epoch 181
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,608 - Completed Epoch 182
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,653 - Completed Epoch 183
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,698 - Completed Epoch 184
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,744 - Completed Epoch 185
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,789 - Completed Epoch 186
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,835 - Completed Epoch 187
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,881 - Completed Epoch 188
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,927 - Completed Epoch 189
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:04,972 - Completed Epoch 190
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,017 - Completed Epoch 191
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,063 - Completed Epoch 192
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,109 - Completed Epoch 193
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,155 - Completed Epoch 194
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,200 - Completed Epoch 195
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,245 - Completed Epoch 196
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,291 - Completed Epoch 197
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,337 - Completed Epoch 198
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,383 - Completed Epoch 199
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,422 - Loss: 0.8666, step: 200
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,428 - Completed Epoch 200
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,474 - Completed Epoch 201
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,520 - Completed Epoch 202
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,566 - Completed Epoch 203
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,612 - Completed Epoch 204
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,665 - Completed Epoch 205
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,711 - Completed Epoch 206
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,758 - Completed Epoch 207
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,803 - Completed Epoch 208
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,848 - Completed Epoch 209
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,894 - Completed Epoch 210
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,939 - Completed Epoch 211
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:05,985 - Completed Epoch 212
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,031 - Completed Epoch 213
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,076 - Completed Epoch 214
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,121 - Completed Epoch 215
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,167 - Completed Epoch 216
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,212 - Completed Epoch 217
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,257 - Completed Epoch 218
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,305 - Completed Epoch 219
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,350 - Completed Epoch 220
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,396 - Completed Epoch 221
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,443 - Completed Epoch 222
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,488 - Completed Epoch 223
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,533 - Completed Epoch 224
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,579 - Completed Epoch 225
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,626 - Completed Epoch 226
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,671 - Completed Epoch 227
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,716 - Completed Epoch 228
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,762 - Completed Epoch 229
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,808 - Completed Epoch 230
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,854 - Completed Epoch 231
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,900 - Completed Epoch 232
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,945 - Completed Epoch 233
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:06,991 - Completed Epoch 234
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,036 - Completed Epoch 235
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,082 - Completed Epoch 236
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,128 - Completed Epoch 237
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,173 - Completed Epoch 238
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,219 - Completed Epoch 239
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,265 - Completed Epoch 240
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,310 - Completed Epoch 241
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,355 - Completed Epoch 242
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,401 - Completed Epoch 243
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,447 - Completed Epoch 244
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,493 - Completed Epoch 245
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,538 - Completed Epoch 246
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,583 - Completed Epoch 247
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,629 - Completed Epoch 248
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,675 - Completed Epoch 249
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,722 - Completed Epoch 250
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,768 - Completed Epoch 251
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,814 - Completed Epoch 252
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,860 - Completed Epoch 253
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,906 - Completed Epoch 254
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,951 - Completed Epoch 255
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:07,997 - Completed Epoch 256
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,042 - Completed Epoch 257
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,091 - Completed Epoch 258
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,136 - Completed Epoch 259
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,182 - Completed Epoch 260
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,227 - Completed Epoch 261
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,273 - Completed Epoch 262
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,319 - Completed Epoch 263
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,365 - Completed Epoch 264
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,410 - Completed Epoch 265
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,458 - Completed Epoch 266
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,503 - Completed Epoch 267
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,549 - Completed Epoch 268
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,595 - Completed Epoch 269
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,640 - Completed Epoch 270
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,685 - Completed Epoch 271
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,732 - Completed Epoch 272
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,778 - Completed Epoch 273
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,823 - Completed Epoch 274
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,869 - Completed Epoch 275
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,915 - Completed Epoch 276
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:08,961 - Completed Epoch 277
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,006 - Completed Epoch 278
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,051 - Completed Epoch 279
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,097 - Completed Epoch 280
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,142 - Completed Epoch 281
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,188 - Completed Epoch 282
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,234 - Completed Epoch 283
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,282 - Completed Epoch 284
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,327 - Completed Epoch 285
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,373 - Completed Epoch 286
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,420 - Completed Epoch 287
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,468 - Completed Epoch 288
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,514 - Completed Epoch 289
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,560 - Completed Epoch 290
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,606 - Completed Epoch 291
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,652 - Completed Epoch 292
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,698 - Completed Epoch 293
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,743 - Completed Epoch 294
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,789 - Completed Epoch 295
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,835 - Completed Epoch 296
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,880 - Completed Epoch 297
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,927 - Completed Epoch 298
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:09,972 - Completed Epoch 299
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,012 - Loss: 0.6712, step: 300
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,018 - Completed Epoch 300
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,064 - Completed Epoch 301
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,110 - Completed Epoch 302
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,155 - Completed Epoch 303
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,201 - Completed Epoch 304
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,249 - Completed Epoch 305
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,295 - Completed Epoch 306
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,340 - Completed Epoch 307
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,387 - Completed Epoch 308
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,433 - Completed Epoch 309
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,481 - Completed Epoch 310
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,526 - Completed Epoch 311
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,572 - Completed Epoch 312
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,617 - Completed Epoch 313
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,663 - Completed Epoch 314
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,708 - Completed Epoch 315
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,753 - Completed Epoch 316
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,799 - Completed Epoch 317
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,844 - Completed Epoch 318
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,889 - Completed Epoch 319
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,935 - Completed Epoch 320
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:10,980 - Completed Epoch 321
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,025 - Completed Epoch 322
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,071 - Completed Epoch 323
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,117 - Completed Epoch 324
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,163 - Completed Epoch 325
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,208 - Completed Epoch 326
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,253 - Completed Epoch 327
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,299 - Completed Epoch 328
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,345 - Completed Epoch 329
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,392 - Completed Epoch 330
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,436 - Completed Epoch 331
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,482 - Completed Epoch 332
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,528 - Completed Epoch 333
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,573 - Completed Epoch 334
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,620 - Completed Epoch 335
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,666 - Completed Epoch 336
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,711 - Completed Epoch 337
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,756 - Completed Epoch 338
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,802 - Completed Epoch 339
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,847 - Completed Epoch 340
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,891 - Completed Epoch 341
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,937 - Completed Epoch 342
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:11,982 - Completed Epoch 343
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,028 - Completed Epoch 344
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,074 - Completed Epoch 345
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,119 - Completed Epoch 346
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,165 - Completed Epoch 347
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,211 - Completed Epoch 348
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,257 - Completed Epoch 349
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,302 - Completed Epoch 350
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,347 - Completed Epoch 351
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,394 - Completed Epoch 352
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,440 - Completed Epoch 353
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,486 - Completed Epoch 354
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,530 - Completed Epoch 355
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,576 - Completed Epoch 356
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,621 - Completed Epoch 357
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,667 - Completed Epoch 358
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,713 - Completed Epoch 359
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,758 - Completed Epoch 360
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,803 - Completed Epoch 361
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,849 - Completed Epoch 362
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,896 - Completed Epoch 363
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,943 - Completed Epoch 364
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:12,988 - Completed Epoch 365
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,034 - Completed Epoch 366
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,080 - Completed Epoch 367
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,125 - Completed Epoch 368
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,170 - Completed Epoch 369
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,215 - Completed Epoch 370
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,261 - Completed Epoch 371
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,306 - Completed Epoch 372
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,352 - Completed Epoch 373
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,398 - Completed Epoch 374
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,444 - Completed Epoch 375
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,489 - Completed Epoch 376
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,535 - Completed Epoch 377
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,580 - Completed Epoch 378
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,625 - Completed Epoch 379
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,670 - Completed Epoch 380
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,716 - Completed Epoch 381
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,761 - Completed Epoch 382
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,807 - Completed Epoch 383
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,852 - Completed Epoch 384
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,898 - Completed Epoch 385
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,944 - Completed Epoch 386
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:13,990 - Completed Epoch 387
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,035 - Completed Epoch 388
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,081 - Completed Epoch 389
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,127 - Completed Epoch 390
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,173 - Completed Epoch 391
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,218 - Completed Epoch 392
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,264 - Completed Epoch 393
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,309 - Completed Epoch 394
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,354 - Completed Epoch 395
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,401 - Completed Epoch 396
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,446 - Completed Epoch 397
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,491 - Completed Epoch 398
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,537 - Completed Epoch 399
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,577 - Loss: 0.6643, step: 400
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,583 - Completed Epoch 400
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,629 - Completed Epoch 401
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,675 - Completed Epoch 402
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,722 - Completed Epoch 403
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,769 - Completed Epoch 404
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,816 - Completed Epoch 405
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,863 - Completed Epoch 406
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,909 - Completed Epoch 407
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:14,956 - Completed Epoch 408
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,015 - Completed Epoch 409
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,062 - Completed Epoch 410
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,109 - Completed Epoch 411
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,156 - Completed Epoch 412
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,203 - Completed Epoch 413
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,249 - Completed Epoch 414
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,296 - Completed Epoch 415
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,341 - Completed Epoch 416
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,388 - Completed Epoch 417
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,435 - Completed Epoch 418
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,495 - Completed Epoch 419
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,542 - Completed Epoch 420
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,588 - Completed Epoch 421
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,634 - Completed Epoch 422
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,694 - Completed Epoch 423
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,741 - Completed Epoch 424
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,787 - Completed Epoch 425
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,834 - Completed Epoch 426
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,880 - Completed Epoch 427
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,928 - Completed Epoch 428
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:15,974 - Completed Epoch 429
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,022 - Completed Epoch 430
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,069 - Completed Epoch 431
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,115 - Completed Epoch 432
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,162 - Completed Epoch 433
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,208 - Completed Epoch 434
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,267 - Completed Epoch 435
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,314 - Completed Epoch 436
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,374 - Completed Epoch 437
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,422 - Completed Epoch 438
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,481 - Completed Epoch 439
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,528 - Completed Epoch 440
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,575 - Completed Epoch 441
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,621 - Completed Epoch 442
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,667 - Completed Epoch 443
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,714 - Completed Epoch 444
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,760 - Completed Epoch 445
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,807 - Completed Epoch 446
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,855 - Completed Epoch 447
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,901 - Completed Epoch 448
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,948 - Completed Epoch 449
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:16,995 - Completed Epoch 450
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,042 - Completed Epoch 451
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,087 - Completed Epoch 452
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,133 - Completed Epoch 453
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,179 - Completed Epoch 454
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,225 - Completed Epoch 455
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,271 - Completed Epoch 456
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,316 - Completed Epoch 457
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,361 - Completed Epoch 458
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,407 - Completed Epoch 459
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,453 - Completed Epoch 460
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,498 - Completed Epoch 461
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,544 - Completed Epoch 462
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,589 - Completed Epoch 463
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,635 - Completed Epoch 464
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,681 - Completed Epoch 465
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,727 - Completed Epoch 466
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,772 - Completed Epoch 467
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,820 - Completed Epoch 468
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,867 - Completed Epoch 469
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,912 - Completed Epoch 470
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:17,957 - Completed Epoch 471
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,003 - Completed Epoch 472
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,048 - Completed Epoch 473
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,095 - Completed Epoch 474
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,140 - Completed Epoch 475
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,185 - Completed Epoch 476
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,231 - Completed Epoch 477
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,277 - Completed Epoch 478
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,322 - Completed Epoch 479
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,367 - Completed Epoch 480
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,412 - Completed Epoch 481
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,460 - Completed Epoch 482
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,505 - Completed Epoch 483
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,551 - Completed Epoch 484
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,596 - Completed Epoch 485
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,642 - Completed Epoch 486
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,688 - Completed Epoch 487
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,734 - Completed Epoch 488
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,780 - Completed Epoch 489
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,825 - Completed Epoch 490
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,871 - Completed Epoch 491
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,916 - Completed Epoch 492
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:18,962 - Completed Epoch 493
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,008 - Completed Epoch 494
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,056 - Completed Epoch 495
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,101 - Completed Epoch 496
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,148 - Completed Epoch 497
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,194 - Completed Epoch 498
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,240 - Completed Epoch 499
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,280 - Loss: 0.6737, step: 500
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,286 - Completed Epoch 500
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,333 - Completed Epoch 501
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,380 - Completed Epoch 502
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,427 - Completed Epoch 503
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,474 - Completed Epoch 504
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,521 - Completed Epoch 505
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,567 - Completed Epoch 506
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,614 - Completed Epoch 507
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,661 - Completed Epoch 508
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,707 - Completed Epoch 509
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,754 - Completed Epoch 510
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,800 - Completed Epoch 511
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,847 - Completed Epoch 512
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,893 - Completed Epoch 513
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,939 - Completed Epoch 514
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:19,985 - Completed Epoch 515
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,031 - Completed Epoch 516
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,077 - Completed Epoch 517
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,123 - Completed Epoch 518
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,169 - Completed Epoch 519
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,216 - Completed Epoch 520
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,263 - Completed Epoch 521
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,308 - Completed Epoch 522
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,353 - Completed Epoch 523
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,401 - Completed Epoch 524
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,448 - Completed Epoch 525
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,494 - Completed Epoch 526
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,540 - Completed Epoch 527
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,586 - Completed Epoch 528
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,631 - Completed Epoch 529
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,677 - Completed Epoch 530
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,721 - Completed Epoch 531
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,767 - Completed Epoch 532
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,811 - Completed Epoch 533
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,856 - Completed Epoch 534
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,902 - Completed Epoch 535
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,947 - Completed Epoch 536
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:20,992 - Completed Epoch 537
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,036 - Completed Epoch 538
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,083 - Completed Epoch 539
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,127 - Completed Epoch 540
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,172 - Completed Epoch 541
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,217 - Completed Epoch 542
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,264 - Completed Epoch 543
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,310 - Completed Epoch 544
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,355 - Completed Epoch 545
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,401 - Completed Epoch 546
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,447 - Completed Epoch 547
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,493 - Completed Epoch 548
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,540 - Completed Epoch 549
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,586 - Completed Epoch 550
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,632 - Completed Epoch 551
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,679 - Completed Epoch 552
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,726 - Completed Epoch 553
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,772 - Completed Epoch 554
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,817 - Completed Epoch 555
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,863 - Completed Epoch 556
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,909 - Completed Epoch 557
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:21,955 - Completed Epoch 558
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,001 - Completed Epoch 559
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,048 - Completed Epoch 560
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,094 - Completed Epoch 561
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,140 - Completed Epoch 562
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,186 - Completed Epoch 563
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,232 - Completed Epoch 564
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,277 - Completed Epoch 565
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,323 - Completed Epoch 566
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,369 - Completed Epoch 567
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,415 - Completed Epoch 568
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,461 - Completed Epoch 569
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,507 - Completed Epoch 570
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,553 - Completed Epoch 571
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,600 - Completed Epoch 572
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,645 - Completed Epoch 573
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,690 - Completed Epoch 574
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,736 - Completed Epoch 575
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,783 - Completed Epoch 576
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,829 - Completed Epoch 577
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,876 - Completed Epoch 578
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,922 - Completed Epoch 579
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:22,968 - Completed Epoch 580
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,014 - Completed Epoch 581
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,061 - Completed Epoch 582
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,107 - Completed Epoch 583
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,152 - Completed Epoch 584
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,199 - Completed Epoch 585
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,245 - Completed Epoch 586
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,291 - Completed Epoch 587
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,338 - Completed Epoch 588
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,383 - Completed Epoch 589
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,430 - Completed Epoch 590
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,477 - Completed Epoch 591
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,522 - Completed Epoch 592
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,568 - Completed Epoch 593
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,614 - Completed Epoch 594
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,660 - Completed Epoch 595
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,707 - Completed Epoch 596
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,753 - Completed Epoch 597
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,798 - Completed Epoch 598
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,844 - Completed Epoch 599
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,884 - Loss: 0.7585, step: 600
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,890 - Completed Epoch 600
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,936 - Completed Epoch 601
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:23,981 - Completed Epoch 602
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,027 - Completed Epoch 603
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,075 - Completed Epoch 604
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,122 - Completed Epoch 605
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,168 - Completed Epoch 606
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,213 - Completed Epoch 607
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,259 - Completed Epoch 608
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,306 - Completed Epoch 609
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,352 - Completed Epoch 610
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,398 - Completed Epoch 611
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,444 - Completed Epoch 612
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,491 - Completed Epoch 613
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,537 - Completed Epoch 614
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,583 - Completed Epoch 615
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,628 - Completed Epoch 616
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,674 - Completed Epoch 617
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,721 - Completed Epoch 618
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,768 - Completed Epoch 619
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,813 - Completed Epoch 620
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,858 - Completed Epoch 621
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,905 - Completed Epoch 622
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,951 - Completed Epoch 623
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:24,996 - Completed Epoch 624
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,043 - Completed Epoch 625
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,090 - Completed Epoch 626
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,137 - Completed Epoch 627
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,183 - Completed Epoch 628
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,229 - Completed Epoch 629
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,274 - Completed Epoch 630
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,320 - Completed Epoch 631
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,367 - Completed Epoch 632
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,414 - Completed Epoch 633
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,459 - Completed Epoch 634
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,505 - Completed Epoch 635
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,550 - Completed Epoch 636
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,596 - Completed Epoch 637
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,679 - Completed Epoch 638
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,724 - Completed Epoch 639
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,771 - Completed Epoch 640
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,817 - Completed Epoch 641
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,863 - Completed Epoch 642
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,909 - Completed Epoch 643
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:25,954 - Completed Epoch 644
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,001 - Completed Epoch 645
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,047 - Completed Epoch 646
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,094 - Completed Epoch 647
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,140 - Completed Epoch 648
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,185 - Completed Epoch 649
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,232 - Completed Epoch 650
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,278 - Completed Epoch 651
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,323 - Completed Epoch 652
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,369 - Completed Epoch 653
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,415 - Completed Epoch 654
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,462 - Completed Epoch 655
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,508 - Completed Epoch 656
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,553 - Completed Epoch 657
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,598 - Completed Epoch 658
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,645 - Completed Epoch 659
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,692 - Completed Epoch 660
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,737 - Completed Epoch 661
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,783 - Completed Epoch 662
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,829 - Completed Epoch 663
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,876 - Completed Epoch 664
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,922 - Completed Epoch 665
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:26,968 - Completed Epoch 666
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,014 - Completed Epoch 667
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,061 - Completed Epoch 668
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,109 - Completed Epoch 669
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,155 - Completed Epoch 670
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,201 - Completed Epoch 671
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,247 - Completed Epoch 672
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,294 - Completed Epoch 673
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,341 - Completed Epoch 674
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,387 - Completed Epoch 675
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,441 - Completed Epoch 676
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,487 - Completed Epoch 677
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,533 - Completed Epoch 678
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,580 - Completed Epoch 679
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,625 - Completed Epoch 680
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,670 - Completed Epoch 681
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,717 - Completed Epoch 682
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,763 - Completed Epoch 683
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,809 - Completed Epoch 684
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,854 - Completed Epoch 685
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,899 - Completed Epoch 686
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,946 - Completed Epoch 687
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:27,992 - Completed Epoch 688
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,038 - Completed Epoch 689
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,084 - Completed Epoch 690
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,131 - Completed Epoch 691
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,177 - Completed Epoch 692
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,223 - Completed Epoch 693
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,268 - Completed Epoch 694
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,314 - Completed Epoch 695
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,360 - Completed Epoch 696
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,406 - Completed Epoch 697
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,453 - Completed Epoch 698
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,499 - Completed Epoch 699
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,539 - Loss: 0.6173, step: 700
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,545 - Completed Epoch 700
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,590 - Completed Epoch 701
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,636 - Completed Epoch 702
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,681 - Completed Epoch 703
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,727 - Completed Epoch 704
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,773 - Completed Epoch 705
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,819 - Completed Epoch 706
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,865 - Completed Epoch 707
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,911 - Completed Epoch 708
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:28,956 - Completed Epoch 709
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,003 - Completed Epoch 710
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,049 - Completed Epoch 711
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,097 - Completed Epoch 712
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,142 - Completed Epoch 713
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,188 - Completed Epoch 714
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,234 - Completed Epoch 715
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,280 - Completed Epoch 716
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,326 - Completed Epoch 717
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,372 - Completed Epoch 718
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,418 - Completed Epoch 719
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,465 - Completed Epoch 720
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,511 - Completed Epoch 721
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,557 - Completed Epoch 722
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,602 - Completed Epoch 723
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,648 - Completed Epoch 724
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,694 - Completed Epoch 725
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,740 - Completed Epoch 726
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,785 - Completed Epoch 727
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,832 - Completed Epoch 728
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,879 - Completed Epoch 729
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,926 - Completed Epoch 730
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:29,972 - Completed Epoch 731
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,017 - Completed Epoch 732
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,063 - Completed Epoch 733
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,110 - Completed Epoch 734
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,157 - Completed Epoch 735
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,203 - Completed Epoch 736
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,250 - Completed Epoch 737
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,295 - Completed Epoch 738
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,341 - Completed Epoch 739
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,388 - Completed Epoch 740
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,433 - Completed Epoch 741
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,479 - Completed Epoch 742
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,526 - Completed Epoch 743
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,572 - Completed Epoch 744
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,618 - Completed Epoch 745
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,664 - Completed Epoch 746
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,710 - Completed Epoch 747
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,772 - Completed Epoch 748
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,817 - Completed Epoch 749
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,863 - Completed Epoch 750
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,908 - Completed Epoch 751
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:30,954 - Completed Epoch 752
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,000 - Completed Epoch 753
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,047 - Completed Epoch 754
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,094 - Completed Epoch 755
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,139 - Completed Epoch 756
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,186 - Completed Epoch 757
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,232 - Completed Epoch 758
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,278 - Completed Epoch 759
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,323 - Completed Epoch 760
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,369 - Completed Epoch 761
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,416 - Completed Epoch 762
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,463 - Completed Epoch 763
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,509 - Completed Epoch 764
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,555 - Completed Epoch 765
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,601 - Completed Epoch 766
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,648 - Completed Epoch 767
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,694 - Completed Epoch 768
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,740 - Completed Epoch 769
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,786 - Completed Epoch 770
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,832 - Completed Epoch 771
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,879 - Completed Epoch 772
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,924 - Completed Epoch 773
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:31,970 - Completed Epoch 774
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,016 - Completed Epoch 775
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,062 - Completed Epoch 776
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,109 - Completed Epoch 777
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,154 - Completed Epoch 778
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,199 - Completed Epoch 779
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,246 - Completed Epoch 780
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,291 - Completed Epoch 781
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,337 - Completed Epoch 782
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,383 - Completed Epoch 783
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,429 - Completed Epoch 784
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,475 - Completed Epoch 785
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,521 - Completed Epoch 786
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,568 - Completed Epoch 787
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,613 - Completed Epoch 788
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,659 - Completed Epoch 789
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,706 - Completed Epoch 790
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,752 - Completed Epoch 791
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,797 - Completed Epoch 792
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,844 - Completed Epoch 793
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,889 - Completed Epoch 794
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,936 - Completed Epoch 795
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:32,983 - Completed Epoch 796
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,028 - Completed Epoch 797
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,074 - Completed Epoch 798
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,120 - Completed Epoch 799
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,161 - Loss: 0.6298, step: 800
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,167 - Completed Epoch 800
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,213 - Completed Epoch 801
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,259 - Completed Epoch 802
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,304 - Completed Epoch 803
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,351 - Completed Epoch 804
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,398 - Completed Epoch 805
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,443 - Completed Epoch 806
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,489 - Completed Epoch 807
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,534 - Completed Epoch 808
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,581 - Completed Epoch 809
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,627 - Completed Epoch 810
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,673 - Completed Epoch 811
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,720 - Completed Epoch 812
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,766 - Completed Epoch 813
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,813 - Completed Epoch 814
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,859 - Completed Epoch 815
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,905 - Completed Epoch 816
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,951 - Completed Epoch 817
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:33,997 - Completed Epoch 818
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,043 - Completed Epoch 819
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,091 - Completed Epoch 820
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,137 - Completed Epoch 821
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,183 - Completed Epoch 822
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,229 - Completed Epoch 823
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,276 - Completed Epoch 824
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,321 - Completed Epoch 825
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,366 - Completed Epoch 826
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,413 - Completed Epoch 827
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,459 - Completed Epoch 828
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,505 - Completed Epoch 829
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,551 - Completed Epoch 830
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,596 - Completed Epoch 831
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,643 - Completed Epoch 832
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,689 - Completed Epoch 833
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,735 - Completed Epoch 834
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,780 - Completed Epoch 835
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,826 - Completed Epoch 836
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,873 - Completed Epoch 837
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,920 - Completed Epoch 838
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:34,966 - Completed Epoch 839
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,012 - Completed Epoch 840
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,057 - Completed Epoch 841
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,104 - Completed Epoch 842
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,150 - Completed Epoch 843
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,195 - Completed Epoch 844
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,240 - Completed Epoch 845
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,287 - Completed Epoch 846
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,332 - Completed Epoch 847
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,378 - Completed Epoch 848
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,425 - Completed Epoch 849
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,471 - Completed Epoch 850
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,518 - Completed Epoch 851
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,565 - Completed Epoch 852
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,610 - Completed Epoch 853
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,656 - Completed Epoch 854
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,702 - Completed Epoch 855
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,748 - Completed Epoch 856
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,794 - Completed Epoch 857
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,840 - Completed Epoch 858
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,898 - Completed Epoch 859
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,946 - Completed Epoch 860
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:35,992 - Completed Epoch 861
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,038 - Completed Epoch 862
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,084 - Completed Epoch 863
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,131 - Completed Epoch 864
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,177 - Completed Epoch 865
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,223 - Completed Epoch 866
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,269 - Completed Epoch 867
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,315 - Completed Epoch 868
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,361 - Completed Epoch 869
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,408 - Completed Epoch 870
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,455 - Completed Epoch 871
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,500 - Completed Epoch 872
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,546 - Completed Epoch 873
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,592 - Completed Epoch 874
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,639 - Completed Epoch 875
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,684 - Completed Epoch 876
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,733 - Completed Epoch 877
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,779 - Completed Epoch 878
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,824 - Completed Epoch 879
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,871 - Completed Epoch 880
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,916 - Completed Epoch 881
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:36,961 - Completed Epoch 882
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,007 - Completed Epoch 883
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,054 - Completed Epoch 884
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,100 - Completed Epoch 885
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,146 - Completed Epoch 886
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,192 - Completed Epoch 887
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,238 - Completed Epoch 888
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,285 - Completed Epoch 889
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,332 - Completed Epoch 890
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,378 - Completed Epoch 891
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,425 - Completed Epoch 892
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,472 - Completed Epoch 893
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,518 - Completed Epoch 894
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,564 - Completed Epoch 895
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,610 - Completed Epoch 896
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,656 - Completed Epoch 897
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,701 - Completed Epoch 898
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,748 - Completed Epoch 899
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,788 - Loss: 0.6103, step: 900
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,794 - Completed Epoch 900
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,840 - Completed Epoch 901
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,887 - Completed Epoch 902
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,934 - Completed Epoch 903
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:37,980 - Completed Epoch 904
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,026 - Completed Epoch 905
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,073 - Completed Epoch 906
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,120 - Completed Epoch 907
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,166 - Completed Epoch 908
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,212 - Completed Epoch 909
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,258 - Completed Epoch 910
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,303 - Completed Epoch 911
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,350 - Completed Epoch 912
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,396 - Completed Epoch 913
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,442 - Completed Epoch 914
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,487 - Completed Epoch 915
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,535 - Completed Epoch 916
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,581 - Completed Epoch 917
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,627 - Completed Epoch 918
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,672 - Completed Epoch 919
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,718 - Completed Epoch 920
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,765 - Completed Epoch 921
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,810 - Completed Epoch 922
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,855 - Completed Epoch 923
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,901 - Completed Epoch 924
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,948 - Completed Epoch 925
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:38,995 - Completed Epoch 926
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,041 - Completed Epoch 927
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,087 - Completed Epoch 928
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,133 - Completed Epoch 929
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,179 - Completed Epoch 930
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,225 - Completed Epoch 931
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,271 - Completed Epoch 932
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,317 - Completed Epoch 933
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,362 - Completed Epoch 934
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,408 - Completed Epoch 935
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,455 - Completed Epoch 936
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,501 - Completed Epoch 937
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,546 - Completed Epoch 938
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,592 - Completed Epoch 939
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,638 - Completed Epoch 940
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,684 - Completed Epoch 941
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,729 - Completed Epoch 942
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,775 - Completed Epoch 943
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,821 - Completed Epoch 944
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,867 - Completed Epoch 945
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,914 - Completed Epoch 946
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:39,959 - Completed Epoch 947
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,004 - Completed Epoch 948
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,051 - Completed Epoch 949
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,098 - Completed Epoch 950
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,143 - Completed Epoch 951
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,190 - Completed Epoch 952
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,235 - Completed Epoch 953
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,281 - Completed Epoch 954
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,327 - Completed Epoch 955
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,373 - Completed Epoch 956
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,418 - Completed Epoch 957
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,464 - Completed Epoch 958
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,511 - Completed Epoch 959
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,557 - Completed Epoch 960
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,603 - Completed Epoch 961
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,649 - Completed Epoch 962
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,695 - Completed Epoch 963
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,741 - Completed Epoch 964
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,787 - Completed Epoch 965
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,832 - Completed Epoch 966
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,878 - Completed Epoch 967
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,925 - Completed Epoch 968
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:40,972 - Completed Epoch 969
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,018 - Completed Epoch 970
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,065 - Completed Epoch 971
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,111 - Completed Epoch 972
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,157 - Completed Epoch 973
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,203 - Completed Epoch 974
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,248 - Completed Epoch 975
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,294 - Completed Epoch 976
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,341 - Completed Epoch 977
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,388 - Completed Epoch 978
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,435 - Completed Epoch 979
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,481 - Completed Epoch 980
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,527 - Completed Epoch 981
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,572 - Completed Epoch 982
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,619 - Completed Epoch 983
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,664 - Completed Epoch 984
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,710 - Completed Epoch 985
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,756 - Completed Epoch 986
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,802 - Completed Epoch 987
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,849 - Completed Epoch 988
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,894 - Completed Epoch 989
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,940 - Completed Epoch 990
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:41,986 - Completed Epoch 991
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:42,033 - Completed Epoch 992
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:42,079 - Completed Epoch 993
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:42,125 - Completed Epoch 994
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:42,171 - Completed Epoch 995
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:42,216 - Completed Epoch 996
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:42,262 - Completed Epoch 997
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:42,308 - Completed Epoch 998
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:42,354 - Completed Epoch 999
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:42,394 - Loss: 0.4824, step: 1000
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:42,400 - Completed Epoch 1000
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:43,981 - Saving final checkpoint.
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:44,155 - Number of trainable parameters in model: 1485217
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:44,156 - Number of total epochs: 10
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:44,156 - Starting training at step 0
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:48,854 - Loss: 0.2457, step: 100
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:53,086 - Loss: 0.2225, step: 200
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:54,605 - Completed Epoch 1
+INFO - dpsgd_diffusion.py - 2025-07-13 14:35:57,504 - Loss: 0.2042, step: 300
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:01,927 - Loss: 0.1905, step: 400
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:04,906 - Completed Epoch 2
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:06,251 - Loss: 0.1880, step: 500
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:10,491 - Loss: 0.1708, step: 600
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:14,759 - Loss: 0.1555, step: 700
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:14,854 - Completed Epoch 3
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:18,985 - Loss: 0.1497, step: 800
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:23,196 - Loss: 0.1679, step: 900
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:24,725 - Completed Epoch 4
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:27,414 - Loss: 0.1566, step: 1000
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:31,651 - Loss: 0.1750, step: 1100
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:34,653 - Completed Epoch 5
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:35,968 - Loss: 0.1817, step: 1200
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:40,300 - Loss: 0.1654, step: 1300
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:44,588 - Loss: 0.1522, step: 1400
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:44,770 - Completed Epoch 6
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:48,864 - Loss: 0.1572, step: 1500
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:53,026 - Loss: 0.1720, step: 1600
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:54,623 - Completed Epoch 7
+INFO - dpsgd_diffusion.py - 2025-07-13 14:36:57,196 - Loss: 0.1552, step: 1700
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:01,364 - Loss: 0.1458, step: 1800
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:04,369 - Completed Epoch 8
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:05,533 - Loss: 0.1475, step: 1900
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:09,702 - Loss: 0.1764, step: 2000
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:09,711 - Saving snapshot checkpoint and sampling single batch at iteration 2000.
+WARNING - image.py - 2025-07-13 14:37:10,440 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:30,665 - FID at iteration 2000: 115.671913
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:35,709 - Loss: 0.1584, step: 2100
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:35,967 - Completed Epoch 9
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:39,884 - Loss: 0.1973, step: 2200
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:44,103 - Loss: 0.1489, step: 2300
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:45,795 - Completed Epoch 10
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:47,059 - Saving final checkpoint.
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:47,868 - Number of trainable parameters in model: 1485217
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:47,868 - Number of total epochs: 150
+INFO - dpsgd_diffusion.py - 2025-07-13 14:37:47,868 - Starting training at step 0
+INFO - dpsgd_diffusion.py - 2025-07-13 14:38:58,224 - Loss: 0.3460, step: 100
+INFO - dpsgd_diffusion.py - 2025-07-13 14:39:59,659 - Loss: 0.3196, step: 200
+INFO - dpsgd_diffusion.py - 2025-07-13 14:41:01,537 - Loss: 0.3130, step: 300
+INFO - dpsgd_diffusion.py - 2025-07-13 14:42:00,652 - Loss: 0.3236, step: 400
+INFO - dpsgd_diffusion.py - 2025-07-13 14:42:27,792 - Eps-value after 1 epochs: 0.1422
+INFO - dpsgd_diffusion.py - 2025-07-13 14:42:57,609 - Loss: 0.3122, step: 500
+INFO - dpsgd_diffusion.py - 2025-07-13 14:43:54,596 - Loss: 0.2941, step: 600
+INFO - dpsgd_diffusion.py - 2025-07-13 14:44:54,893 - Loss: 0.3028, step: 700
+INFO - dpsgd_diffusion.py - 2025-07-13 14:45:52,341 - Loss: 0.2704, step: 800
+INFO - dpsgd_diffusion.py - 2025-07-13 14:46:48,650 - Eps-value after 2 epochs: 0.1526
+INFO - dpsgd_diffusion.py - 2025-07-13 14:46:50,971 - Loss: 0.2959, step: 900
+INFO - dpsgd_diffusion.py - 2025-07-13 14:47:48,412 - Loss: 0.2873, step: 1000
+INFO - dpsgd_diffusion.py - 2025-07-13 14:48:45,708 - Loss: 0.2747, step: 1100
+INFO - dpsgd_diffusion.py - 2025-07-13 14:49:46,033 - Loss: 0.2903, step: 1200
+INFO - dpsgd_diffusion.py - 2025-07-13 14:50:42,863 - Loss: 0.2835, step: 1300
+INFO - dpsgd_diffusion.py - 2025-07-13 14:51:08,774 - Eps-value after 3 epochs: 0.1631
+INFO - dpsgd_diffusion.py - 2025-07-13 14:51:40,511 - Loss: 0.2612, step: 1400
+INFO - dpsgd_diffusion.py - 2025-07-13 14:52:39,212 - Loss: 0.2581, step: 1500
+INFO - dpsgd_diffusion.py - 2025-07-13 14:53:36,728 - Loss: 0.2827, step: 1600
+INFO - dpsgd_diffusion.py - 2025-07-13 14:54:33,848 - Loss: 0.2625, step: 1700
+INFO - dpsgd_diffusion.py - 2025-07-13 14:55:27,668 - Eps-value after 4 epochs: 0.1735
+INFO - dpsgd_diffusion.py - 2025-07-13 14:55:32,195 - Loss: 0.2457, step: 1800
+INFO - dpsgd_diffusion.py - 2025-07-13 14:56:29,449 - Loss: 0.2651, step: 1900
+INFO - dpsgd_diffusion.py - 2025-07-13 14:57:26,256 - Loss: 0.3005, step: 2000
+INFO - dpsgd_diffusion.py - 2025-07-13 14:57:26,312 - Saving snapshot checkpoint and sampling single batch at iteration 2000.
+WARNING - image.py - 2025-07-13 14:57:27,527 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 14:57:41,926 - FID at iteration 2000: 78.525479
+INFO - dpsgd_diffusion.py - 2025-07-13 14:58:39,792 - Loss: 0.2578, step: 2100
+INFO - dpsgd_diffusion.py - 2025-07-13 14:59:37,661 - Loss: 0.2646, step: 2200
+INFO - dpsgd_diffusion.py - 2025-07-13 15:00:00,779 - Eps-value after 5 epochs: 0.1839
+INFO - dpsgd_diffusion.py - 2025-07-13 15:00:35,048 - Loss: 0.2746, step: 2300
+INFO - dpsgd_diffusion.py - 2025-07-13 15:01:32,568 - Loss: 0.2539, step: 2400
+INFO - dpsgd_diffusion.py - 2025-07-13 15:02:29,713 - Loss: 0.2549, step: 2500
+INFO - dpsgd_diffusion.py - 2025-07-13 15:03:26,455 - Loss: 0.2585, step: 2600
+INFO - dpsgd_diffusion.py - 2025-07-13 15:04:16,871 - Eps-value after 6 epochs: 0.1943
+INFO - dpsgd_diffusion.py - 2025-07-13 15:04:23,941 - Loss: 0.2720, step: 2700
+INFO - dpsgd_diffusion.py - 2025-07-13 15:05:21,068 - Loss: 0.2772, step: 2800
+INFO - dpsgd_diffusion.py - 2025-07-13 15:06:18,317 - Loss: 0.2424, step: 2900
+INFO - dpsgd_diffusion.py - 2025-07-13 15:07:15,247 - Loss: 0.2593, step: 3000
+INFO - dpsgd_diffusion.py - 2025-07-13 15:08:12,361 - Loss: 0.2749, step: 3100
+INFO - dpsgd_diffusion.py - 2025-07-13 15:08:33,292 - Eps-value after 7 epochs: 0.2048
+INFO - dpsgd_diffusion.py - 2025-07-13 15:09:10,292 - Loss: 0.2583, step: 3200
+INFO - dpsgd_diffusion.py - 2025-07-13 15:10:06,305 - Loss: 0.2394, step: 3300
+INFO - dpsgd_diffusion.py - 2025-07-13 15:11:02,950 - Loss: 0.2449, step: 3400
+INFO - dpsgd_diffusion.py - 2025-07-13 15:11:59,419 - Loss: 0.2526, step: 3500
+INFO - dpsgd_diffusion.py - 2025-07-13 15:12:46,824 - Eps-value after 8 epochs: 0.2152
+INFO - dpsgd_diffusion.py - 2025-07-13 15:12:55,815 - Loss: 0.2424, step: 3600
+INFO - dpsgd_diffusion.py - 2025-07-13 15:13:52,763 - Loss: 0.2457, step: 3700
+INFO - dpsgd_diffusion.py - 2025-07-13 15:14:49,825 - Loss: 0.2665, step: 3800
+INFO - dpsgd_diffusion.py - 2025-07-13 15:15:49,952 - Loss: 0.2196, step: 3900
+INFO - dpsgd_diffusion.py - 2025-07-13 15:16:47,179 - Loss: 0.2726, step: 4000
+INFO - dpsgd_diffusion.py - 2025-07-13 15:16:47,206 - Saving snapshot checkpoint and sampling single batch at iteration 4000.
+WARNING - image.py - 2025-07-13 15:16:48,269 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 15:17:02,140 - FID at iteration 4000: 63.344152
+INFO - dpsgd_diffusion.py - 2025-07-13 15:17:20,965 - Eps-value after 9 epochs: 0.2256
+INFO - dpsgd_diffusion.py - 2025-07-13 15:17:59,726 - Loss: 0.2443, step: 4100
+INFO - dpsgd_diffusion.py - 2025-07-13 15:18:57,102 - Loss: 0.2994, step: 4200
+INFO - dpsgd_diffusion.py - 2025-07-13 15:19:54,244 - Loss: 0.2433, step: 4300
+INFO - dpsgd_diffusion.py - 2025-07-13 15:20:51,342 - Loss: 0.2682, step: 4400
+INFO - dpsgd_diffusion.py - 2025-07-13 15:21:36,368 - Eps-value after 10 epochs: 0.2361
+INFO - dpsgd_diffusion.py - 2025-07-13 15:21:48,179 - Loss: 0.3003, step: 4500
+INFO - dpsgd_diffusion.py - 2025-07-13 15:22:45,472 - Loss: 0.2807, step: 4600
+INFO - dpsgd_diffusion.py - 2025-07-13 15:23:42,730 - Loss: 0.2446, step: 4700
+INFO - dpsgd_diffusion.py - 2025-07-13 15:24:39,822 - Loss: 0.2594, step: 4800
+INFO - dpsgd_diffusion.py - 2025-07-13 15:25:37,046 - Loss: 0.2322, step: 4900
+INFO - dpsgd_diffusion.py - 2025-07-13 15:25:53,532 - Eps-value after 11 epochs: 0.2465
+INFO - dpsgd_diffusion.py - 2025-07-13 15:26:34,860 - Loss: 0.2701, step: 5000
+INFO - dpsgd_diffusion.py - 2025-07-13 15:27:32,447 - Loss: 0.2314, step: 5100
+INFO - dpsgd_diffusion.py - 2025-07-13 15:28:29,148 - Loss: 0.2733, step: 5200
+INFO - dpsgd_diffusion.py - 2025-07-13 15:29:26,563 - Loss: 0.2302, step: 5300
+INFO - dpsgd_diffusion.py - 2025-07-13 15:30:09,370 - Eps-value after 12 epochs: 0.2569
+INFO - dpsgd_diffusion.py - 2025-07-13 15:30:23,254 - Loss: 0.2450, step: 5400
+INFO - dpsgd_diffusion.py - 2025-07-13 15:31:21,105 - Loss: 0.2723, step: 5500
+INFO - dpsgd_diffusion.py - 2025-07-13 15:32:18,394 - Loss: 0.2508, step: 5600
+INFO - dpsgd_diffusion.py - 2025-07-13 15:33:17,826 - Loss: 0.2756, step: 5700
+INFO - dpsgd_diffusion.py - 2025-07-13 15:34:14,076 - Loss: 0.2381, step: 5800
+INFO - dpsgd_diffusion.py - 2025-07-13 15:34:27,518 - Eps-value after 13 epochs: 0.2673
+INFO - dpsgd_diffusion.py - 2025-07-13 15:35:10,614 - Loss: 0.2434, step: 5900
+INFO - dpsgd_diffusion.py - 2025-07-13 15:36:07,786 - Loss: 0.2593, step: 6000
+INFO - dpsgd_diffusion.py - 2025-07-13 15:36:07,809 - Saving snapshot checkpoint and sampling single batch at iteration 6000.
+WARNING - image.py - 2025-07-13 15:36:08,619 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 15:36:22,603 - FID at iteration 6000: 57.227787
+INFO - dpsgd_diffusion.py - 2025-07-13 15:37:20,436 - Loss: 0.2663, step: 6100
+INFO - dpsgd_diffusion.py - 2025-07-13 15:38:17,297 - Loss: 0.2734, step: 6200
+INFO - dpsgd_diffusion.py - 2025-07-13 15:38:58,262 - Eps-value after 14 epochs: 0.2778
+INFO - dpsgd_diffusion.py - 2025-07-13 15:39:13,907 - Loss: 0.2397, step: 6300
+INFO - dpsgd_diffusion.py - 2025-07-13 15:40:10,140 - Loss: 0.2517, step: 6400
+INFO - dpsgd_diffusion.py - 2025-07-13 15:41:09,075 - Loss: 0.2270, step: 6500
+INFO - dpsgd_diffusion.py - 2025-07-13 15:42:06,943 - Loss: 0.2408, step: 6600
+INFO - dpsgd_diffusion.py - 2025-07-13 15:43:04,592 - Loss: 0.2297, step: 6700
+INFO - dpsgd_diffusion.py - 2025-07-13 15:43:15,790 - Eps-value after 15 epochs: 0.2881
+INFO - dpsgd_diffusion.py - 2025-07-13 15:44:00,783 - Loss: 0.2538, step: 6800
+INFO - dpsgd_diffusion.py - 2025-07-13 15:44:57,853 - Loss: 0.2521, step: 6900
+INFO - dpsgd_diffusion.py - 2025-07-13 15:45:55,112 - Loss: 0.2562, step: 7000
+INFO - dpsgd_diffusion.py - 2025-07-13 15:46:53,019 - Loss: 0.2490, step: 7100
+INFO - dpsgd_diffusion.py - 2025-07-13 15:47:31,694 - Eps-value after 16 epochs: 0.2981
+INFO - dpsgd_diffusion.py - 2025-07-13 15:47:50,803 - Loss: 0.2885, step: 7200
+INFO - dpsgd_diffusion.py - 2025-07-13 15:48:48,338 - Loss: 0.2499, step: 7300
+INFO - dpsgd_diffusion.py - 2025-07-13 15:49:44,887 - Loss: 0.2327, step: 7400
+INFO - dpsgd_diffusion.py - 2025-07-13 15:50:41,821 - Loss: 0.2197, step: 7500
+INFO - dpsgd_diffusion.py - 2025-07-13 15:51:38,973 - Loss: 0.2311, step: 7600
+INFO - dpsgd_diffusion.py - 2025-07-13 15:51:48,220 - Eps-value after 17 epochs: 0.3078
+INFO - dpsgd_diffusion.py - 2025-07-13 15:52:36,325 - Loss: 0.2628, step: 7700
+INFO - dpsgd_diffusion.py - 2025-07-13 15:53:32,807 - Loss: 0.2340, step: 7800
+INFO - dpsgd_diffusion.py - 2025-07-13 15:54:29,911 - Loss: 0.2242, step: 7900
+INFO - dpsgd_diffusion.py - 2025-07-13 15:55:27,016 - Loss: 0.2580, step: 8000
+INFO - dpsgd_diffusion.py - 2025-07-13 15:55:27,046 - Saving snapshot checkpoint and sampling single batch at iteration 8000.
+WARNING - image.py - 2025-07-13 15:55:28,203 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 15:55:42,123 - FID at iteration 8000: 53.057226
+INFO - dpsgd_diffusion.py - 2025-07-13 15:56:19,786 - Eps-value after 18 epochs: 0.3172
+INFO - dpsgd_diffusion.py - 2025-07-13 15:56:40,493 - Loss: 0.2377, step: 8100
+INFO - dpsgd_diffusion.py - 2025-07-13 15:57:38,440 - Loss: 0.2263, step: 8200
+INFO - dpsgd_diffusion.py - 2025-07-13 15:58:36,035 - Loss: 0.2532, step: 8300
+INFO - dpsgd_diffusion.py - 2025-07-13 15:59:33,296 - Loss: 0.2337, step: 8400
+INFO - dpsgd_diffusion.py - 2025-07-13 16:00:30,983 - Loss: 0.2563, step: 8500
+INFO - dpsgd_diffusion.py - 2025-07-13 16:00:37,966 - Eps-value after 19 epochs: 0.3264
+INFO - dpsgd_diffusion.py - 2025-07-13 16:01:28,606 - Loss: 0.2553, step: 8600
+INFO - dpsgd_diffusion.py - 2025-07-13 16:02:26,337 - Loss: 0.2452, step: 8700
+INFO - dpsgd_diffusion.py - 2025-07-13 16:03:23,438 - Loss: 0.2647, step: 8800
+INFO - dpsgd_diffusion.py - 2025-07-13 16:04:20,028 - Loss: 0.2482, step: 8900
+INFO - dpsgd_diffusion.py - 2025-07-13 16:04:54,639 - Eps-value after 20 epochs: 0.3354
+INFO - dpsgd_diffusion.py - 2025-07-13 16:05:17,159 - Loss: 0.2428, step: 9000
+INFO - dpsgd_diffusion.py - 2025-07-13 16:06:14,481 - Loss: 0.2444, step: 9100
+INFO - dpsgd_diffusion.py - 2025-07-13 16:07:11,705 - Loss: 0.2468, step: 9200
+INFO - dpsgd_diffusion.py - 2025-07-13 16:08:08,045 - Loss: 0.2246, step: 9300
+INFO - dpsgd_diffusion.py - 2025-07-13 16:09:04,236 - Loss: 0.2627, step: 9400
+INFO - dpsgd_diffusion.py - 2025-07-13 16:09:08,763 - Eps-value after 21 epochs: 0.3441
+INFO - dpsgd_diffusion.py - 2025-07-13 16:10:01,463 - Loss: 0.2395, step: 9500
+INFO - dpsgd_diffusion.py - 2025-07-13 16:10:58,501 - Loss: 0.2438, step: 9600
+INFO - dpsgd_diffusion.py - 2025-07-13 16:11:54,853 - Loss: 0.2414, step: 9700
+INFO - dpsgd_diffusion.py - 2025-07-13 16:12:51,841 - Loss: 0.2424, step: 9800
+INFO - dpsgd_diffusion.py - 2025-07-13 16:13:24,100 - Eps-value after 22 epochs: 0.3527
+INFO - dpsgd_diffusion.py - 2025-07-13 16:13:48,962 - Loss: 0.2260, step: 9900
+INFO - dpsgd_diffusion.py - 2025-07-13 16:14:45,664 - Loss: 0.2440, step: 10000
+INFO - dpsgd_diffusion.py - 2025-07-13 16:14:45,688 - Saving snapshot checkpoint and sampling single batch at iteration 10000.
+WARNING - image.py - 2025-07-13 16:14:47,162 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 16:15:01,065 - FID at iteration 10000: 49.945834
+INFO - dpsgd_diffusion.py - 2025-07-13 16:15:58,311 - Loss: 0.2718, step: 10100
+INFO - dpsgd_diffusion.py - 2025-07-13 16:16:55,119 - Loss: 0.2472, step: 10200
+INFO - dpsgd_diffusion.py - 2025-07-13 16:17:51,621 - Loss: 0.2367, step: 10300
+INFO - dpsgd_diffusion.py - 2025-07-13 16:17:53,930 - Eps-value after 23 epochs: 0.3611
+INFO - dpsgd_diffusion.py - 2025-07-13 16:18:49,420 - Loss: 0.2453, step: 10400
+INFO - dpsgd_diffusion.py - 2025-07-13 16:19:47,087 - Loss: 0.2471, step: 10500
+INFO - dpsgd_diffusion.py - 2025-07-13 16:20:44,686 - Loss: 0.2170, step: 10600
+INFO - dpsgd_diffusion.py - 2025-07-13 16:21:41,290 - Loss: 0.2404, step: 10700
+INFO - dpsgd_diffusion.py - 2025-07-13 16:22:10,748 - Eps-value after 24 epochs: 0.3693
+INFO - dpsgd_diffusion.py - 2025-07-13 16:22:37,836 - Loss: 0.2515, step: 10800
+INFO - dpsgd_diffusion.py - 2025-07-13 16:23:33,982 - Loss: 0.2511, step: 10900
+INFO - dpsgd_diffusion.py - 2025-07-13 16:24:32,146 - Loss: 0.2490, step: 11000
+INFO - dpsgd_diffusion.py - 2025-07-13 16:25:29,343 - Loss: 0.2280, step: 11100
+INFO - dpsgd_diffusion.py - 2025-07-13 16:26:26,212 - Loss: 0.2362, step: 11200
+INFO - dpsgd_diffusion.py - 2025-07-13 16:26:26,936 - Eps-value after 25 epochs: 0.3774
+INFO - dpsgd_diffusion.py - 2025-07-13 16:27:24,506 - Loss: 0.2232, step: 11300
+INFO - dpsgd_diffusion.py - 2025-07-13 16:28:21,608 - Loss: 0.2340, step: 11400
+INFO - dpsgd_diffusion.py - 2025-07-13 16:29:18,543 - Loss: 0.2241, step: 11500
+INFO - dpsgd_diffusion.py - 2025-07-13 16:30:15,269 - Loss: 0.2609, step: 11600
+INFO - dpsgd_diffusion.py - 2025-07-13 16:30:42,203 - Eps-value after 26 epochs: 0.3853
+INFO - dpsgd_diffusion.py - 2025-07-13 16:31:12,292 - Loss: 0.2644, step: 11700
+INFO - dpsgd_diffusion.py - 2025-07-13 16:32:10,016 - Loss: 0.2452, step: 11800
+INFO - dpsgd_diffusion.py - 2025-07-13 16:33:07,439 - Loss: 0.2408, step: 11900
+INFO - dpsgd_diffusion.py - 2025-07-13 16:34:03,565 - Loss: 0.2513, step: 12000
+INFO - dpsgd_diffusion.py - 2025-07-13 16:34:03,597 - Saving snapshot checkpoint and sampling single batch at iteration 12000.
+WARNING - image.py - 2025-07-13 16:34:04,167 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 16:34:17,761 - FID at iteration 12000: 49.708404
+INFO - dpsgd_diffusion.py - 2025-07-13 16:35:13,114 - Eps-value after 27 epochs: 0.3930
+INFO - dpsgd_diffusion.py - 2025-07-13 16:35:15,397 - Loss: 0.2585, step: 12100
+INFO - dpsgd_diffusion.py - 2025-07-13 16:36:12,841 - Loss: 0.2315, step: 12200
+INFO - dpsgd_diffusion.py - 2025-07-13 16:37:10,331 - Loss: 0.2196, step: 12300
+INFO - dpsgd_diffusion.py - 2025-07-13 16:38:07,827 - Loss: 0.2349, step: 12400
+INFO - dpsgd_diffusion.py - 2025-07-13 16:39:04,367 - Loss: 0.2320, step: 12500
+INFO - dpsgd_diffusion.py - 2025-07-13 16:39:29,069 - Eps-value after 28 epochs: 0.4007
+INFO - dpsgd_diffusion.py - 2025-07-13 16:40:00,747 - Loss: 0.2818, step: 12600
+INFO - dpsgd_diffusion.py - 2025-07-13 16:40:57,364 - Loss: 0.2484, step: 12700
+INFO - dpsgd_diffusion.py - 2025-07-13 16:41:54,999 - Loss: 0.2373, step: 12800
+INFO - dpsgd_diffusion.py - 2025-07-13 16:42:53,333 - Loss: 0.2559, step: 12900
+INFO - dpsgd_diffusion.py - 2025-07-13 16:43:46,309 - Eps-value after 29 epochs: 0.4082
+INFO - dpsgd_diffusion.py - 2025-07-13 16:43:50,882 - Loss: 0.2615, step: 13000
+INFO - dpsgd_diffusion.py - 2025-07-13 16:44:47,350 - Loss: 0.2352, step: 13100
+INFO - dpsgd_diffusion.py - 2025-07-13 16:45:44,397 - Loss: 0.2660, step: 13200
+INFO - dpsgd_diffusion.py - 2025-07-13 16:46:41,444 - Loss: 0.2252, step: 13300
+INFO - dpsgd_diffusion.py - 2025-07-13 16:47:38,685 - Loss: 0.2328, step: 13400
+INFO - dpsgd_diffusion.py - 2025-07-13 16:48:01,752 - Eps-value after 30 epochs: 0.4156
+INFO - dpsgd_diffusion.py - 2025-07-13 16:48:35,848 - Loss: 0.2540, step: 13500
+INFO - dpsgd_diffusion.py - 2025-07-13 16:49:33,138 - Loss: 0.2664, step: 13600
+INFO - dpsgd_diffusion.py - 2025-07-13 16:50:29,978 - Loss: 0.2313, step: 13700
+INFO - dpsgd_diffusion.py - 2025-07-13 16:51:27,264 - Loss: 0.2319, step: 13800
+INFO - dpsgd_diffusion.py - 2025-07-13 16:52:17,282 - Eps-value after 31 epochs: 0.4229
+INFO - dpsgd_diffusion.py - 2025-07-13 16:52:24,178 - Loss: 0.2336, step: 13900
+INFO - dpsgd_diffusion.py - 2025-07-13 16:53:21,950 - Loss: 0.2291, step: 14000
+INFO - dpsgd_diffusion.py - 2025-07-13 16:53:22,020 - Saving snapshot checkpoint and sampling single batch at iteration 14000.
+WARNING - image.py - 2025-07-13 16:53:22,790 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 16:53:36,323 - FID at iteration 14000: 48.282121
+INFO - dpsgd_diffusion.py - 2025-07-13 16:54:33,510 - Loss: 0.2357, step: 14100
+INFO - dpsgd_diffusion.py - 2025-07-13 16:55:30,246 - Loss: 0.2309, step: 14200
+INFO - dpsgd_diffusion.py - 2025-07-13 16:56:27,927 - Loss: 0.2357, step: 14300
+INFO - dpsgd_diffusion.py - 2025-07-13 16:56:48,392 - Eps-value after 32 epochs: 0.4301
+INFO - dpsgd_diffusion.py - 2025-07-13 16:57:24,435 - Loss: 0.2262, step: 14400
+INFO - dpsgd_diffusion.py - 2025-07-13 16:58:21,953 - Loss: 0.2319, step: 14500
+INFO - dpsgd_diffusion.py - 2025-07-13 16:59:19,497 - Loss: 0.2457, step: 14600
+INFO - dpsgd_diffusion.py - 2025-07-13 17:00:16,706 - Loss: 0.2142, step: 14700
+INFO - dpsgd_diffusion.py - 2025-07-13 17:01:04,130 - Eps-value after 33 epochs: 0.4371
+INFO - dpsgd_diffusion.py - 2025-07-13 17:01:13,059 - Loss: 0.2233, step: 14800
+INFO - dpsgd_diffusion.py - 2025-07-13 17:02:10,210 - Loss: 0.2759, step: 14900
+INFO - dpsgd_diffusion.py - 2025-07-13 17:03:07,262 - Loss: 0.2345, step: 15000
+INFO - dpsgd_diffusion.py - 2025-07-13 17:04:05,911 - Loss: 0.2273, step: 15100
+INFO - dpsgd_diffusion.py - 2025-07-13 17:05:02,629 - Loss: 0.2381, step: 15200
+INFO - dpsgd_diffusion.py - 2025-07-13 17:05:21,028 - Eps-value after 34 epochs: 0.4441
+INFO - dpsgd_diffusion.py - 2025-07-13 17:06:00,585 - Loss: 0.2448, step: 15300
+INFO - dpsgd_diffusion.py - 2025-07-13 17:06:57,302 - Loss: 0.2108, step: 15400
+INFO - dpsgd_diffusion.py - 2025-07-13 17:07:53,129 - Loss: 0.2360, step: 15500
+INFO - dpsgd_diffusion.py - 2025-07-13 17:08:50,778 - Loss: 0.2358, step: 15600
+INFO - dpsgd_diffusion.py - 2025-07-13 17:09:36,716 - Eps-value after 35 epochs: 0.4510
+INFO - dpsgd_diffusion.py - 2025-07-13 17:09:48,222 - Loss: 0.2497, step: 15700
+INFO - dpsgd_diffusion.py - 2025-07-13 17:10:45,890 - Loss: 0.2553, step: 15800
+INFO - dpsgd_diffusion.py - 2025-07-13 17:11:42,694 - Loss: 0.2656, step: 15900
+INFO - dpsgd_diffusion.py - 2025-07-13 17:12:38,228 - Loss: 0.2164, step: 16000
+INFO - dpsgd_diffusion.py - 2025-07-13 17:12:38,256 - Saving snapshot checkpoint and sampling single batch at iteration 16000.
+WARNING - image.py - 2025-07-13 17:12:38,870 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 17:12:52,727 - FID at iteration 16000: 46.579975
+INFO - dpsgd_diffusion.py - 2025-07-13 17:13:50,304 - Loss: 0.2387, step: 16100
+INFO - dpsgd_diffusion.py - 2025-07-13 17:14:05,966 - Eps-value after 36 epochs: 0.4578
+INFO - dpsgd_diffusion.py - 2025-07-13 17:14:47,103 - Loss: 0.2794, step: 16200
+INFO - dpsgd_diffusion.py - 2025-07-13 17:15:44,533 - Loss: 0.2215, step: 16300
+INFO - dpsgd_diffusion.py - 2025-07-13 17:16:41,373 - Loss: 0.2578, step: 16400
+INFO - dpsgd_diffusion.py - 2025-07-13 17:17:38,553 - Loss: 0.2210, step: 16500
+INFO - dpsgd_diffusion.py - 2025-07-13 17:18:21,985 - Eps-value after 37 epochs: 0.4645
+INFO - dpsgd_diffusion.py - 2025-07-13 17:18:35,413 - Loss: 0.2568, step: 16600
+INFO - dpsgd_diffusion.py - 2025-07-13 17:19:33,283 - Loss: 0.2435, step: 16700
+INFO - dpsgd_diffusion.py - 2025-07-13 17:20:30,989 - Loss: 0.2605, step: 16800
+INFO - dpsgd_diffusion.py - 2025-07-13 17:21:28,478 - Loss: 0.2432, step: 16900
+INFO - dpsgd_diffusion.py - 2025-07-13 17:22:23,975 - Loss: 0.1940, step: 17000
+INFO - dpsgd_diffusion.py - 2025-07-13 17:22:37,622 - Eps-value after 38 epochs: 0.4711
+INFO - dpsgd_diffusion.py - 2025-07-13 17:23:21,423 - Loss: 0.2179, step: 17100
+INFO - dpsgd_diffusion.py - 2025-07-13 17:24:18,919 - Loss: 0.2281, step: 17200
+INFO - dpsgd_diffusion.py - 2025-07-13 17:25:17,615 - Loss: 0.2495, step: 17300
+INFO - dpsgd_diffusion.py - 2025-07-13 17:26:14,199 - Loss: 0.2411, step: 17400
+INFO - dpsgd_diffusion.py - 2025-07-13 17:26:54,740 - Eps-value after 39 epochs: 0.4776
+INFO - dpsgd_diffusion.py - 2025-07-13 17:27:10,757 - Loss: 0.2473, step: 17500
+INFO - dpsgd_diffusion.py - 2025-07-13 17:28:09,465 - Loss: 0.2439, step: 17600
+INFO - dpsgd_diffusion.py - 2025-07-13 17:29:07,397 - Loss: 0.2306, step: 17700
+INFO - dpsgd_diffusion.py - 2025-07-13 17:30:04,583 - Loss: 0.2421, step: 17800
+INFO - dpsgd_diffusion.py - 2025-07-13 17:31:01,520 - Loss: 0.2289, step: 17900
+INFO - dpsgd_diffusion.py - 2025-07-13 17:31:13,000 - Eps-value after 40 epochs: 0.4841
+INFO - dpsgd_diffusion.py - 2025-07-13 17:31:58,283 - Loss: 0.2296, step: 18000
+INFO - dpsgd_diffusion.py - 2025-07-13 17:31:58,339 - Saving snapshot checkpoint and sampling single batch at iteration 18000.
+WARNING - image.py - 2025-07-13 17:31:58,955 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 17:32:12,696 - FID at iteration 18000: 45.308280
+INFO - dpsgd_diffusion.py - 2025-07-13 17:33:10,401 - Loss: 0.2424, step: 18100
+INFO - dpsgd_diffusion.py - 2025-07-13 17:34:08,203 - Loss: 0.2508, step: 18200
+INFO - dpsgd_diffusion.py - 2025-07-13 17:35:05,100 - Loss: 0.2397, step: 18300
+INFO - dpsgd_diffusion.py - 2025-07-13 17:35:44,982 - Eps-value after 41 epochs: 0.4905
+INFO - dpsgd_diffusion.py - 2025-07-13 17:36:03,138 - Loss: 0.2487, step: 18400
+INFO - dpsgd_diffusion.py - 2025-07-13 17:36:59,683 - Loss: 0.2262, step: 18500
+INFO - dpsgd_diffusion.py - 2025-07-13 17:37:56,668 - Loss: 0.2450, step: 18600
+INFO - dpsgd_diffusion.py - 2025-07-13 17:38:53,475 - Loss: 0.2391, step: 18700
+INFO - dpsgd_diffusion.py - 2025-07-13 17:39:50,172 - Loss: 0.2420, step: 18800
+INFO - dpsgd_diffusion.py - 2025-07-13 17:39:59,206 - Eps-value after 42 epochs: 0.4968
+INFO - dpsgd_diffusion.py - 2025-07-13 17:40:47,329 - Loss: 0.2598, step: 18900
+INFO - dpsgd_diffusion.py - 2025-07-13 17:41:44,775 - Loss: 0.2387, step: 19000
+INFO - dpsgd_diffusion.py - 2025-07-13 17:42:41,896 - Loss: 0.2360, step: 19100
+INFO - dpsgd_diffusion.py - 2025-07-13 17:43:40,075 - Loss: 0.2397, step: 19200
+INFO - dpsgd_diffusion.py - 2025-07-13 17:44:16,430 - Eps-value after 43 epochs: 0.5030
+INFO - dpsgd_diffusion.py - 2025-07-13 17:44:36,645 - Loss: 0.2281, step: 19300
+INFO - dpsgd_diffusion.py - 2025-07-13 17:45:33,235 - Loss: 0.2245, step: 19400
+INFO - dpsgd_diffusion.py - 2025-07-13 17:46:30,268 - Loss: 0.2298, step: 19500
+INFO - dpsgd_diffusion.py - 2025-07-13 17:47:27,973 - Loss: 0.2469, step: 19600
+INFO - dpsgd_diffusion.py - 2025-07-13 17:48:25,399 - Loss: 0.2379, step: 19700
+INFO - dpsgd_diffusion.py - 2025-07-13 17:48:32,375 - Eps-value after 44 epochs: 0.5092
+INFO - dpsgd_diffusion.py - 2025-07-13 17:49:24,066 - Loss: 0.2225, step: 19800
+INFO - dpsgd_diffusion.py - 2025-07-13 17:50:20,623 - Loss: 0.2326, step: 19900
+INFO - dpsgd_diffusion.py - 2025-07-13 17:51:17,895 - Loss: 0.2085, step: 20000
+INFO - dpsgd_diffusion.py - 2025-07-13 17:51:17,927 - Saving snapshot checkpoint and sampling single batch at iteration 20000.
+WARNING - image.py - 2025-07-13 17:51:18,512 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 17:51:32,004 - FID at iteration 20000: 43.720015
+INFO - dpsgd_diffusion.py - 2025-07-13 17:52:29,424 - Loss: 0.2604, step: 20100
+INFO - dpsgd_diffusion.py - 2025-07-13 17:53:04,225 - Eps-value after 45 epochs: 0.5153
+INFO - dpsgd_diffusion.py - 2025-07-13 17:53:27,229 - Loss: 0.2395, step: 20200
+INFO - dpsgd_diffusion.py - 2025-07-13 17:54:24,459 - Loss: 0.2460, step: 20300
+INFO - dpsgd_diffusion.py - 2025-07-13 17:55:20,926 - Loss: 0.2174, step: 20400
+INFO - dpsgd_diffusion.py - 2025-07-13 17:56:17,356 - Loss: 0.2272, step: 20500
+INFO - dpsgd_diffusion.py - 2025-07-13 17:57:14,466 - Loss: 0.2626, step: 20600
+INFO - dpsgd_diffusion.py - 2025-07-13 17:57:19,017 - Eps-value after 46 epochs: 0.5214
+INFO - dpsgd_diffusion.py - 2025-07-13 17:58:11,262 - Loss: 0.2192, step: 20700
+INFO - dpsgd_diffusion.py - 2025-07-13 17:59:09,078 - Loss: 0.2332, step: 20800
+INFO - dpsgd_diffusion.py - 2025-07-13 18:00:06,189 - Loss: 0.2158, step: 20900
+INFO - dpsgd_diffusion.py - 2025-07-13 18:01:04,068 - Loss: 0.2040, step: 21000
+INFO - dpsgd_diffusion.py - 2025-07-13 18:01:36,965 - Eps-value after 47 epochs: 0.5273
+INFO - dpsgd_diffusion.py - 2025-07-13 18:02:02,757 - Loss: 0.2416, step: 21100
+INFO - dpsgd_diffusion.py - 2025-07-13 18:02:59,977 - Loss: 0.2355, step: 21200
+INFO - dpsgd_diffusion.py - 2025-07-13 18:03:57,650 - Loss: 0.2368, step: 21300
+INFO - dpsgd_diffusion.py - 2025-07-13 18:04:55,682 - Loss: 0.2499, step: 21400
+INFO - dpsgd_diffusion.py - 2025-07-13 18:05:53,122 - Loss: 0.2297, step: 21500
+INFO - dpsgd_diffusion.py - 2025-07-13 18:05:55,504 - Eps-value after 48 epochs: 0.5332
+INFO - dpsgd_diffusion.py - 2025-07-13 18:06:49,877 - Loss: 0.2124, step: 21600
+INFO - dpsgd_diffusion.py - 2025-07-13 18:07:47,124 - Loss: 0.2417, step: 21700
+INFO - dpsgd_diffusion.py - 2025-07-13 18:08:44,160 - Loss: 0.2141, step: 21800
+INFO - dpsgd_diffusion.py - 2025-07-13 18:09:42,319 - Loss: 0.2189, step: 21900
+INFO - dpsgd_diffusion.py - 2025-07-13 18:10:12,264 - Eps-value after 49 epochs: 0.5391
+INFO - dpsgd_diffusion.py - 2025-07-13 18:10:39,285 - Loss: 0.2136, step: 22000
+INFO - dpsgd_diffusion.py - 2025-07-13 18:10:39,309 - Saving snapshot checkpoint and sampling single batch at iteration 22000.
+WARNING - image.py - 2025-07-13 18:10:40,669 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 18:10:54,600 - FID at iteration 22000: 43.112718
+INFO - dpsgd_diffusion.py - 2025-07-13 18:11:51,290 - Loss: 0.2281, step: 22100
+INFO - dpsgd_diffusion.py - 2025-07-13 18:12:47,732 - Loss: 0.2552, step: 22200
+INFO - dpsgd_diffusion.py - 2025-07-13 18:13:44,094 - Loss: 0.2188, step: 22300
+INFO - dpsgd_diffusion.py - 2025-07-13 18:14:41,109 - Loss: 0.2258, step: 22400
+INFO - dpsgd_diffusion.py - 2025-07-13 18:14:41,132 - Eps-value after 50 epochs: 0.5449
+INFO - dpsgd_diffusion.py - 2025-07-13 18:15:38,522 - Loss: 0.2596, step: 22500
+INFO - dpsgd_diffusion.py - 2025-07-13 18:16:36,308 - Loss: 0.2553, step: 22600
+INFO - dpsgd_diffusion.py - 2025-07-13 18:17:33,958 - Loss: 0.2483, step: 22700
+INFO - dpsgd_diffusion.py - 2025-07-13 18:18:31,266 - Loss: 0.2612, step: 22800
+INFO - dpsgd_diffusion.py - 2025-07-13 18:18:58,727 - Eps-value after 51 epochs: 0.5507
+INFO - dpsgd_diffusion.py - 2025-07-13 18:19:28,812 - Loss: 0.2249, step: 22900
+INFO - dpsgd_diffusion.py - 2025-07-13 18:20:27,124 - Loss: 0.2326, step: 23000
+INFO - dpsgd_diffusion.py - 2025-07-13 18:21:24,177 - Loss: 0.2201, step: 23100
+INFO - dpsgd_diffusion.py - 2025-07-13 18:22:20,552 - Loss: 0.2510, step: 23200
+INFO - dpsgd_diffusion.py - 2025-07-13 18:23:15,734 - Eps-value after 52 epochs: 0.5564
+INFO - dpsgd_diffusion.py - 2025-07-13 18:23:18,037 - Loss: 0.2354, step: 23300
+INFO - dpsgd_diffusion.py - 2025-07-13 18:24:14,711 - Loss: 0.2232, step: 23400
+INFO - dpsgd_diffusion.py - 2025-07-13 18:25:11,264 - Loss: 0.2175, step: 23500
+INFO - dpsgd_diffusion.py - 2025-07-13 18:26:08,113 - Loss: 0.2264, step: 23600
+INFO - dpsgd_diffusion.py - 2025-07-13 18:27:05,573 - Loss: 0.2527, step: 23700
+INFO - dpsgd_diffusion.py - 2025-07-13 18:27:30,724 - Eps-value after 53 epochs: 0.5621
+INFO - dpsgd_diffusion.py - 2025-07-13 18:28:02,924 - Loss: 0.2403, step: 23800
+INFO - dpsgd_diffusion.py - 2025-07-13 18:29:01,343 - Loss: 0.2440, step: 23900
+INFO - dpsgd_diffusion.py - 2025-07-13 18:29:59,132 - Loss: 0.2338, step: 24000
+INFO - dpsgd_diffusion.py - 2025-07-13 18:29:59,161 - Saving snapshot checkpoint and sampling single batch at iteration 24000.
+WARNING - image.py - 2025-07-13 18:30:00,192 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 18:30:13,955 - FID at iteration 24000: 42.025443
+INFO - dpsgd_diffusion.py - 2025-07-13 18:31:12,086 - Loss: 0.2520, step: 24100
+INFO - dpsgd_diffusion.py - 2025-07-13 18:32:04,486 - Eps-value after 54 epochs: 0.5677
+INFO - dpsgd_diffusion.py - 2025-07-13 18:32:09,073 - Loss: 0.2325, step: 24200
+INFO - dpsgd_diffusion.py - 2025-07-13 18:33:06,221 - Loss: 0.2418, step: 24300
+INFO - dpsgd_diffusion.py - 2025-07-13 18:34:01,940 - Loss: 0.2288, step: 24400
+INFO - dpsgd_diffusion.py - 2025-07-13 18:34:59,449 - Loss: 0.2062, step: 24500
+INFO - dpsgd_diffusion.py - 2025-07-13 18:35:57,105 - Loss: 0.2524, step: 24600
+INFO - dpsgd_diffusion.py - 2025-07-13 18:36:20,614 - Eps-value after 55 epochs: 0.5732
+INFO - dpsgd_diffusion.py - 2025-07-13 18:36:55,791 - Loss: 0.2389, step: 24700
+INFO - dpsgd_diffusion.py - 2025-07-13 18:37:54,125 - Loss: 0.2336, step: 24800
+INFO - dpsgd_diffusion.py - 2025-07-13 18:38:51,799 - Loss: 0.2312, step: 24900
+INFO - dpsgd_diffusion.py - 2025-07-13 18:39:49,816 - Loss: 0.2315, step: 25000
+INFO - dpsgd_diffusion.py - 2025-07-13 18:40:40,393 - Eps-value after 56 epochs: 0.5788
+INFO - dpsgd_diffusion.py - 2025-07-13 18:40:47,466 - Loss: 0.2350, step: 25100
+INFO - dpsgd_diffusion.py - 2025-07-13 18:41:45,028 - Loss: 0.2749, step: 25200
+INFO - dpsgd_diffusion.py - 2025-07-13 18:42:42,661 - Loss: 0.2275, step: 25300
+INFO - dpsgd_diffusion.py - 2025-07-13 18:43:41,371 - Loss: 0.2335, step: 25400
+INFO - dpsgd_diffusion.py - 2025-07-13 18:44:39,358 - Loss: 0.2305, step: 25500
+INFO - dpsgd_diffusion.py - 2025-07-13 18:45:00,161 - Eps-value after 57 epochs: 0.5842
+INFO - dpsgd_diffusion.py - 2025-07-13 18:45:36,712 - Loss: 0.2323, step: 25600
+INFO - dpsgd_diffusion.py - 2025-07-13 18:46:34,151 - Loss: 0.2128, step: 25700
+INFO - dpsgd_diffusion.py - 2025-07-13 18:47:31,688 - Loss: 0.2323, step: 25800
+INFO - dpsgd_diffusion.py - 2025-07-13 18:48:28,322 - Loss: 0.2600, step: 25900
+INFO - dpsgd_diffusion.py - 2025-07-13 18:49:16,361 - Eps-value after 58 epochs: 0.5896
+INFO - dpsgd_diffusion.py - 2025-07-13 18:49:25,337 - Loss: 0.2451, step: 26000
+INFO - dpsgd_diffusion.py - 2025-07-13 18:49:25,384 - Saving snapshot checkpoint and sampling single batch at iteration 26000.
+WARNING - image.py - 2025-07-13 18:49:26,052 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 18:49:38,897 - FID at iteration 26000: 42.402163
+INFO - dpsgd_diffusion.py - 2025-07-13 18:50:36,754 - Loss: 0.2242, step: 26100
+INFO - dpsgd_diffusion.py - 2025-07-13 18:51:33,120 - Loss: 0.2499, step: 26200
+INFO - dpsgd_diffusion.py - 2025-07-13 18:52:30,888 - Loss: 0.2218, step: 26300
+INFO - dpsgd_diffusion.py - 2025-07-13 18:53:28,909 - Loss: 0.2309, step: 26400
+INFO - dpsgd_diffusion.py - 2025-07-13 18:53:47,416 - Eps-value after 59 epochs: 0.5951
+INFO - dpsgd_diffusion.py - 2025-07-13 18:54:26,735 - Loss: 0.2288, step: 26500
+INFO - dpsgd_diffusion.py - 2025-07-13 18:55:23,934 - Loss: 0.2279, step: 26600
+INFO - dpsgd_diffusion.py - 2025-07-13 18:56:21,286 - Loss: 0.2410, step: 26700
+INFO - dpsgd_diffusion.py - 2025-07-13 18:57:18,632 - Loss: 0.2241, step: 26800
+INFO - dpsgd_diffusion.py - 2025-07-13 18:58:04,894 - Eps-value after 60 epochs: 0.6004
+INFO - dpsgd_diffusion.py - 2025-07-13 18:58:16,102 - Loss: 0.2308, step: 26900
+INFO - dpsgd_diffusion.py - 2025-07-13 18:59:11,715 - Loss: 0.2213, step: 27000
+INFO - dpsgd_diffusion.py - 2025-07-13 19:00:08,759 - Loss: 0.2642, step: 27100
+INFO - dpsgd_diffusion.py - 2025-07-13 19:01:06,664 - Loss: 0.2287, step: 27200
+INFO - dpsgd_diffusion.py - 2025-07-13 19:02:04,742 - Loss: 0.2077, step: 27300
+INFO - dpsgd_diffusion.py - 2025-07-13 19:02:21,113 - Eps-value after 61 epochs: 0.6057
+INFO - dpsgd_diffusion.py - 2025-07-13 19:03:02,973 - Loss: 0.2177, step: 27400
+INFO - dpsgd_diffusion.py - 2025-07-13 19:03:59,775 - Loss: 0.2494, step: 27500
+INFO - dpsgd_diffusion.py - 2025-07-13 19:04:57,284 - Loss: 0.2468, step: 27600
+INFO - dpsgd_diffusion.py - 2025-07-13 19:05:54,849 - Loss: 0.2611, step: 27700
+INFO - dpsgd_diffusion.py - 2025-07-13 19:06:38,731 - Eps-value after 62 epochs: 0.6109
+INFO - dpsgd_diffusion.py - 2025-07-13 19:06:52,732 - Loss: 0.2542, step: 27800
+INFO - dpsgd_diffusion.py - 2025-07-13 19:07:50,343 - Loss: 0.2371, step: 27900
+INFO - dpsgd_diffusion.py - 2025-07-13 19:08:47,824 - Loss: 0.2402, step: 28000
+INFO - dpsgd_diffusion.py - 2025-07-13 19:08:47,855 - Saving snapshot checkpoint and sampling single batch at iteration 28000.
+WARNING - image.py - 2025-07-13 19:08:48,561 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 19:09:02,116 - FID at iteration 28000: 41.353635
+INFO - dpsgd_diffusion.py - 2025-07-13 19:09:59,826 - Loss: 0.2180, step: 28100
+INFO - dpsgd_diffusion.py - 2025-07-13 19:10:58,659 - Loss: 0.2204, step: 28200
+INFO - dpsgd_diffusion.py - 2025-07-13 19:11:12,472 - Eps-value after 63 epochs: 0.6162
+INFO - dpsgd_diffusion.py - 2025-07-13 19:11:55,999 - Loss: 0.2336, step: 28300
+INFO - dpsgd_diffusion.py - 2025-07-13 19:12:53,475 - Loss: 0.2491, step: 28400
+INFO - dpsgd_diffusion.py - 2025-07-13 19:13:50,881 - Loss: 0.2197, step: 28500
+INFO - dpsgd_diffusion.py - 2025-07-13 19:14:48,285 - Loss: 0.2361, step: 28600
+INFO - dpsgd_diffusion.py - 2025-07-13 19:15:29,302 - Eps-value after 64 epochs: 0.6214
+INFO - dpsgd_diffusion.py - 2025-07-13 19:15:45,396 - Loss: 0.2380, step: 28700
+INFO - dpsgd_diffusion.py - 2025-07-13 19:16:43,447 - Loss: 0.2404, step: 28800
+INFO - dpsgd_diffusion.py - 2025-07-13 19:17:39,341 - Loss: 0.2442, step: 28900
+INFO - dpsgd_diffusion.py - 2025-07-13 19:18:37,251 - Loss: 0.2216, step: 29000
+INFO - dpsgd_diffusion.py - 2025-07-13 19:19:34,080 - Loss: 0.2508, step: 29100
+INFO - dpsgd_diffusion.py - 2025-07-13 19:19:45,326 - Eps-value after 65 epochs: 0.6265
+INFO - dpsgd_diffusion.py - 2025-07-13 19:20:31,377 - Loss: 0.2151, step: 29200
+INFO - dpsgd_diffusion.py - 2025-07-13 19:21:28,279 - Loss: 0.2189, step: 29300
+INFO - dpsgd_diffusion.py - 2025-07-13 19:22:26,290 - Loss: 0.2206, step: 29400
+INFO - dpsgd_diffusion.py - 2025-07-13 19:23:23,973 - Loss: 0.2187, step: 29500
+INFO - dpsgd_diffusion.py - 2025-07-13 19:24:02,900 - Eps-value after 66 epochs: 0.6316
+INFO - dpsgd_diffusion.py - 2025-07-13 19:24:20,342 - Loss: 0.2194, step: 29600
+INFO - dpsgd_diffusion.py - 2025-07-13 19:25:17,953 - Loss: 0.2401, step: 29700
+INFO - dpsgd_diffusion.py - 2025-07-13 19:26:15,791 - Loss: 0.2255, step: 29800
+INFO - dpsgd_diffusion.py - 2025-07-13 19:27:11,706 - Loss: 0.2281, step: 29900
+INFO - dpsgd_diffusion.py - 2025-07-13 19:28:09,182 - Loss: 0.2471, step: 30000
+INFO - dpsgd_diffusion.py - 2025-07-13 19:28:09,241 - Saving snapshot checkpoint and sampling single batch at iteration 30000.
+WARNING - image.py - 2025-07-13 19:28:10,649 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 19:28:23,522 - FID at iteration 30000: 40.616024
+INFO - dpsgd_diffusion.py - 2025-07-13 19:28:33,523 - Eps-value after 67 epochs: 0.6367
+INFO - dpsgd_diffusion.py - 2025-07-13 19:29:22,296 - Loss: 0.2542, step: 30100
+INFO - dpsgd_diffusion.py - 2025-07-13 19:30:21,214 - Loss: 0.2284, step: 30200
+INFO - dpsgd_diffusion.py - 2025-07-13 19:31:19,479 - Loss: 0.2056, step: 30300
+INFO - dpsgd_diffusion.py - 2025-07-13 19:32:15,567 - Loss: 0.2195, step: 30400
+INFO - dpsgd_diffusion.py - 2025-07-13 19:32:52,714 - Eps-value after 68 epochs: 0.6417
+INFO - dpsgd_diffusion.py - 2025-07-13 19:33:13,115 - Loss: 0.2345, step: 30500
+INFO - dpsgd_diffusion.py - 2025-07-13 19:34:10,655 - Loss: 0.2247, step: 30600
+INFO - dpsgd_diffusion.py - 2025-07-13 19:35:08,022 - Loss: 0.2271, step: 30700
+INFO - dpsgd_diffusion.py - 2025-07-13 19:36:05,109 - Loss: 0.2418, step: 30800
+INFO - dpsgd_diffusion.py - 2025-07-13 19:37:02,292 - Loss: 0.2267, step: 30900
+INFO - dpsgd_diffusion.py - 2025-07-13 19:37:09,386 - Eps-value after 69 epochs: 0.6468
+INFO - dpsgd_diffusion.py - 2025-07-13 19:37:59,694 - Loss: 0.2366, step: 31000
+INFO - dpsgd_diffusion.py - 2025-07-13 19:38:56,415 - Loss: 0.2381, step: 31100
+INFO - dpsgd_diffusion.py - 2025-07-13 19:39:53,405 - Loss: 0.2226, step: 31200
+INFO - dpsgd_diffusion.py - 2025-07-13 19:40:49,045 - Loss: 0.2197, step: 31300
+INFO - dpsgd_diffusion.py - 2025-07-13 19:41:23,459 - Eps-value after 70 epochs: 0.6517
+INFO - dpsgd_diffusion.py - 2025-07-13 19:41:47,267 - Loss: 0.2519, step: 31400
+INFO - dpsgd_diffusion.py - 2025-07-13 19:42:44,975 - Loss: 0.2626, step: 31500
+INFO - dpsgd_diffusion.py - 2025-07-13 19:43:41,804 - Loss: 0.2297, step: 31600
+INFO - dpsgd_diffusion.py - 2025-07-13 19:44:38,820 - Loss: 0.2604, step: 31700
+INFO - dpsgd_diffusion.py - 2025-07-13 19:45:35,525 - Loss: 0.2455, step: 31800
+INFO - dpsgd_diffusion.py - 2025-07-13 19:45:40,070 - Eps-value after 71 epochs: 0.6566
+INFO - dpsgd_diffusion.py - 2025-07-13 19:46:32,879 - Loss: 0.2310, step: 31900
+INFO - dpsgd_diffusion.py - 2025-07-13 19:47:30,305 - Loss: 0.2206, step: 32000
+INFO - dpsgd_diffusion.py - 2025-07-13 19:47:30,339 - Saving snapshot checkpoint and sampling single batch at iteration 32000.
+WARNING - image.py - 2025-07-13 19:47:31,183 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 19:47:45,034 - FID at iteration 32000: 39.820748
+INFO - dpsgd_diffusion.py - 2025-07-13 19:48:43,064 - Loss: 0.2318, step: 32100
+INFO - dpsgd_diffusion.py - 2025-07-13 19:49:40,879 - Loss: 0.2249, step: 32200
+INFO - dpsgd_diffusion.py - 2025-07-13 19:50:13,737 - Eps-value after 72 epochs: 0.6615
+INFO - dpsgd_diffusion.py - 2025-07-13 19:50:38,623 - Loss: 0.2317, step: 32300
+INFO - dpsgd_diffusion.py - 2025-07-13 19:51:36,008 - Loss: 0.2031, step: 32400
+INFO - dpsgd_diffusion.py - 2025-07-13 19:52:32,757 - Loss: 0.2463, step: 32500
+INFO - dpsgd_diffusion.py - 2025-07-13 19:53:30,299 - Loss: 0.2152, step: 32600
+INFO - dpsgd_diffusion.py - 2025-07-13 19:54:26,624 - Loss: 0.2579, step: 32700
+INFO - dpsgd_diffusion.py - 2025-07-13 19:54:28,923 - Eps-value after 73 epochs: 0.6664
+INFO - dpsgd_diffusion.py - 2025-07-13 19:55:24,371 - Loss: 0.2133, step: 32800
+INFO - dpsgd_diffusion.py - 2025-07-13 19:56:23,069 - Loss: 0.2538, step: 32900
+INFO - dpsgd_diffusion.py - 2025-07-13 19:57:21,097 - Loss: 0.2291, step: 33000
+INFO - dpsgd_diffusion.py - 2025-07-13 19:58:19,139 - Loss: 0.2422, step: 33100
+INFO - dpsgd_diffusion.py - 2025-07-13 19:58:49,373 - Eps-value after 74 epochs: 0.6713
+INFO - dpsgd_diffusion.py - 2025-07-13 19:59:16,578 - Loss: 0.2347, step: 33200
+INFO - dpsgd_diffusion.py - 2025-07-13 20:00:13,605 - Loss: 0.2615, step: 33300
+INFO - dpsgd_diffusion.py - 2025-07-13 20:01:11,052 - Loss: 0.2401, step: 33400
+INFO - dpsgd_diffusion.py - 2025-07-13 20:02:09,562 - Loss: 0.2412, step: 33500
+INFO - dpsgd_diffusion.py - 2025-07-13 20:03:07,380 - Loss: 0.2314, step: 33600
+INFO - dpsgd_diffusion.py - 2025-07-13 20:03:07,404 - Eps-value after 75 epochs: 0.6761
+INFO - dpsgd_diffusion.py - 2025-07-13 20:04:03,782 - Loss: 0.2468, step: 33700
+INFO - dpsgd_diffusion.py - 2025-07-13 20:05:00,735 - Loss: 0.2170, step: 33800
+INFO - dpsgd_diffusion.py - 2025-07-13 20:05:57,180 - Loss: 0.2402, step: 33900
+INFO - dpsgd_diffusion.py - 2025-07-13 20:06:54,457 - Loss: 0.2635, step: 34000
+INFO - dpsgd_diffusion.py - 2025-07-13 20:06:54,500 - Saving snapshot checkpoint and sampling single batch at iteration 34000.
+WARNING - image.py - 2025-07-13 20:06:55,131 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 20:07:08,326 - FID at iteration 34000: 39.842539
+INFO - dpsgd_diffusion.py - 2025-07-13 20:07:35,715 - Eps-value after 76 epochs: 0.6808
+INFO - dpsgd_diffusion.py - 2025-07-13 20:08:05,876 - Loss: 0.2269, step: 34100
+INFO - dpsgd_diffusion.py - 2025-07-13 20:09:03,393 - Loss: 0.2485, step: 34200
+INFO - dpsgd_diffusion.py - 2025-07-13 20:10:00,833 - Loss: 0.2095, step: 34300
+INFO - dpsgd_diffusion.py - 2025-07-13 20:10:58,512 - Loss: 0.2091, step: 34400
+INFO - dpsgd_diffusion.py - 2025-07-13 20:11:54,375 - Eps-value after 77 epochs: 0.6856
+INFO - dpsgd_diffusion.py - 2025-07-13 20:11:56,618 - Loss: 0.2230, step: 34500
+INFO - dpsgd_diffusion.py - 2025-07-13 20:12:53,071 - Loss: 0.2376, step: 34600
+INFO - dpsgd_diffusion.py - 2025-07-13 20:13:49,848 - Loss: 0.2100, step: 34700
+INFO - dpsgd_diffusion.py - 2025-07-13 20:14:46,686 - Loss: 0.2090, step: 34800
+INFO - dpsgd_diffusion.py - 2025-07-13 20:15:44,131 - Loss: 0.2657, step: 34900
+INFO - dpsgd_diffusion.py - 2025-07-13 20:16:08,991 - Eps-value after 78 epochs: 0.6903
+INFO - dpsgd_diffusion.py - 2025-07-13 20:16:40,694 - Loss: 0.2255, step: 35000
+INFO - dpsgd_diffusion.py - 2025-07-13 20:17:37,544 - Loss: 0.2053, step: 35100
+INFO - dpsgd_diffusion.py - 2025-07-13 20:18:35,349 - Loss: 0.2255, step: 35200
+INFO - dpsgd_diffusion.py - 2025-07-13 20:19:31,269 - Loss: 0.2494, step: 35300
+INFO - dpsgd_diffusion.py - 2025-07-13 20:20:23,641 - Eps-value after 79 epochs: 0.6951
+INFO - dpsgd_diffusion.py - 2025-07-13 20:20:28,218 - Loss: 0.2481, step: 35400
+INFO - dpsgd_diffusion.py - 2025-07-13 20:21:24,941 - Loss: 0.2303, step: 35500
+INFO - dpsgd_diffusion.py - 2025-07-13 20:22:22,290 - Loss: 0.2026, step: 35600
+INFO - dpsgd_diffusion.py - 2025-07-13 20:23:19,119 - Loss: 0.2264, step: 35700
+INFO - dpsgd_diffusion.py - 2025-07-13 20:24:15,526 - Loss: 0.2455, step: 35800
+INFO - dpsgd_diffusion.py - 2025-07-13 20:24:38,324 - Eps-value after 80 epochs: 0.6998
+INFO - dpsgd_diffusion.py - 2025-07-13 20:25:12,399 - Loss: 0.2220, step: 35900
+INFO - dpsgd_diffusion.py - 2025-07-13 20:26:10,371 - Loss: 0.2208, step: 36000
+INFO - dpsgd_diffusion.py - 2025-07-13 20:26:10,404 - Saving snapshot checkpoint and sampling single batch at iteration 36000.
+WARNING - image.py - 2025-07-13 20:26:11,713 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 20:26:25,523 - FID at iteration 36000: 39.155245
+INFO - dpsgd_diffusion.py - 2025-07-13 20:27:23,053 - Loss: 0.2319, step: 36100
+INFO - dpsgd_diffusion.py - 2025-07-13 20:28:19,893 - Loss: 0.2475, step: 36200
+INFO - dpsgd_diffusion.py - 2025-07-13 20:29:10,791 - Eps-value after 81 epochs: 0.7044
+INFO - dpsgd_diffusion.py - 2025-07-13 20:29:17,516 - Loss: 0.2352, step: 36300
+INFO - dpsgd_diffusion.py - 2025-07-13 20:30:15,232 - Loss: 0.2162, step: 36400
+INFO - dpsgd_diffusion.py - 2025-07-13 20:31:11,041 - Loss: 0.2239, step: 36500
+INFO - dpsgd_diffusion.py - 2025-07-13 20:32:08,171 - Loss: 0.2351, step: 36600
+INFO - dpsgd_diffusion.py - 2025-07-13 20:33:05,638 - Loss: 0.2436, step: 36700
+INFO - dpsgd_diffusion.py - 2025-07-13 20:33:26,079 - Eps-value after 82 epochs: 0.7090
+INFO - dpsgd_diffusion.py - 2025-07-13 20:34:02,366 - Loss: 0.2260, step: 36800
+INFO - dpsgd_diffusion.py - 2025-07-13 20:34:59,200 - Loss: 0.2546, step: 36900
+INFO - dpsgd_diffusion.py - 2025-07-13 20:35:56,812 - Loss: 0.2440, step: 37000
+INFO - dpsgd_diffusion.py - 2025-07-13 20:36:54,297 - Loss: 0.2219, step: 37100
+INFO - dpsgd_diffusion.py - 2025-07-13 20:37:43,530 - Eps-value after 83 epochs: 0.7135
+INFO - dpsgd_diffusion.py - 2025-07-13 20:37:52,579 - Loss: 0.2103, step: 37200
+INFO - dpsgd_diffusion.py - 2025-07-13 20:38:49,261 - Loss: 0.2410, step: 37300
+INFO - dpsgd_diffusion.py - 2025-07-13 20:39:46,546 - Loss: 0.2421, step: 37400
+INFO - dpsgd_diffusion.py - 2025-07-13 20:40:43,761 - Loss: 0.2303, step: 37500
+INFO - dpsgd_diffusion.py - 2025-07-13 20:41:40,537 - Loss: 0.2308, step: 37600
+INFO - dpsgd_diffusion.py - 2025-07-13 20:41:58,666 - Eps-value after 84 epochs: 0.7181
+INFO - dpsgd_diffusion.py - 2025-07-13 20:42:37,841 - Loss: 0.2141, step: 37700
+INFO - dpsgd_diffusion.py - 2025-07-13 20:43:34,970 - Loss: 0.2291, step: 37800
+INFO - dpsgd_diffusion.py - 2025-07-13 20:44:32,971 - Loss: 0.2517, step: 37900
+INFO - dpsgd_diffusion.py - 2025-07-13 20:45:29,508 - Loss: 0.2156, step: 38000
+INFO - dpsgd_diffusion.py - 2025-07-13 20:45:29,536 - Saving snapshot checkpoint and sampling single batch at iteration 38000.
+WARNING - image.py - 2025-07-13 20:45:30,081 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 20:45:43,581 - FID at iteration 38000: 38.782778
+INFO - dpsgd_diffusion.py - 2025-07-13 20:46:30,194 - Eps-value after 85 epochs: 0.7227
+INFO - dpsgd_diffusion.py - 2025-07-13 20:46:42,000 - Loss: 0.2494, step: 38100
+INFO - dpsgd_diffusion.py - 2025-07-13 20:47:39,887 - Loss: 0.2600, step: 38200
+INFO - dpsgd_diffusion.py - 2025-07-13 20:48:36,575 - Loss: 0.2608, step: 38300
+INFO - dpsgd_diffusion.py - 2025-07-13 20:49:34,020 - Loss: 0.2237, step: 38400
+INFO - dpsgd_diffusion.py - 2025-07-13 20:50:32,164 - Loss: 0.2503, step: 38500
+INFO - dpsgd_diffusion.py - 2025-07-13 20:50:47,722 - Eps-value after 86 epochs: 0.7273
+INFO - dpsgd_diffusion.py - 2025-07-13 20:51:29,429 - Loss: 0.2359, step: 38600
+INFO - dpsgd_diffusion.py - 2025-07-13 20:52:26,947 - Loss: 0.2376, step: 38700
+INFO - dpsgd_diffusion.py - 2025-07-13 20:53:23,885 - Loss: 0.2361, step: 38800
+INFO - dpsgd_diffusion.py - 2025-07-13 20:54:20,569 - Loss: 0.2277, step: 38900
+INFO - dpsgd_diffusion.py - 2025-07-13 20:55:03,671 - Eps-value after 87 epochs: 0.7318
+INFO - dpsgd_diffusion.py - 2025-07-13 20:55:17,113 - Loss: 0.2428, step: 39000
+INFO - dpsgd_diffusion.py - 2025-07-13 20:56:14,215 - Loss: 0.2217, step: 39100
+INFO - dpsgd_diffusion.py - 2025-07-13 20:57:13,130 - Loss: 0.2247, step: 39200
+INFO - dpsgd_diffusion.py - 2025-07-13 20:58:10,137 - Loss: 0.2449, step: 39300
+INFO - dpsgd_diffusion.py - 2025-07-13 20:59:07,604 - Loss: 0.2143, step: 39400
+INFO - dpsgd_diffusion.py - 2025-07-13 20:59:21,606 - Eps-value after 88 epochs: 0.7362
+INFO - dpsgd_diffusion.py - 2025-07-13 21:00:06,067 - Loss: 0.2387, step: 39500
+INFO - dpsgd_diffusion.py - 2025-07-13 21:01:03,113 - Loss: 0.2401, step: 39600
+INFO - dpsgd_diffusion.py - 2025-07-13 21:01:59,900 - Loss: 0.2446, step: 39700
+INFO - dpsgd_diffusion.py - 2025-07-13 21:02:57,015 - Loss: 0.2586, step: 39800
+INFO - dpsgd_diffusion.py - 2025-07-13 21:03:39,471 - Eps-value after 89 epochs: 0.7406
+INFO - dpsgd_diffusion.py - 2025-07-13 21:03:55,977 - Loss: 0.2321, step: 39900
+INFO - dpsgd_diffusion.py - 2025-07-13 21:04:53,800 - Loss: 0.2220, step: 40000
+INFO - dpsgd_diffusion.py - 2025-07-13 21:04:53,831 - Saving snapshot checkpoint and sampling single batch at iteration 40000.
+WARNING - image.py - 2025-07-13 21:04:54,389 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 21:05:07,911 - FID at iteration 40000: 38.235757
+INFO - dpsgd_diffusion.py - 2025-07-13 21:06:04,001 - Loss: 0.2423, step: 40100
+INFO - dpsgd_diffusion.py - 2025-07-13 21:07:01,301 - Loss: 0.2360, step: 40200
+INFO - dpsgd_diffusion.py - 2025-07-13 21:07:57,821 - Loss: 0.2321, step: 40300
+INFO - dpsgd_diffusion.py - 2025-07-13 21:08:09,350 - Eps-value after 90 epochs: 0.7450
+INFO - dpsgd_diffusion.py - 2025-07-13 21:08:54,320 - Loss: 0.2159, step: 40400
+INFO - dpsgd_diffusion.py - 2025-07-13 21:09:51,466 - Loss: 0.2270, step: 40500
+INFO - dpsgd_diffusion.py - 2025-07-13 21:10:48,800 - Loss: 0.2209, step: 40600
+INFO - dpsgd_diffusion.py - 2025-07-13 21:11:46,163 - Loss: 0.2062, step: 40700
+INFO - dpsgd_diffusion.py - 2025-07-13 21:12:24,057 - Eps-value after 91 epochs: 0.7494
+INFO - dpsgd_diffusion.py - 2025-07-13 21:12:42,458 - Loss: 0.2271, step: 40800
+INFO - dpsgd_diffusion.py - 2025-07-13 21:13:40,844 - Loss: 0.2628, step: 40900
+INFO - dpsgd_diffusion.py - 2025-07-13 21:14:38,798 - Loss: 0.2219, step: 41000
+INFO - dpsgd_diffusion.py - 2025-07-13 21:15:37,077 - Loss: 0.2504, step: 41100
+INFO - dpsgd_diffusion.py - 2025-07-13 21:16:34,211 - Loss: 0.2255, step: 41200
+INFO - dpsgd_diffusion.py - 2025-07-13 21:16:43,370 - Eps-value after 92 epochs: 0.7539
+INFO - dpsgd_diffusion.py - 2025-07-13 21:17:31,574 - Loss: 0.2582, step: 41300
+INFO - dpsgd_diffusion.py - 2025-07-13 21:18:27,697 - Loss: 0.2347, step: 41400
+INFO - dpsgd_diffusion.py - 2025-07-13 21:19:26,274 - Loss: 0.1981, step: 41500
+INFO - dpsgd_diffusion.py - 2025-07-13 21:20:23,277 - Loss: 0.2379, step: 41600
+INFO - dpsgd_diffusion.py - 2025-07-13 21:21:00,289 - Eps-value after 93 epochs: 0.7583
+INFO - dpsgd_diffusion.py - 2025-07-13 21:21:20,784 - Loss: 0.2194, step: 41700
+INFO - dpsgd_diffusion.py - 2025-07-13 21:22:18,160 - Loss: 0.2217, step: 41800
+INFO - dpsgd_diffusion.py - 2025-07-13 21:23:15,386 - Loss: 0.2215, step: 41900
+INFO - dpsgd_diffusion.py - 2025-07-13 21:24:12,812 - Loss: 0.2214, step: 42000
+INFO - dpsgd_diffusion.py - 2025-07-13 21:24:12,858 - Saving snapshot checkpoint and sampling single batch at iteration 42000.
+WARNING - image.py - 2025-07-13 21:24:13,905 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 21:24:27,639 - FID at iteration 42000: 37.884783
+INFO - dpsgd_diffusion.py - 2025-07-13 21:25:25,576 - Loss: 0.2302, step: 42100
+INFO - dpsgd_diffusion.py - 2025-07-13 21:25:32,304 - Eps-value after 94 epochs: 0.7626
+INFO - dpsgd_diffusion.py - 2025-07-13 21:26:25,603 - Loss: 0.2359, step: 42200
+INFO - dpsgd_diffusion.py - 2025-07-13 21:27:22,875 - Loss: 0.2223, step: 42300
+INFO - dpsgd_diffusion.py - 2025-07-13 21:28:20,078 - Loss: 0.2491, step: 42400
+INFO - dpsgd_diffusion.py - 2025-07-13 21:29:17,987 - Loss: 0.2321, step: 42500
+INFO - dpsgd_diffusion.py - 2025-07-13 21:29:52,427 - Eps-value after 95 epochs: 0.7669
+INFO - dpsgd_diffusion.py - 2025-07-13 21:30:14,998 - Loss: 0.2483, step: 42600
+INFO - dpsgd_diffusion.py - 2025-07-13 21:31:12,177 - Loss: 0.2404, step: 42700
+INFO - dpsgd_diffusion.py - 2025-07-13 21:32:10,100 - Loss: 0.2550, step: 42800
+INFO - dpsgd_diffusion.py - 2025-07-13 21:33:07,326 - Loss: 0.2412, step: 42900
+INFO - dpsgd_diffusion.py - 2025-07-13 21:34:05,254 - Loss: 0.2236, step: 43000
+INFO - dpsgd_diffusion.py - 2025-07-13 21:34:10,109 - Eps-value after 96 epochs: 0.7711
+INFO - dpsgd_diffusion.py - 2025-07-13 21:35:04,394 - Loss: 0.2274, step: 43100
+INFO - dpsgd_diffusion.py - 2025-07-13 21:36:02,135 - Loss: 0.2071, step: 43200
+INFO - dpsgd_diffusion.py - 2025-07-13 21:36:59,444 - Loss: 0.2411, step: 43300
+INFO - dpsgd_diffusion.py - 2025-07-13 21:37:56,727 - Loss: 0.2352, step: 43400
+INFO - dpsgd_diffusion.py - 2025-07-13 21:38:28,852 - Eps-value after 97 epochs: 0.7754
+INFO - dpsgd_diffusion.py - 2025-07-13 21:38:53,785 - Loss: 0.1965, step: 43500
+INFO - dpsgd_diffusion.py - 2025-07-13 21:39:50,978 - Loss: 0.2277, step: 43600
+INFO - dpsgd_diffusion.py - 2025-07-13 21:40:48,828 - Loss: 0.2411, step: 43700
+INFO - dpsgd_diffusion.py - 2025-07-13 21:41:46,335 - Loss: 0.2493, step: 43800
+INFO - dpsgd_diffusion.py - 2025-07-13 21:42:43,425 - Loss: 0.2428, step: 43900
+INFO - dpsgd_diffusion.py - 2025-07-13 21:42:45,642 - Eps-value after 98 epochs: 0.7796
+INFO - dpsgd_diffusion.py - 2025-07-13 21:43:41,597 - Loss: 0.2449, step: 44000
+INFO - dpsgd_diffusion.py - 2025-07-13 21:43:41,629 - Saving snapshot checkpoint and sampling single batch at iteration 44000.
+WARNING - image.py - 2025-07-13 21:43:42,804 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 21:43:56,618 - FID at iteration 44000: 37.467490
+INFO - dpsgd_diffusion.py - 2025-07-13 21:44:54,042 - Loss: 0.2189, step: 44100
+INFO - dpsgd_diffusion.py - 2025-07-13 21:45:50,983 - Loss: 0.2362, step: 44200
+INFO - dpsgd_diffusion.py - 2025-07-13 21:46:48,020 - Loss: 0.2070, step: 44300
+INFO - dpsgd_diffusion.py - 2025-07-13 21:47:17,528 - Eps-value after 99 epochs: 0.7839
+INFO - dpsgd_diffusion.py - 2025-07-13 21:47:45,115 - Loss: 0.2161, step: 44400
+INFO - dpsgd_diffusion.py - 2025-07-13 21:48:42,111 - Loss: 0.2154, step: 44500
+INFO - dpsgd_diffusion.py - 2025-07-13 21:49:39,293 - Loss: 0.2204, step: 44600
+INFO - dpsgd_diffusion.py - 2025-07-13 21:50:37,484 - Loss: 0.2611, step: 44700
+INFO - dpsgd_diffusion.py - 2025-07-13 21:51:34,574 - Loss: 0.2199, step: 44800
+INFO - dpsgd_diffusion.py - 2025-07-13 21:51:34,598 - Eps-value after 100 epochs: 0.7881
+INFO - dpsgd_diffusion.py - 2025-07-13 21:52:32,280 - Loss: 0.2265, step: 44900
+INFO - dpsgd_diffusion.py - 2025-07-13 21:53:28,941 - Loss: 0.2478, step: 45000
+INFO - dpsgd_diffusion.py - 2025-07-13 21:54:25,726 - Loss: 0.2253, step: 45100
+INFO - dpsgd_diffusion.py - 2025-07-13 21:55:23,137 - Loss: 0.2174, step: 45200
+INFO - dpsgd_diffusion.py - 2025-07-13 21:55:51,428 - Eps-value after 101 epochs: 0.7924
+INFO - dpsgd_diffusion.py - 2025-07-13 21:56:21,408 - Loss: 0.2325, step: 45300
+INFO - dpsgd_diffusion.py - 2025-07-13 21:57:18,329 - Loss: 0.2700, step: 45400
+INFO - dpsgd_diffusion.py - 2025-07-13 21:58:15,272 - Loss: 0.2310, step: 45500
+INFO - dpsgd_diffusion.py - 2025-07-13 21:59:12,432 - Loss: 0.2411, step: 45600
+INFO - dpsgd_diffusion.py - 2025-07-13 22:00:07,677 - Eps-value after 102 epochs: 0.7966
+INFO - dpsgd_diffusion.py - 2025-07-13 22:00:10,044 - Loss: 0.2266, step: 45700
+INFO - dpsgd_diffusion.py - 2025-07-13 22:01:07,890 - Loss: 0.2278, step: 45800
+INFO - dpsgd_diffusion.py - 2025-07-13 22:02:05,043 - Loss: 0.2103, step: 45900
+INFO - dpsgd_diffusion.py - 2025-07-13 22:03:02,282 - Loss: 0.2272, step: 46000
+INFO - dpsgd_diffusion.py - 2025-07-13 22:03:02,341 - Saving snapshot checkpoint and sampling single batch at iteration 46000.
+WARNING - image.py - 2025-07-13 22:03:02,909 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 22:03:16,761 - FID at iteration 46000: 37.621997
+INFO - dpsgd_diffusion.py - 2025-07-13 22:04:13,710 - Loss: 0.2253, step: 46100
+INFO - dpsgd_diffusion.py - 2025-07-13 22:04:38,736 - Eps-value after 103 epochs: 0.8007
+INFO - dpsgd_diffusion.py - 2025-07-13 22:05:10,181 - Loss: 0.2328, step: 46200
+INFO - dpsgd_diffusion.py - 2025-07-13 22:06:06,945 - Loss: 0.2141, step: 46300
+INFO - dpsgd_diffusion.py - 2025-07-13 22:07:04,420 - Loss: 0.2516, step: 46400
+INFO - dpsgd_diffusion.py - 2025-07-13 22:08:01,522 - Loss: 0.2202, step: 46500
+INFO - dpsgd_diffusion.py - 2025-07-13 22:08:53,921 - Eps-value after 104 epochs: 0.8048
+INFO - dpsgd_diffusion.py - 2025-07-13 22:08:58,538 - Loss: 0.2419, step: 46600
+INFO - dpsgd_diffusion.py - 2025-07-13 22:09:56,690 - Loss: 0.2381, step: 46700
+INFO - dpsgd_diffusion.py - 2025-07-13 22:10:53,567 - Loss: 0.2537, step: 46800
+INFO - dpsgd_diffusion.py - 2025-07-13 22:11:50,680 - Loss: 0.2456, step: 46900
+INFO - dpsgd_diffusion.py - 2025-07-13 22:12:46,697 - Loss: 0.2226, step: 47000
+INFO - dpsgd_diffusion.py - 2025-07-13 22:13:09,517 - Eps-value after 105 epochs: 0.8089
+INFO - dpsgd_diffusion.py - 2025-07-13 22:13:44,710 - Loss: 0.2550, step: 47100
+INFO - dpsgd_diffusion.py - 2025-07-13 22:14:42,593 - Loss: 0.2320, step: 47200
+INFO - dpsgd_diffusion.py - 2025-07-13 22:15:40,178 - Loss: 0.2344, step: 47300
+INFO - dpsgd_diffusion.py - 2025-07-13 22:16:38,044 - Loss: 0.2420, step: 47400
+INFO - dpsgd_diffusion.py - 2025-07-13 22:17:28,305 - Eps-value after 106 epochs: 0.8130
+INFO - dpsgd_diffusion.py - 2025-07-13 22:17:35,378 - Loss: 0.2274, step: 47500
+INFO - dpsgd_diffusion.py - 2025-07-13 22:18:33,246 - Loss: 0.2291, step: 47600
+INFO - dpsgd_diffusion.py - 2025-07-13 22:19:30,975 - Loss: 0.2397, step: 47700
+INFO - dpsgd_diffusion.py - 2025-07-13 22:20:26,835 - Loss: 0.2335, step: 47800
+INFO - dpsgd_diffusion.py - 2025-07-13 22:21:23,832 - Loss: 0.2244, step: 47900
+INFO - dpsgd_diffusion.py - 2025-07-13 22:21:44,126 - Eps-value after 107 epochs: 0.8171
+INFO - dpsgd_diffusion.py - 2025-07-13 22:22:20,547 - Loss: 0.2493, step: 48000
+INFO - dpsgd_diffusion.py - 2025-07-13 22:22:20,581 - Saving snapshot checkpoint and sampling single batch at iteration 48000.
+WARNING - image.py - 2025-07-13 22:22:21,716 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 22:22:35,547 - FID at iteration 48000: 37.041319
+INFO - dpsgd_diffusion.py - 2025-07-13 22:23:33,512 - Loss: 0.2202, step: 48100
+INFO - dpsgd_diffusion.py - 2025-07-13 22:24:29,947 - Loss: 0.2409, step: 48200
+INFO - dpsgd_diffusion.py - 2025-07-13 22:25:27,650 - Loss: 0.2175, step: 48300
+INFO - dpsgd_diffusion.py - 2025-07-13 22:26:16,113 - Eps-value after 108 epochs: 0.8211
+INFO - dpsgd_diffusion.py - 2025-07-13 22:26:25,469 - Loss: 0.2137, step: 48400
+INFO - dpsgd_diffusion.py - 2025-07-13 22:27:22,485 - Loss: 0.2405, step: 48500
+INFO - dpsgd_diffusion.py - 2025-07-13 22:28:19,695 - Loss: 0.2265, step: 48600
+INFO - dpsgd_diffusion.py - 2025-07-13 22:29:16,881 - Loss: 0.2114, step: 48700
+INFO - dpsgd_diffusion.py - 2025-07-13 22:30:13,220 - Loss: 0.2418, step: 48800
+INFO - dpsgd_diffusion.py - 2025-07-13 22:30:31,122 - Eps-value after 109 epochs: 0.8252
+INFO - dpsgd_diffusion.py - 2025-07-13 22:31:09,946 - Loss: 0.2199, step: 48900
+INFO - dpsgd_diffusion.py - 2025-07-13 22:32:07,774 - Loss: 0.2340, step: 49000
+INFO - dpsgd_diffusion.py - 2025-07-13 22:33:05,735 - Loss: 0.2220, step: 49100
+INFO - dpsgd_diffusion.py - 2025-07-13 22:34:03,173 - Loss: 0.2357, step: 49200
+INFO - dpsgd_diffusion.py - 2025-07-13 22:34:48,503 - Eps-value after 110 epochs: 0.8293
+INFO - dpsgd_diffusion.py - 2025-07-13 22:34:59,730 - Loss: 0.2279, step: 49300
+INFO - dpsgd_diffusion.py - 2025-07-13 22:35:57,335 - Loss: 0.2138, step: 49400
+INFO - dpsgd_diffusion.py - 2025-07-13 22:36:55,654 - Loss: 0.2410, step: 49500
+INFO - dpsgd_diffusion.py - 2025-07-13 22:37:52,151 - Loss: 0.2349, step: 49600
+INFO - dpsgd_diffusion.py - 2025-07-13 22:38:49,775 - Loss: 0.2463, step: 49700
+INFO - dpsgd_diffusion.py - 2025-07-13 22:39:05,778 - Eps-value after 111 epochs: 0.8334
+INFO - dpsgd_diffusion.py - 2025-07-13 22:39:46,463 - Loss: 0.2366, step: 49800
+INFO - dpsgd_diffusion.py - 2025-07-13 22:40:43,095 - Loss: 0.2346, step: 49900
+INFO - dpsgd_diffusion.py - 2025-07-13 22:41:40,211 - Loss: 0.2339, step: 50000
+INFO - dpsgd_diffusion.py - 2025-07-13 22:41:40,237 - Saving snapshot checkpoint and sampling single batch at iteration 50000.
+WARNING - image.py - 2025-07-13 22:41:40,913 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 22:41:54,590 - FID at iteration 50000: 36.200067
+INFO - dpsgd_diffusion.py - 2025-07-13 22:42:53,517 - Loss: 0.2424, step: 50100
+INFO - dpsgd_diffusion.py - 2025-07-13 22:43:37,270 - Eps-value after 112 epochs: 0.8374
+INFO - dpsgd_diffusion.py - 2025-07-13 22:43:51,129 - Loss: 0.2353, step: 50200
+INFO - dpsgd_diffusion.py - 2025-07-13 22:44:48,408 - Loss: 0.2050, step: 50300
+INFO - dpsgd_diffusion.py - 2025-07-13 22:45:45,802 - Loss: 0.2374, step: 50400
+INFO - dpsgd_diffusion.py - 2025-07-13 22:46:42,656 - Loss: 0.2340, step: 50500
+INFO - dpsgd_diffusion.py - 2025-07-13 22:47:40,650 - Loss: 0.2091, step: 50600
+INFO - dpsgd_diffusion.py - 2025-07-13 22:47:54,174 - Eps-value after 113 epochs: 0.8413
+INFO - dpsgd_diffusion.py - 2025-07-13 22:48:36,392 - Loss: 0.2141, step: 50700
+INFO - dpsgd_diffusion.py - 2025-07-13 22:49:32,855 - Loss: 0.2358, step: 50800
+INFO - dpsgd_diffusion.py - 2025-07-13 22:50:29,699 - Loss: 0.2252, step: 50900
+INFO - dpsgd_diffusion.py - 2025-07-13 22:51:27,909 - Loss: 0.2103, step: 51000
+INFO - dpsgd_diffusion.py - 2025-07-13 22:52:09,213 - Eps-value after 114 epochs: 0.8452
+INFO - dpsgd_diffusion.py - 2025-07-13 22:52:24,919 - Loss: 0.2395, step: 51100
+INFO - dpsgd_diffusion.py - 2025-07-13 22:53:22,735 - Loss: 0.2012, step: 51200
+INFO - dpsgd_diffusion.py - 2025-07-13 22:54:20,831 - Loss: 0.2392, step: 51300
+INFO - dpsgd_diffusion.py - 2025-07-13 22:55:17,428 - Loss: 0.2202, step: 51400
+INFO - dpsgd_diffusion.py - 2025-07-13 22:56:15,288 - Loss: 0.2399, step: 51500
+INFO - dpsgd_diffusion.py - 2025-07-13 22:56:26,348 - Eps-value after 115 epochs: 0.8491
+INFO - dpsgd_diffusion.py - 2025-07-13 22:57:12,678 - Loss: 0.2289, step: 51600
+INFO - dpsgd_diffusion.py - 2025-07-13 22:58:10,313 - Loss: 0.2605, step: 51700
+INFO - dpsgd_diffusion.py - 2025-07-13 22:59:08,077 - Loss: 0.2481, step: 51800
+INFO - dpsgd_diffusion.py - 2025-07-13 23:00:04,798 - Loss: 0.2227, step: 51900
+INFO - dpsgd_diffusion.py - 2025-07-13 23:00:44,328 - Eps-value after 116 epochs: 0.8531
+INFO - dpsgd_diffusion.py - 2025-07-13 23:01:02,335 - Loss: 0.2187, step: 52000
+INFO - dpsgd_diffusion.py - 2025-07-13 23:01:02,369 - Saving snapshot checkpoint and sampling single batch at iteration 52000.
+WARNING - image.py - 2025-07-13 23:01:03,524 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 23:01:16,431 - FID at iteration 52000: 36.425192
+INFO - dpsgd_diffusion.py - 2025-07-13 23:02:13,468 - Loss: 0.2337, step: 52100
+INFO - dpsgd_diffusion.py - 2025-07-13 23:03:11,030 - Loss: 0.2308, step: 52200
+INFO - dpsgd_diffusion.py - 2025-07-13 23:04:08,327 - Loss: 0.2534, step: 52300
+INFO - dpsgd_diffusion.py - 2025-07-13 23:05:05,128 - Loss: 0.2260, step: 52400
+INFO - dpsgd_diffusion.py - 2025-07-13 23:05:14,418 - Eps-value after 117 epochs: 0.8570
+INFO - dpsgd_diffusion.py - 2025-07-13 23:06:01,752 - Loss: 0.2358, step: 52500
+INFO - dpsgd_diffusion.py - 2025-07-13 23:06:58,237 - Loss: 0.2341, step: 52600
+INFO - dpsgd_diffusion.py - 2025-07-13 23:07:55,800 - Loss: 0.2343, step: 52700
+INFO - dpsgd_diffusion.py - 2025-07-13 23:08:52,572 - Loss: 0.1967, step: 52800
+INFO - dpsgd_diffusion.py - 2025-07-13 23:09:30,116 - Eps-value after 118 epochs: 0.8609
+INFO - dpsgd_diffusion.py - 2025-07-13 23:09:50,391 - Loss: 0.2270, step: 52900
+INFO - dpsgd_diffusion.py - 2025-07-13 23:10:47,869 - Loss: 0.2214, step: 53000
+INFO - dpsgd_diffusion.py - 2025-07-13 23:11:44,563 - Loss: 0.2404, step: 53100
+INFO - dpsgd_diffusion.py - 2025-07-13 23:12:41,711 - Loss: 0.2429, step: 53200
+INFO - dpsgd_diffusion.py - 2025-07-13 23:13:38,437 - Loss: 0.2294, step: 53300
+INFO - dpsgd_diffusion.py - 2025-07-13 23:13:45,544 - Eps-value after 119 epochs: 0.8648
+INFO - dpsgd_diffusion.py - 2025-07-13 23:14:37,545 - Loss: 0.2250, step: 53400
+INFO - dpsgd_diffusion.py - 2025-07-13 23:15:35,329 - Loss: 0.2358, step: 53500
+INFO - dpsgd_diffusion.py - 2025-07-13 23:16:33,044 - Loss: 0.2152, step: 53600
+INFO - dpsgd_diffusion.py - 2025-07-13 23:17:30,776 - Loss: 0.2256, step: 53700
+INFO - dpsgd_diffusion.py - 2025-07-13 23:18:04,890 - Eps-value after 120 epochs: 0.8688
+INFO - dpsgd_diffusion.py - 2025-07-13 23:18:29,548 - Loss: 0.2321, step: 53800
+INFO - dpsgd_diffusion.py - 2025-07-13 23:19:26,891 - Loss: 0.2038, step: 53900
+INFO - dpsgd_diffusion.py - 2025-07-13 23:20:25,244 - Loss: 0.2372, step: 54000
+INFO - dpsgd_diffusion.py - 2025-07-13 23:20:25,390 - Saving snapshot checkpoint and sampling single batch at iteration 54000.
+WARNING - image.py - 2025-07-13 23:20:26,282 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 23:20:40,140 - FID at iteration 54000: 37.238743
+INFO - dpsgd_diffusion.py - 2025-07-13 23:21:37,379 - Loss: 0.2345, step: 54100
+INFO - dpsgd_diffusion.py - 2025-07-13 23:22:34,619 - Loss: 0.2389, step: 54200
+INFO - dpsgd_diffusion.py - 2025-07-13 23:22:39,327 - Eps-value after 121 epochs: 0.8727
+INFO - dpsgd_diffusion.py - 2025-07-13 23:23:31,942 - Loss: 0.2367, step: 54300
+INFO - dpsgd_diffusion.py - 2025-07-13 23:24:29,287 - Loss: 0.2286, step: 54400
+INFO - dpsgd_diffusion.py - 2025-07-13 23:25:26,476 - Loss: 0.2471, step: 54500
+INFO - dpsgd_diffusion.py - 2025-07-13 23:26:23,305 - Loss: 0.2018, step: 54600
+INFO - dpsgd_diffusion.py - 2025-07-13 23:26:55,057 - Eps-value after 122 epochs: 0.8766
+INFO - dpsgd_diffusion.py - 2025-07-13 23:27:19,905 - Loss: 0.2175, step: 54700
+INFO - dpsgd_diffusion.py - 2025-07-13 23:28:17,622 - Loss: 0.2273, step: 54800
+INFO - dpsgd_diffusion.py - 2025-07-13 23:29:14,470 - Loss: 0.2154, step: 54900
+INFO - dpsgd_diffusion.py - 2025-07-13 23:30:11,250 - Loss: 0.2325, step: 55000
+INFO - dpsgd_diffusion.py - 2025-07-13 23:31:08,674 - Loss: 0.2465, step: 55100
+INFO - dpsgd_diffusion.py - 2025-07-13 23:31:11,037 - Eps-value after 123 epochs: 0.8803
+INFO - dpsgd_diffusion.py - 2025-07-13 23:32:06,644 - Loss: 0.2263, step: 55200
+INFO - dpsgd_diffusion.py - 2025-07-13 23:33:03,336 - Loss: 0.2400, step: 55300
+INFO - dpsgd_diffusion.py - 2025-07-13 23:34:00,575 - Loss: 0.2125, step: 55400
+INFO - dpsgd_diffusion.py - 2025-07-13 23:34:57,320 - Loss: 0.2317, step: 55500
+INFO - dpsgd_diffusion.py - 2025-07-13 23:35:26,629 - Eps-value after 124 epochs: 0.8841
+INFO - dpsgd_diffusion.py - 2025-07-13 23:35:54,169 - Loss: 0.2383, step: 55600
+INFO - dpsgd_diffusion.py - 2025-07-13 23:36:49,861 - Loss: 0.2358, step: 55700
+INFO - dpsgd_diffusion.py - 2025-07-13 23:37:47,104 - Loss: 0.2409, step: 55800
+INFO - dpsgd_diffusion.py - 2025-07-13 23:38:44,784 - Loss: 0.2307, step: 55900
+INFO - dpsgd_diffusion.py - 2025-07-13 23:39:41,612 - Loss: 0.2133, step: 56000
+INFO - dpsgd_diffusion.py - 2025-07-13 23:39:41,635 - Eps-value after 125 epochs: 0.8879
+INFO - dpsgd_diffusion.py - 2025-07-13 23:39:41,661 - Saving snapshot checkpoint and sampling single batch at iteration 56000.
+WARNING - image.py - 2025-07-13 23:39:42,218 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 23:39:55,928 - FID at iteration 56000: 36.424552
+INFO - dpsgd_diffusion.py - 2025-07-13 23:40:52,795 - Loss: 0.2245, step: 56100
+INFO - dpsgd_diffusion.py - 2025-07-13 23:41:50,656 - Loss: 0.2172, step: 56200
+INFO - dpsgd_diffusion.py - 2025-07-13 23:42:46,846 - Loss: 0.2324, step: 56300
+INFO - dpsgd_diffusion.py - 2025-07-13 23:43:43,794 - Loss: 0.2597, step: 56400
+INFO - dpsgd_diffusion.py - 2025-07-13 23:44:11,145 - Eps-value after 126 epochs: 0.8916
+INFO - dpsgd_diffusion.py - 2025-07-13 23:44:40,816 - Loss: 0.2473, step: 56500
+INFO - dpsgd_diffusion.py - 2025-07-13 23:45:38,404 - Loss: 0.2375, step: 56600
+INFO - dpsgd_diffusion.py - 2025-07-13 23:46:36,183 - Loss: 0.2137, step: 56700
+INFO - dpsgd_diffusion.py - 2025-07-13 23:47:33,290 - Loss: 0.2135, step: 56800
+INFO - dpsgd_diffusion.py - 2025-07-13 23:48:27,233 - Eps-value after 127 epochs: 0.8954
+INFO - dpsgd_diffusion.py - 2025-07-13 23:48:29,502 - Loss: 0.2437, step: 56900
+INFO - dpsgd_diffusion.py - 2025-07-13 23:49:26,634 - Loss: 0.2283, step: 57000
+INFO - dpsgd_diffusion.py - 2025-07-13 23:50:24,104 - Loss: 0.2251, step: 57100
+INFO - dpsgd_diffusion.py - 2025-07-13 23:51:21,493 - Loss: 0.2420, step: 57200
+INFO - dpsgd_diffusion.py - 2025-07-13 23:52:18,175 - Loss: 0.2407, step: 57300
+INFO - dpsgd_diffusion.py - 2025-07-13 23:52:43,399 - Eps-value after 128 epochs: 0.8991
+INFO - dpsgd_diffusion.py - 2025-07-13 23:53:15,164 - Loss: 0.2109, step: 57400
+INFO - dpsgd_diffusion.py - 2025-07-13 23:54:11,442 - Loss: 0.2312, step: 57500
+INFO - dpsgd_diffusion.py - 2025-07-13 23:55:09,482 - Loss: 0.2371, step: 57600
+INFO - dpsgd_diffusion.py - 2025-07-13 23:56:06,155 - Loss: 0.2306, step: 57700
+INFO - dpsgd_diffusion.py - 2025-07-13 23:56:58,429 - Eps-value after 129 epochs: 0.9029
+INFO - dpsgd_diffusion.py - 2025-07-13 23:57:03,022 - Loss: 0.2057, step: 57800
+INFO - dpsgd_diffusion.py - 2025-07-13 23:58:00,178 - Loss: 0.2277, step: 57900
+INFO - dpsgd_diffusion.py - 2025-07-13 23:58:58,475 - Loss: 0.2360, step: 58000
+INFO - dpsgd_diffusion.py - 2025-07-13 23:58:58,516 - Saving snapshot checkpoint and sampling single batch at iteration 58000.
+WARNING - image.py - 2025-07-13 23:58:59,134 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-13 23:59:12,971 - FID at iteration 58000: 36.973120
+INFO - dpsgd_diffusion.py - 2025-07-14 00:00:10,118 - Loss: 0.2314, step: 58100
+INFO - dpsgd_diffusion.py - 2025-07-14 00:01:07,036 - Loss: 0.2202, step: 58200
+INFO - dpsgd_diffusion.py - 2025-07-14 00:01:29,979 - Eps-value after 130 epochs: 0.9067
+INFO - dpsgd_diffusion.py - 2025-07-14 00:02:04,630 - Loss: 0.2416, step: 58300
+INFO - dpsgd_diffusion.py - 2025-07-14 00:03:02,240 - Loss: 0.2305, step: 58400
+INFO - dpsgd_diffusion.py - 2025-07-14 00:03:59,780 - Loss: 0.2473, step: 58500
+INFO - dpsgd_diffusion.py - 2025-07-14 00:04:56,186 - Loss: 0.2316, step: 58600
+INFO - dpsgd_diffusion.py - 2025-07-14 00:05:45,853 - Eps-value after 131 epochs: 0.9104
+INFO - dpsgd_diffusion.py - 2025-07-14 00:05:52,636 - Loss: 0.2316, step: 58700
+INFO - dpsgd_diffusion.py - 2025-07-14 00:06:49,995 - Loss: 0.2287, step: 58800
+INFO - dpsgd_diffusion.py - 2025-07-14 00:07:47,576 - Loss: 0.2325, step: 58900
+INFO - dpsgd_diffusion.py - 2025-07-14 00:08:44,473 - Loss: 0.2387, step: 59000
+INFO - dpsgd_diffusion.py - 2025-07-14 00:09:40,873 - Loss: 0.2203, step: 59100
+INFO - dpsgd_diffusion.py - 2025-07-14 00:10:01,014 - Eps-value after 132 epochs: 0.9142
+INFO - dpsgd_diffusion.py - 2025-07-14 00:10:37,643 - Loss: 0.2358, step: 59200
+INFO - dpsgd_diffusion.py - 2025-07-14 00:11:35,213 - Loss: 0.2215, step: 59300
+INFO - dpsgd_diffusion.py - 2025-07-14 00:12:31,644 - Loss: 0.2166, step: 59400
+INFO - dpsgd_diffusion.py - 2025-07-14 00:13:29,226 - Loss: 0.2195, step: 59500
+INFO - dpsgd_diffusion.py - 2025-07-14 00:14:17,202 - Eps-value after 133 epochs: 0.9179
+INFO - dpsgd_diffusion.py - 2025-07-14 00:14:26,584 - Loss: 0.2317, step: 59600
+INFO - dpsgd_diffusion.py - 2025-07-14 00:15:23,328 - Loss: 0.2433, step: 59700
+INFO - dpsgd_diffusion.py - 2025-07-14 00:16:20,673 - Loss: 0.2398, step: 59800
+INFO - dpsgd_diffusion.py - 2025-07-14 00:17:17,882 - Loss: 0.2480, step: 59900
+INFO - dpsgd_diffusion.py - 2025-07-14 00:18:15,351 - Loss: 0.2293, step: 60000
+INFO - dpsgd_diffusion.py - 2025-07-14 00:18:15,383 - Saving snapshot checkpoint and sampling single batch at iteration 60000.
+WARNING - image.py - 2025-07-14 00:18:16,608 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-14 00:18:30,285 - FID at iteration 60000: 35.801775
+INFO - dpsgd_diffusion.py - 2025-07-14 00:18:49,619 - Eps-value after 134 epochs: 0.9217
+INFO - dpsgd_diffusion.py - 2025-07-14 00:19:28,941 - Loss: 0.2417, step: 60100
+INFO - dpsgd_diffusion.py - 2025-07-14 00:20:25,668 - Loss: 0.2505, step: 60200
+INFO - dpsgd_diffusion.py - 2025-07-14 00:21:23,295 - Loss: 0.2543, step: 60300
+INFO - dpsgd_diffusion.py - 2025-07-14 00:22:21,540 - Loss: 0.2033, step: 60400
+INFO - dpsgd_diffusion.py - 2025-07-14 00:23:07,960 - Eps-value after 135 epochs: 0.9253
+INFO - dpsgd_diffusion.py - 2025-07-14 00:23:20,204 - Loss: 0.2276, step: 60500
+INFO - dpsgd_diffusion.py - 2025-07-14 00:24:17,168 - Loss: 0.2291, step: 60600
+INFO - dpsgd_diffusion.py - 2025-07-14 00:25:13,476 - Loss: 0.2326, step: 60700
+INFO - dpsgd_diffusion.py - 2025-07-14 00:26:11,192 - Loss: 0.2315, step: 60800
+INFO - dpsgd_diffusion.py - 2025-07-14 00:27:10,156 - Loss: 0.2184, step: 60900
+INFO - dpsgd_diffusion.py - 2025-07-14 00:27:25,808 - Eps-value after 136 epochs: 0.9289
+INFO - dpsgd_diffusion.py - 2025-07-14 00:28:07,808 - Loss: 0.2299, step: 61000
+INFO - dpsgd_diffusion.py - 2025-07-14 00:29:05,359 - Loss: 0.2523, step: 61100
+INFO - dpsgd_diffusion.py - 2025-07-14 00:30:03,010 - Loss: 0.2073, step: 61200
+INFO - dpsgd_diffusion.py - 2025-07-14 00:31:00,114 - Loss: 0.2374, step: 61300
+INFO - dpsgd_diffusion.py - 2025-07-14 00:31:43,236 - Eps-value after 137 epochs: 0.9325
+INFO - dpsgd_diffusion.py - 2025-07-14 00:31:57,297 - Loss: 0.2339, step: 61400
+INFO - dpsgd_diffusion.py - 2025-07-14 00:32:53,832 - Loss: 0.2228, step: 61500
+INFO - dpsgd_diffusion.py - 2025-07-14 00:33:51,288 - Loss: 0.2196, step: 61600
+INFO - dpsgd_diffusion.py - 2025-07-14 00:34:48,855 - Loss: 0.2195, step: 61700
+INFO - dpsgd_diffusion.py - 2025-07-14 00:35:45,573 - Loss: 0.2203, step: 61800
+INFO - dpsgd_diffusion.py - 2025-07-14 00:35:59,426 - Eps-value after 138 epochs: 0.9361
+INFO - dpsgd_diffusion.py - 2025-07-14 00:36:42,472 - Loss: 0.2332, step: 61900
+INFO - dpsgd_diffusion.py - 2025-07-14 00:37:40,115 - Loss: 0.2436, step: 62000
+INFO - dpsgd_diffusion.py - 2025-07-14 00:37:40,159 - Saving snapshot checkpoint and sampling single batch at iteration 62000.
+WARNING - image.py - 2025-07-14 00:37:40,808 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-14 00:37:54,710 - FID at iteration 62000: 36.432191
+INFO - dpsgd_diffusion.py - 2025-07-14 00:38:51,171 - Loss: 0.2498, step: 62100
+INFO - dpsgd_diffusion.py - 2025-07-14 00:39:47,423 - Loss: 0.2482, step: 62200
+INFO - dpsgd_diffusion.py - 2025-07-14 00:40:28,242 - Eps-value after 139 epochs: 0.9397
+INFO - dpsgd_diffusion.py - 2025-07-14 00:40:44,351 - Loss: 0.2266, step: 62300
+INFO - dpsgd_diffusion.py - 2025-07-14 00:41:43,149 - Loss: 0.2368, step: 62400
+INFO - dpsgd_diffusion.py - 2025-07-14 00:42:40,941 - Loss: 0.2186, step: 62500
+INFO - dpsgd_diffusion.py - 2025-07-14 00:43:38,466 - Loss: 0.2119, step: 62600
+INFO - dpsgd_diffusion.py - 2025-07-14 00:44:35,447 - Loss: 0.2173, step: 62700
+INFO - dpsgd_diffusion.py - 2025-07-14 00:44:46,766 - Eps-value after 140 epochs: 0.9433
+INFO - dpsgd_diffusion.py - 2025-07-14 00:45:32,218 - Loss: 0.2576, step: 62800
+INFO - dpsgd_diffusion.py - 2025-07-14 00:46:29,455 - Loss: 0.2181, step: 62900
+INFO - dpsgd_diffusion.py - 2025-07-14 00:47:27,001 - Loss: 0.2398, step: 63000
+INFO - dpsgd_diffusion.py - 2025-07-14 00:48:23,850 - Loss: 0.2499, step: 63100
+INFO - dpsgd_diffusion.py - 2025-07-14 00:49:03,019 - Eps-value after 141 epochs: 0.9469
+INFO - dpsgd_diffusion.py - 2025-07-14 00:49:20,676 - Loss: 0.2481, step: 63200
+INFO - dpsgd_diffusion.py - 2025-07-14 00:50:17,835 - Loss: 0.2265, step: 63300
+INFO - dpsgd_diffusion.py - 2025-07-14 00:51:15,679 - Loss: 0.2296, step: 63400
+INFO - dpsgd_diffusion.py - 2025-07-14 00:52:12,719 - Loss: 0.2485, step: 63500
+INFO - dpsgd_diffusion.py - 2025-07-14 00:53:09,646 - Loss: 0.2200, step: 63600
+INFO - dpsgd_diffusion.py - 2025-07-14 00:53:19,017 - Eps-value after 142 epochs: 0.9505
+INFO - dpsgd_diffusion.py - 2025-07-14 00:54:07,103 - Loss: 0.2427, step: 63700
+INFO - dpsgd_diffusion.py - 2025-07-14 00:55:03,654 - Loss: 0.2594, step: 63800
+INFO - dpsgd_diffusion.py - 2025-07-14 00:56:01,080 - Loss: 0.2275, step: 63900
+INFO - dpsgd_diffusion.py - 2025-07-14 00:56:58,622 - Loss: 0.2485, step: 64000
+INFO - dpsgd_diffusion.py - 2025-07-14 00:56:58,655 - Saving snapshot checkpoint and sampling single batch at iteration 64000.
+WARNING - image.py - 2025-07-14 00:56:59,985 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-14 00:57:13,735 - FID at iteration 64000: 35.518463
+INFO - dpsgd_diffusion.py - 2025-07-14 00:57:51,556 - Eps-value after 143 epochs: 0.9541
+INFO - dpsgd_diffusion.py - 2025-07-14 00:58:11,890 - Loss: 0.2296, step: 64100
+INFO - dpsgd_diffusion.py - 2025-07-14 00:59:09,376 - Loss: 0.2143, step: 64200
+INFO - dpsgd_diffusion.py - 2025-07-14 01:00:05,968 - Loss: 0.2219, step: 64300
+INFO - dpsgd_diffusion.py - 2025-07-14 01:01:02,923 - Loss: 0.2233, step: 64400
+INFO - dpsgd_diffusion.py - 2025-07-14 01:02:00,751 - Loss: 0.2410, step: 64500
+INFO - dpsgd_diffusion.py - 2025-07-14 01:02:07,700 - Eps-value after 144 epochs: 0.9577
+INFO - dpsgd_diffusion.py - 2025-07-14 01:02:57,998 - Loss: 0.2376, step: 64600
+INFO - dpsgd_diffusion.py - 2025-07-14 01:03:55,389 - Loss: 0.2257, step: 64700
+INFO - dpsgd_diffusion.py - 2025-07-14 01:04:52,222 - Loss: 0.1969, step: 64800
+INFO - dpsgd_diffusion.py - 2025-07-14 01:05:49,177 - Loss: 0.2134, step: 64900
+INFO - dpsgd_diffusion.py - 2025-07-14 01:06:24,117 - Eps-value after 145 epochs: 0.9613
+INFO - dpsgd_diffusion.py - 2025-07-14 01:06:47,081 - Loss: 0.2478, step: 65000
+INFO - dpsgd_diffusion.py - 2025-07-14 01:07:43,415 - Loss: 0.2443, step: 65100
+INFO - dpsgd_diffusion.py - 2025-07-14 01:08:40,530 - Loss: 0.2149, step: 65200
+INFO - dpsgd_diffusion.py - 2025-07-14 01:09:37,163 - Loss: 0.2385, step: 65300
+INFO - dpsgd_diffusion.py - 2025-07-14 01:10:33,635 - Loss: 0.2399, step: 65400
+INFO - dpsgd_diffusion.py - 2025-07-14 01:10:38,105 - Eps-value after 146 epochs: 0.9649
+INFO - dpsgd_diffusion.py - 2025-07-14 01:11:29,822 - Loss: 0.2414, step: 65500
+INFO - dpsgd_diffusion.py - 2025-07-14 01:12:26,778 - Loss: 0.2402, step: 65600
+INFO - dpsgd_diffusion.py - 2025-07-14 01:13:24,629 - Loss: 0.2420, step: 65700
+INFO - dpsgd_diffusion.py - 2025-07-14 01:14:22,471 - Loss: 0.2245, step: 65800
+INFO - dpsgd_diffusion.py - 2025-07-14 01:14:54,981 - Eps-value after 147 epochs: 0.9685
+INFO - dpsgd_diffusion.py - 2025-07-14 01:15:20,111 - Loss: 0.2357, step: 65900
+INFO - dpsgd_diffusion.py - 2025-07-14 01:16:16,710 - Loss: 0.2257, step: 66000
+INFO - dpsgd_diffusion.py - 2025-07-14 01:16:16,737 - Saving snapshot checkpoint and sampling single batch at iteration 66000.
+WARNING - image.py - 2025-07-14 01:16:18,057 - Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+INFO - dpsgd_diffusion.py - 2025-07-14 01:16:31,688 - FID at iteration 66000: 34.677783
+INFO - dpsgd_diffusion.py - 2025-07-14 01:17:29,268 - Loss: 0.2488, step: 66100
+INFO - dpsgd_diffusion.py - 2025-07-14 01:18:26,992 - Loss: 0.2436, step: 66200
+INFO - dpsgd_diffusion.py - 2025-07-14 01:19:24,527 - Loss: 0.2349, step: 66300
+INFO - dpsgd_diffusion.py - 2025-07-14 01:19:26,812 - Eps-value after 148 epochs: 0.9720
+INFO - dpsgd_diffusion.py - 2025-07-14 01:20:21,201 - Loss: 0.2052, step: 66400
+INFO - dpsgd_diffusion.py - 2025-07-14 01:21:17,937 - Loss: 0.2341, step: 66500
+INFO - dpsgd_diffusion.py - 2025-07-14 01:22:14,645 - Loss: 0.2111, step: 66600
+INFO - dpsgd_diffusion.py - 2025-07-14 01:23:11,795 - Loss: 0.2315, step: 66700
+INFO - dpsgd_diffusion.py - 2025-07-14 01:23:41,178 - Eps-value after 149 epochs: 0.9755
+INFO - dpsgd_diffusion.py - 2025-07-14 01:24:08,332 - Loss: 0.2296, step: 66800
+INFO - dpsgd_diffusion.py - 2025-07-14 01:25:05,945 - Loss: 0.2017, step: 66900
+INFO - dpsgd_diffusion.py - 2025-07-14 01:26:03,613 - Loss: 0.2431, step: 67000
+INFO - dpsgd_diffusion.py - 2025-07-14 01:27:00,390 - Loss: 0.2168, step: 67100
+INFO - dpsgd_diffusion.py - 2025-07-14 01:27:57,277 - Loss: 0.2186, step: 67200
+INFO - dpsgd_diffusion.py - 2025-07-14 01:27:57,301 - Eps-value after 150 epochs: 0.9789
+INFO - dpsgd_diffusion.py - 2025-07-14 01:27:59,583 - Saving final checkpoint.
+INFO - dpsgd_diffusion.py - 2025-07-14 01:27:59,587 - start to generate 60000 samples
+INFO - dpsgd_diffusion.py - 2025-07-14 02:03:14,789 - Generation Finished!
+INFO - evaluator.py - 2025-07-14 02:03:35,383 - Epoch: 0 Train acc: 63.230909090909094 Val acc: 75.02 Test acc74.48; Train loss: 0.9728939808238637 Val loss: 0.18639842224121095
+INFO - evaluator.py - 2025-07-14 02:03:52,177 - Epoch: 1 Train acc: 84.52 Val acc: 76.0 Test acc75.59; Train loss: 0.42006155048717153 Val loss: 0.17719107971191406
+INFO - evaluator.py - 2025-07-14 02:04:08,946 - Epoch: 2 Train acc: 86.64909090909092 Val acc: 79.60000000000001 Test acc78.71000000000001; Train loss: 0.3602491159612482 Val loss: 0.15484354553222657
+INFO - evaluator.py - 2025-07-14 02:04:25,697 - Epoch: 3 Train acc: 88.88363636363637 Val acc: 78.12 Test acc76.68; Train loss: 0.30123949536410244 Val loss: 0.17217506408691408
+INFO - evaluator.py - 2025-07-14 02:04:42,601 - Epoch: 4 Train acc: 90.50727272727272 Val acc: 82.02000000000001 Test acc81.45; Train loss: 0.25938085403442385 Val loss: 0.14035930786132814
+INFO - evaluator.py - 2025-07-14 02:04:59,355 - Epoch: 5 Train acc: 91.51454545454546 Val acc: 78.74 Test acc79.12; Train loss: 0.23115597097223456 Val loss: 0.1690273223876953
+INFO - evaluator.py - 2025-07-14 02:05:16,120 - Epoch: 6 Train acc: 92.17090909090909 Val acc: 80.66 Test acc80.72; Train loss: 0.21135672364668412 Val loss: 0.1516772674560547
+INFO - evaluator.py - 2025-07-14 02:05:32,888 - Epoch: 7 Train acc: 92.61090909090909 Val acc: 75.78 Test acc75.82; Train loss: 0.2015727870247581 Val loss: 0.19836148376464843
+INFO - evaluator.py - 2025-07-14 02:05:49,643 - Epoch: 8 Train acc: 93.17999999999999 Val acc: 82.0 Test acc82.07; Train loss: 0.1871941192626953 Val loss: 0.1495481170654297
+INFO - evaluator.py - 2025-07-14 02:06:06,409 - Epoch: 9 Train acc: 93.14545454545454 Val acc: 55.120000000000005 Test acc55.38999999999999; Train loss: 0.1837769416809082 Val loss: 0.54869150390625
+INFO - evaluator.py - 2025-07-14 02:06:23,194 - Epoch: 10 Train acc: 93.73454545454545 Val acc: 79.46 Test acc79.63; Train loss: 0.16995668543035333 Val loss: 0.17403826293945313
+INFO - evaluator.py - 2025-07-14 02:06:40,108 - Epoch: 11 Train acc: 93.7709090909091 Val acc: 75.5 Test acc76.05; Train loss: 0.16714701205166904 Val loss: 0.2083026123046875
+INFO - evaluator.py - 2025-07-14 02:06:56,877 - Epoch: 12 Train acc: 94.21818181818182 Val acc: 66.4 Test acc66.13; Train loss: 0.1572728990728205 Val loss: 0.27323070068359373
+INFO - evaluator.py - 2025-07-14 02:07:13,663 - Epoch: 13 Train acc: 94.42363636363636 Val acc: 67.88 Test acc68.32000000000001; Train loss: 0.15103598577325994 Val loss: 0.33592913208007813
+INFO - evaluator.py - 2025-07-14 02:07:30,438 - Epoch: 14 Train acc: 94.58 Val acc: 62.13999999999999 Test acc62.629999999999995; Train loss: 0.14828189340071243 Val loss: 0.3325946716308594
+INFO - evaluator.py - 2025-07-14 02:07:47,198 - Epoch: 15 Train acc: 94.79454545454546 Val acc: 31.5 Test acc31.269999999999996; Train loss: 0.14191759955666283 Val loss: 1.4519609375
+INFO - evaluator.py - 2025-07-14 02:08:03,980 - Epoch: 16 Train acc: 95.02909090909091 Val acc: 39.12 Test acc39.129999999999995; Train loss: 0.13399320127313788 Val loss: 0.960971044921875
+INFO - evaluator.py - 2025-07-14 02:08:20,745 - Epoch: 17 Train acc: 95.19272727272727 Val acc: 32.2 Test acc32.58; Train loss: 0.12917809399691496 Val loss: 1.1959283447265625
+INFO - evaluator.py - 2025-07-14 02:08:37,547 - Epoch: 18 Train acc: 95.5 Val acc: 35.44 Test acc35.02; Train loss: 0.11944839106473056 Val loss: 1.5135582275390624
+INFO - evaluator.py - 2025-07-14 02:08:54,457 - Epoch: 19 Train acc: 95.7709090909091 Val acc: 30.2 Test acc30.14; Train loss: 0.11730518540469083 Val loss: 1.6105165283203124
+INFO - evaluator.py - 2025-07-14 02:09:11,220 - Epoch: 20 Train acc: 97.69636363636364 Val acc: 53.2 Test acc54.22; Train loss: 0.06479443577853117 Val loss: 0.7756227661132813
+INFO - evaluator.py - 2025-07-14 02:09:27,997 - Epoch: 21 Train acc: 98.37272727272726 Val acc: 79.2 Test acc79.60000000000001; Train loss: 0.04629021485068582 Val loss: 0.3240345703125
+INFO - evaluator.py - 2025-07-14 02:09:44,760 - Epoch: 22 Train acc: 98.75272727272727 Val acc: 79.12 Test acc79.38; Train loss: 0.03611664434346286 Val loss: 0.427685302734375
+INFO - evaluator.py - 2025-07-14 02:10:01,539 - Epoch: 23 Train acc: 98.97636363636364 Val acc: 79.44 Test acc80.47; Train loss: 0.029912651387127964 Val loss: 0.40577255859375
+INFO - evaluator.py - 2025-07-14 02:10:18,325 - Epoch: 24 Train acc: 99.16545454545455 Val acc: 79.67999999999999 Test acc80.55; Train loss: 0.024227752917463128 Val loss: 0.473455859375
+INFO - evaluator.py - 2025-07-14 02:10:35,121 - Epoch: 25 Train acc: 99.31090909090909 Val acc: 79.25999999999999 Test acc79.84; Train loss: 0.02040911323590712 Val loss: 0.5541025390625
+INFO - evaluator.py - 2025-07-14 02:10:51,903 - Epoch: 26 Train acc: 99.33818181818181 Val acc: 78.58000000000001 Test acc78.7; Train loss: 0.01844961269985546 Val loss: 0.6373592041015625
+INFO - evaluator.py - 2025-07-14 02:11:08,809 - Epoch: 27 Train acc: 99.44181818181819 Val acc: 79.67999999999999 Test acc80.47; Train loss: 0.016392860583825546 Val loss: 0.5418733642578125
+INFO - evaluator.py - 2025-07-14 02:11:25,606 - Epoch: 28 Train acc: 99.4509090909091 Val acc: 80.28 Test acc81.43; Train loss: 0.016690947898951442 Val loss: 0.5063696716308593
+INFO - evaluator.py - 2025-07-14 02:11:42,364 - Epoch: 29 Train acc: 99.45272727272727 Val acc: 79.86 Test acc80.64; Train loss: 0.015443830606612292 Val loss: 0.6016888061523438
+INFO - evaluator.py - 2025-07-14 02:11:59,145 - Epoch: 30 Train acc: 99.61454545454545 Val acc: 79.28 Test acc79.9; Train loss: 0.011069540650194342 Val loss: 0.5804787963867187
+INFO - evaluator.py - 2025-07-14 02:12:15,921 - Epoch: 31 Train acc: 99.45272727272727 Val acc: 80.06 Test acc80.77; Train loss: 0.014796204884485764 Val loss: 0.5244080932617188
+INFO - evaluator.py - 2025-07-14 02:12:32,695 - Epoch: 32 Train acc: 99.5490909090909 Val acc: 80.62 Test acc81.23; Train loss: 0.012358412169868296 Val loss: 0.5559001281738282
+INFO - evaluator.py - 2025-07-14 02:12:49,464 - Epoch: 33 Train acc: 99.63454545454546 Val acc: 80.74 Test acc81.36; Train loss: 0.010141338506882841 Val loss: 0.5715734802246094
+INFO - evaluator.py - 2025-07-14 02:13:06,373 - Epoch: 34 Train acc: 99.58727272727272 Val acc: 79.88 Test acc80.61; Train loss: 0.01259242169640281 Val loss: 0.6730089721679687
+INFO - evaluator.py - 2025-07-14 02:13:23,149 - Epoch: 35 Train acc: 99.68363636363637 Val acc: 79.80000000000001 Test acc79.96; Train loss: 0.009510427817160433 Val loss: 0.58250322265625
+INFO - evaluator.py - 2025-07-14 02:13:39,934 - Epoch: 36 Train acc: 99.64545454545456 Val acc: 81.32000000000001 Test acc82.32000000000001; Train loss: 0.010204767912287603 Val loss: 0.5217677856445313
+INFO - evaluator.py - 2025-07-14 02:13:56,712 - Epoch: 37 Train acc: 99.55818181818182 Val acc: 78.08 Test acc78.57; Train loss: 0.011693080294674092 Val loss: 0.8493373657226563
+INFO - evaluator.py - 2025-07-14 02:14:13,476 - Epoch: 38 Train acc: 99.5490909090909 Val acc: 74.24 Test acc75.09; Train loss: 0.01229085292761976 Val loss: 0.853183447265625
+INFO - evaluator.py - 2025-07-14 02:14:30,230 - Epoch: 39 Train acc: 99.74363636363637 Val acc: 79.14 Test acc79.89; Train loss: 0.007280028362301263 Val loss: 0.6597297729492188
+INFO - evaluator.py - 2025-07-14 02:14:46,996 - Epoch: 40 Train acc: 99.92545454545456 Val acc: 79.78 Test acc80.80000000000001; Train loss: 0.0025479828625578774 Val loss: 0.637247216796875
+INFO - evaluator.py - 2025-07-14 02:15:03,785 - Epoch: 41 Train acc: 99.98 Val acc: 80.56 Test acc81.63; Train loss: 0.0010851853808557445 Val loss: 0.6259953125
+INFO - evaluator.py - 2025-07-14 02:15:20,706 - Epoch: 42 Train acc: 99.97454545454545 Val acc: 81.0 Test acc81.97; Train loss: 0.000974713677235625 Val loss: 0.6198457153320313
+INFO - evaluator.py - 2025-07-14 02:15:37,469 - Epoch: 43 Train acc: 100.0 Val acc: 80.94 Test acc81.97; Train loss: 0.0004641077208248052 Val loss: 0.6419405151367188
+INFO - evaluator.py - 2025-07-14 02:15:54,249 - Epoch: 44 Train acc: 99.99636363636364 Val acc: 81.04 Test acc82.1; Train loss: 0.0004010423346337947 Val loss: 0.6407933959960938
+INFO - evaluator.py - 2025-07-14 02:16:11,020 - Epoch: 45 Train acc: 99.99818181818182 Val acc: 80.76 Test acc82.04; Train loss: 0.00038186805249953813 Val loss: 0.6711038452148438
+INFO - evaluator.py - 2025-07-14 02:16:27,826 - Epoch: 46 Train acc: 100.0 Val acc: 80.78 Test acc82.03; Train loss: 0.0003100688388655809 Val loss: 0.6744886962890625
+INFO - evaluator.py - 2025-07-14 02:16:44,584 - Epoch: 47 Train acc: 99.99272727272728 Val acc: 80.47999999999999 Test acc81.82000000000001; Train loss: 0.00037069569955241273 Val loss: 0.7035238159179688
+INFO - evaluator.py - 2025-07-14 02:17:01,377 - Epoch: 48 Train acc: 99.99454545454546 Val acc: 80.54 Test acc81.75; Train loss: 0.00040715354552323167 Val loss: 0.7021861938476562
+INFO - evaluator.py - 2025-07-14 02:17:18,143 - Epoch: 49 Train acc: 99.99454545454546 Val acc: 80.72 Test acc82.06; Train loss: 0.0003616497384807603 Val loss: 0.693932861328125
+INFO - evaluator.py - 2025-07-14 02:17:18,150 - The best acc of synthetic images on sensitive val and the corresponding acc on test dataset from resnet is 82.02000000000001 and 81.45
+INFO - evaluator.py - 2025-07-14 02:17:18,151 - The best acc of synthetic images on noisy sensitive val and the corresponding acc on test dataset from resnet is 82.02000000000001 and 81.45
+INFO - evaluator.py - 2025-07-14 02:17:18,151 - The best acc test dataset from resnet is 82.32000000000001
+INFO - evaluator.py - 2025-07-14 02:17:34,114 - Epoch: 0 Train acc: 72.06727272727272 Val acc: 76.03999999999999 Test acc75.51; Train loss: 0.723497993885387 Val loss: 0.18362763061523438
+INFO - evaluator.py - 2025-07-14 02:17:48,893 - Epoch: 1 Train acc: 85.25090909090909 Val acc: 76.1 Test acc75.9; Train loss: 0.39081812404285776 Val loss: 0.19936583557128906
+INFO - evaluator.py - 2025-07-14 02:18:03,682 - Epoch: 2 Train acc: 87.36727272727272 Val acc: 70.16 Test acc69.44; Train loss: 0.3387022909684615 Val loss: 0.23123973999023437
+INFO - evaluator.py - 2025-07-14 02:18:18,488 - Epoch: 3 Train acc: 88.74545454545455 Val acc: 78.78 Test acc79.14999999999999; Train loss: 0.3013653382734819 Val loss: 0.1718812469482422
+INFO - evaluator.py - 2025-07-14 02:18:33,268 - Epoch: 4 Train acc: 89.48181818181818 Val acc: 24.7 Test acc24.82; Train loss: 0.2838796298633922 Val loss: 1.3998432373046874
+INFO - evaluator.py - 2025-07-14 02:18:48,014 - Epoch: 5 Train acc: 90.2781818181818 Val acc: 80.36 Test acc80.82000000000001; Train loss: 0.2624425087668679 Val loss: 0.15764458923339844
+INFO - evaluator.py - 2025-07-14 02:19:02,756 - Epoch: 6 Train acc: 90.9309090909091 Val acc: 81.02000000000001 Test acc81.23; Train loss: 0.2437753448486328 Val loss: 0.15193519134521485
+INFO - evaluator.py - 2025-07-14 02:19:17,669 - Epoch: 7 Train acc: 91.3 Val acc: 67.10000000000001 Test acc67.30000000000001; Train loss: 0.2318849380493164 Val loss: 0.29240332641601563
+INFO - evaluator.py - 2025-07-14 02:19:32,449 - Epoch: 8 Train acc: 91.53818181818181 Val acc: 80.76 Test acc81.84; Train loss: 0.22653963439247826 Val loss: 0.15212615966796875
+INFO - evaluator.py - 2025-07-14 02:19:47,229 - Epoch: 9 Train acc: 91.95454545454545 Val acc: 79.17999999999999 Test acc80.07; Train loss: 0.21768138302889736 Val loss: 0.18604157409667968
+INFO - evaluator.py - 2025-07-14 02:20:02,023 - Epoch: 10 Train acc: 92.36909090909091 Val acc: 32.32 Test acc32.67; Train loss: 0.20489979816783557 Val loss: 1.368782861328125
+INFO - evaluator.py - 2025-07-14 02:20:16,775 - Epoch: 11 Train acc: 92.73090909090908 Val acc: 82.62 Test acc82.99; Train loss: 0.19914338108409535 Val loss: 0.1429949661254883
+INFO - evaluator.py - 2025-07-14 02:20:31,555 - Epoch: 12 Train acc: 92.53818181818183 Val acc: 69.74000000000001 Test acc69.49; Train loss: 0.1988842420057817 Val loss: 0.3016349365234375
+INFO - evaluator.py - 2025-07-14 02:20:46,345 - Epoch: 13 Train acc: 93.05636363636364 Val acc: 78.62 Test acc79.24; Train loss: 0.18515491818514737 Val loss: 0.1862947021484375
+INFO - evaluator.py - 2025-07-14 02:21:01,108 - Epoch: 14 Train acc: 93.24545454545455 Val acc: 80.04 Test acc80.75; Train loss: 0.1815893919164484 Val loss: 0.18099246520996093
+INFO - evaluator.py - 2025-07-14 02:21:16,013 - Epoch: 15 Train acc: 93.60545454545455 Val acc: 42.120000000000005 Test acc42.61; Train loss: 0.17306720206520773 Val loss: 0.9066803955078125
+INFO - evaluator.py - 2025-07-14 02:21:30,773 - Epoch: 16 Train acc: 93.64545454545454 Val acc: 78.12 Test acc78.3; Train loss: 0.17049034226157447 Val loss: 0.21765423889160157
+INFO - evaluator.py - 2025-07-14 02:21:45,562 - Epoch: 17 Train acc: 93.88181818181818 Val acc: 44.06 Test acc45.15; Train loss: 0.16141576330011542 Val loss: 1.1765218994140625
+INFO - evaluator.py - 2025-07-14 02:22:00,323 - Epoch: 18 Train acc: 94.08545454545455 Val acc: 41.78 Test acc42.449999999999996; Train loss: 0.15794383645491167 Val loss: 0.9527877807617188
+INFO - evaluator.py - 2025-07-14 02:22:15,076 - Epoch: 19 Train acc: 93.28909090909092 Val acc: 26.22 Test acc25.94; Train loss: 0.1784904050653631 Val loss: 1.131236572265625
+INFO - evaluator.py - 2025-07-14 02:22:29,857 - Epoch: 20 Train acc: 95.66181818181818 Val acc: 82.88 Test acc83.39999999999999; Train loss: 0.11609221534729004 Val loss: 0.17593370666503907
+INFO - evaluator.py - 2025-07-14 02:22:44,608 - Epoch: 21 Train acc: 96.14181818181818 Val acc: 82.28 Test acc82.8; Train loss: 0.10399227359078148 Val loss: 0.21246970825195313
+INFO - evaluator.py - 2025-07-14 02:22:59,368 - Epoch: 22 Train acc: 96.29818181818182 Val acc: 81.69999999999999 Test acc81.89; Train loss: 0.09769839168895375 Val loss: 0.2644343536376953
+INFO - evaluator.py - 2025-07-14 02:23:14,262 - Epoch: 23 Train acc: 96.47818181818182 Val acc: 80.97999999999999 Test acc81.33; Train loss: 0.0926496977892789 Val loss: 0.2890345397949219
+INFO - evaluator.py - 2025-07-14 02:23:29,034 - Epoch: 24 Train acc: 96.67272727272727 Val acc: 80.44 Test acc80.64; Train loss: 0.08745190008336848 Val loss: 0.3343001953125
+INFO - evaluator.py - 2025-07-14 02:23:43,810 - Epoch: 25 Train acc: 96.93636363636364 Val acc: 80.25999999999999 Test acc80.80000000000001; Train loss: 0.0818286376953125 Val loss: 0.36335152587890623
+INFO - evaluator.py - 2025-07-14 02:23:58,593 - Epoch: 26 Train acc: 97.14727272727272 Val acc: 79.44 Test acc79.63; Train loss: 0.0763984426498413 Val loss: 0.3724803955078125
+INFO - evaluator.py - 2025-07-14 02:24:13,352 - Epoch: 27 Train acc: 97.36727272727272 Val acc: 80.44 Test acc80.74; Train loss: 0.07062258051091974 Val loss: 0.37353825073242186
+INFO - evaluator.py - 2025-07-14 02:24:28,118 - Epoch: 28 Train acc: 97.53454545454545 Val acc: 79.22 Test acc79.49000000000001; Train loss: 0.06598764724731446 Val loss: 0.4165214538574219
+INFO - evaluator.py - 2025-07-14 02:24:42,874 - Epoch: 29 Train acc: 97.66181818181818 Val acc: 80.38 Test acc80.85; Train loss: 0.06186465903195468 Val loss: 0.38431867065429687
+INFO - evaluator.py - 2025-07-14 02:24:57,634 - Epoch: 30 Train acc: 97.79636363636364 Val acc: 79.9 Test acc80.44; Train loss: 0.05763112794702703 Val loss: 0.4230142028808594
+INFO - evaluator.py - 2025-07-14 02:25:12,524 - Epoch: 31 Train acc: 98.01272727272728 Val acc: 78.96 Test acc79.51; Train loss: 0.05197127835533836 Val loss: 0.461909130859375
+INFO - evaluator.py - 2025-07-14 02:25:27,295 - Epoch: 32 Train acc: 98.11818181818181 Val acc: 79.2 Test acc79.32000000000001; Train loss: 0.049239204814217306 Val loss: 0.49502230834960936
+INFO - evaluator.py - 2025-07-14 02:25:42,033 - Epoch: 33 Train acc: 98.18181818181819 Val acc: 79.94 Test acc80.64; Train loss: 0.04724857860911976 Val loss: 0.4684939331054688
+INFO - evaluator.py - 2025-07-14 02:25:56,771 - Epoch: 34 Train acc: 98.44727272727273 Val acc: 77.86 Test acc78.02; Train loss: 0.040447577944668855 Val loss: 0.5907557983398437
+INFO - evaluator.py - 2025-07-14 02:26:11,507 - Epoch: 35 Train acc: 98.57454545454546 Val acc: 80.74 Test acc81.26; Train loss: 0.04014613910371607 Val loss: 0.44539279174804686
+INFO - evaluator.py - 2025-07-14 02:26:26,261 - Epoch: 36 Train acc: 98.70909090909092 Val acc: 80.22 Test acc80.60000000000001; Train loss: 0.034984594600850884 Val loss: 0.48122417602539064
+INFO - evaluator.py - 2025-07-14 02:26:41,007 - Epoch: 37 Train acc: 98.70909090909092 Val acc: 80.5 Test acc80.77; Train loss: 0.034545190455696796 Val loss: 0.5037933044433593
+INFO - evaluator.py - 2025-07-14 02:26:55,775 - Epoch: 38 Train acc: 98.82909090909091 Val acc: 80.64 Test acc80.60000000000001; Train loss: 0.03189006402709267 Val loss: 0.5299626708984375
+INFO - evaluator.py - 2025-07-14 02:27:10,669 - Epoch: 39 Train acc: 98.98363636363636 Val acc: 79.64 Test acc80.03; Train loss: 0.028024273961240596 Val loss: 0.5571938354492187
+INFO - evaluator.py - 2025-07-14 02:27:25,437 - Epoch: 40 Train acc: 99.36 Val acc: 79.84 Test acc79.96; Train loss: 0.017890120459686625 Val loss: 0.5581749877929687
+INFO - evaluator.py - 2025-07-14 02:27:40,217 - Epoch: 41 Train acc: 99.56 Val acc: 80.96 Test acc81.55; Train loss: 0.013985507175597277 Val loss: 0.5031509338378907
+INFO - evaluator.py - 2025-07-14 02:27:54,987 - Epoch: 42 Train acc: 99.53090909090909 Val acc: 81.04 Test acc81.73; Train loss: 0.014367858570272273 Val loss: 0.5014944763183594
+INFO - evaluator.py - 2025-07-14 02:28:09,757 - Epoch: 43 Train acc: 99.53818181818181 Val acc: 81.82000000000001 Test acc82.5; Train loss: 0.013969924824888055 Val loss: 0.49660228271484375
+INFO - evaluator.py - 2025-07-14 02:28:24,528 - Epoch: 44 Train acc: 99.5490909090909 Val acc: 81.72 Test acc82.73; Train loss: 0.013033134440942245 Val loss: 0.4949253173828125
+INFO - evaluator.py - 2025-07-14 02:28:39,275 - Epoch: 45 Train acc: 99.64909090909092 Val acc: 81.84 Test acc82.77; Train loss: 0.011093131556836042 Val loss: 0.4912981628417969
+INFO - evaluator.py - 2025-07-14 02:28:54,174 - Epoch: 46 Train acc: 99.60727272727271 Val acc: 81.38 Test acc82.36; Train loss: 0.011681928325241262 Val loss: 0.5280275695800781
+INFO - evaluator.py - 2025-07-14 02:29:08,959 - Epoch: 47 Train acc: 99.64909090909092 Val acc: 81.10000000000001 Test acc82.0; Train loss: 0.01080017935037613 Val loss: 0.5452219116210938
+INFO - evaluator.py - 2025-07-14 02:29:23,727 - Epoch: 48 Train acc: 99.60545454545453 Val acc: 81.76 Test acc82.63000000000001; Train loss: 0.010813318135792558 Val loss: 0.5504441711425782
+INFO - evaluator.py - 2025-07-14 02:29:38,532 - Epoch: 49 Train acc: 99.64909090909092 Val acc: 81.8 Test acc83.08; Train loss: 0.010672893223437396 Val loss: 0.523036083984375
+INFO - evaluator.py - 2025-07-14 02:29:38,564 - The best acc of synthetic images on sensitive val and the corresponding acc on test dataset from wrn is 82.88 and 83.39999999999999
+INFO - evaluator.py - 2025-07-14 02:29:38,564 - The best acc of synthetic images on noisy sensitive val and the corresponding acc on test dataset from wrn is 82.88 and 83.39999999999999
+INFO - evaluator.py - 2025-07-14 02:29:38,564 - The best acc test dataset from wrn is 83.39999999999999
+INFO - evaluator.py - 2025-07-14 02:30:32,343 - Epoch: 0 Train acc: 76.36909090909091 Val acc: 74.62 Test acc74.42999999999999; Train loss: 0.7047014649824662 Val loss: 0.22445050354003906
+INFO - evaluator.py - 2025-07-14 02:31:14,880 - Epoch: 1 Train acc: 88.45454545454545 Val acc: 78.60000000000001 Test acc78.38000000000001; Train loss: 0.3119695979725231 Val loss: 0.19626419982910157
+INFO - evaluator.py - 2025-07-14 02:31:57,381 - Epoch: 2 Train acc: 90.23818181818181 Val acc: 79.82000000000001 Test acc79.73; Train loss: 0.26472469995672054 Val loss: 0.2085086975097656
+INFO - evaluator.py - 2025-07-14 02:32:39,878 - Epoch: 3 Train acc: 91.51272727272726 Val acc: 77.78 Test acc77.81; Train loss: 0.23282399021495473 Val loss: 0.2402680969238281
+INFO - evaluator.py - 2025-07-14 02:33:22,510 - Epoch: 4 Train acc: 92.27454545454546 Val acc: 63.94 Test acc64.84; Train loss: 0.20877749099731446 Val loss: 0.4366159240722656
+INFO - evaluator.py - 2025-07-14 02:34:05,033 - Epoch: 5 Train acc: 92.95818181818181 Val acc: 77.28 Test acc78.02; Train loss: 0.1930568302154541 Val loss: 0.27146668395996093
+INFO - evaluator.py - 2025-07-14 02:34:47,541 - Epoch: 6 Train acc: 93.57454545454546 Val acc: 77.52 Test acc77.72; Train loss: 0.17728694426796654 Val loss: 0.2748783752441406
+INFO - evaluator.py - 2025-07-14 02:35:30,061 - Epoch: 7 Train acc: 94.35272727272728 Val acc: 80.14 Test acc80.73; Train loss: 0.15506170023137872 Val loss: 0.22187384033203125
+INFO - evaluator.py - 2025-07-14 02:36:12,577 - Epoch: 8 Train acc: 94.66909090909091 Val acc: 80.04 Test acc80.55; Train loss: 0.14653924401023172 Val loss: 0.21499545593261718
+INFO - evaluator.py - 2025-07-14 02:36:55,094 - Epoch: 9 Train acc: 95.39272727272727 Val acc: 73.96000000000001 Test acc74.18; Train loss: 0.12622585317438298 Val loss: 0.3899453552246094
+INFO - evaluator.py - 2025-07-14 02:37:37,646 - Epoch: 10 Train acc: 95.63818181818182 Val acc: 66.56 Test acc67.07; Train loss: 0.11943306170376865 Val loss: 0.4037509521484375
+INFO - evaluator.py - 2025-07-14 02:38:20,137 - Epoch: 11 Train acc: 96.25818181818182 Val acc: 42.18 Test acc43.25; Train loss: 0.10415623807040128 Val loss: 1.15692197265625
+INFO - evaluator.py - 2025-07-14 02:39:02,752 - Epoch: 12 Train acc: 96.63090909090909 Val acc: 37.82 Test acc39.14; Train loss: 0.09366650384556163 Val loss: 1.536066552734375
+INFO - evaluator.py - 2025-07-14 02:39:45,237 - Epoch: 13 Train acc: 96.71818181818182 Val acc: 60.099999999999994 Test acc61.53999999999999; Train loss: 0.08964600962725552 Val loss: 0.557770166015625
+INFO - evaluator.py - 2025-07-14 02:40:27,718 - Epoch: 14 Train acc: 97.2109090909091 Val acc: 62.160000000000004 Test acc62.99; Train loss: 0.07602697329954668 Val loss: 0.57273740234375
+INFO - evaluator.py - 2025-07-14 02:41:10,174 - Epoch: 15 Train acc: 97.40727272727273 Val acc: 51.25999999999999 Test acc53.03; Train loss: 0.07001663384004073 Val loss: 0.9004582641601563
+INFO - evaluator.py - 2025-07-14 02:41:52,645 - Epoch: 16 Train acc: 97.59454545454545 Val acc: 51.85999999999999 Test acc53.22; Train loss: 0.06560993793660944 Val loss: 0.8214202270507812
+INFO - evaluator.py - 2025-07-14 02:42:35,134 - Epoch: 17 Train acc: 97.57454545454546 Val acc: 28.28 Test acc29.970000000000002; Train loss: 0.06636157930547541 Val loss: 2.0263322021484376
+INFO - evaluator.py - 2025-07-14 02:43:17,666 - Epoch: 18 Train acc: 98.07272727272728 Val acc: 43.580000000000005 Test acc45.18; Train loss: 0.05489965210827914 Val loss: 1.145769189453125
+INFO - evaluator.py - 2025-07-14 02:44:00,218 - Epoch: 19 Train acc: 98.30363636363636 Val acc: 39.82 Test acc41.29; Train loss: 0.04727213227965615 Val loss: 1.506967041015625
+INFO - evaluator.py - 2025-07-14 02:44:42,811 - Epoch: 20 Train acc: 99.63454545454546 Val acc: 76.52 Test acc76.78; Train loss: 0.012295563432845203 Val loss: 0.6110974243164062
+INFO - evaluator.py - 2025-07-14 02:45:25,240 - Epoch: 21 Train acc: 99.96000000000001 Val acc: 79.72 Test acc80.06; Train loss: 0.00304693686040965 Val loss: 0.5818102172851563
+INFO - evaluator.py - 2025-07-14 02:46:07,695 - Epoch: 22 Train acc: 99.9890909090909 Val acc: 79.66 Test acc79.41; Train loss: 0.001420506327328357 Val loss: 0.726018701171875
+INFO - evaluator.py - 2025-07-14 02:46:50,127 - Epoch: 23 Train acc: 99.99636363636364 Val acc: 79.88 Test acc80.2; Train loss: 0.0008834856943989342 Val loss: 0.6492474853515625
+INFO - evaluator.py - 2025-07-14 02:47:32,588 - Epoch: 24 Train acc: 99.99454545454546 Val acc: 79.12 Test acc78.86; Train loss: 0.0006462194839323109 Val loss: 0.641075244140625
+INFO - evaluator.py - 2025-07-14 02:48:15,066 - Epoch: 25 Train acc: 99.98 Val acc: 81.82000000000001 Test acc81.85; Train loss: 0.0009593716547909108 Val loss: 0.5493373046875
+INFO - evaluator.py - 2025-07-14 02:48:57,553 - Epoch: 26 Train acc: 99.99272727272728 Val acc: 81.08 Test acc80.99; Train loss: 0.0006224196252328429 Val loss: 0.6773364990234375
+INFO - evaluator.py - 2025-07-14 02:49:40,316 - Epoch: 27 Train acc: 99.99090909090908 Val acc: 80.36 Test acc80.73; Train loss: 0.0004986440259370614 Val loss: 0.7176751953125
+INFO - evaluator.py - 2025-07-14 02:50:22,871 - Epoch: 28 Train acc: 99.99272727272728 Val acc: 68.32000000000001 Test acc69.65; Train loss: 0.0007783195810223167 Val loss: 1.27959638671875
+INFO - evaluator.py - 2025-07-14 02:51:05,364 - Epoch: 29 Train acc: 99.81818181818181 Val acc: 77.92 Test acc77.69; Train loss: 0.005151352267881686 Val loss: 0.7250724365234374
+INFO - evaluator.py - 2025-07-14 02:51:47,842 - Epoch: 30 Train acc: 99.86 Val acc: 75.6 Test acc75.83; Train loss: 0.004321700448136438 Val loss: 0.842701171875
+INFO - evaluator.py - 2025-07-14 02:52:30,316 - Epoch: 31 Train acc: 99.91636363636364 Val acc: 51.580000000000005 Test acc53.09; Train loss: 0.002633294868807901 Val loss: 2.418356005859375
+INFO - evaluator.py - 2025-07-14 02:53:12,800 - Epoch: 32 Train acc: 99.9509090909091 Val acc: 79.96 Test acc80.7; Train loss: 0.0017921753552657637 Val loss: 0.7181675048828124
+INFO - evaluator.py - 2025-07-14 02:53:55,280 - Epoch: 33 Train acc: 99.65818181818182 Val acc: 78.10000000000001 Test acc78.2; Train loss: 0.009488544199886647 Val loss: 0.7057689697265624
+INFO - evaluator.py - 2025-07-14 02:54:37,785 - Epoch: 34 Train acc: 99.75272727272727 Val acc: 76.0 Test acc76.14999999999999; Train loss: 0.007095286677100442 Val loss: 0.8363346435546875
+INFO - evaluator.py - 2025-07-14 02:55:20,430 - Epoch: 35 Train acc: 99.86 Val acc: 41.88 Test acc42.59; Train loss: 0.0047709333141757685 Val loss: 3.082317919921875
+INFO - evaluator.py - 2025-07-14 02:56:02,911 - Epoch: 36 Train acc: 99.88545454545455 Val acc: 34.14 Test acc34.64; Train loss: 0.003393366900458932 Val loss: 5.96904287109375
+INFO - evaluator.py - 2025-07-14 02:56:45,377 - Epoch: 37 Train acc: 99.84545454545454 Val acc: 81.47999999999999 Test acc81.19; Train loss: 0.004523794530264356 Val loss: 0.5775406616210937
+INFO - evaluator.py - 2025-07-14 02:57:27,841 - Epoch: 38 Train acc: 99.8490909090909 Val acc: 79.28 Test acc79.17999999999999; Train loss: 0.004684451772027056 Val loss: 0.7999928100585938
+INFO - evaluator.py - 2025-07-14 02:58:10,281 - Epoch: 39 Train acc: 99.77818181818182 Val acc: 76.48 Test acc76.49000000000001; Train loss: 0.006086602948267352 Val loss: 0.8064704467773437
+INFO - evaluator.py - 2025-07-14 02:58:52,722 - Epoch: 40 Train acc: 99.93818181818182 Val acc: 74.62 Test acc74.95; Train loss: 0.002156823519075459 Val loss: 0.8999592651367188
+INFO - evaluator.py - 2025-07-14 02:59:35,155 - Epoch: 41 Train acc: 100.0 Val acc: 75.28 Test acc75.41; Train loss: 0.00042381880994547496 Val loss: 0.8940758911132812
+INFO - evaluator.py - 2025-07-14 03:00:17,597 - Epoch: 42 Train acc: 100.0 Val acc: 75.58 Test acc75.72; Train loss: 0.00025572165572507817 Val loss: 0.875025927734375
+INFO - evaluator.py - 2025-07-14 03:01:00,199 - Epoch: 43 Train acc: 100.0 Val acc: 75.64 Test acc75.79; Train loss: 0.0001860016246495599 Val loss: 0.8929731689453125
+INFO - evaluator.py - 2025-07-14 03:01:42,674 - Epoch: 44 Train acc: 100.0 Val acc: 76.18 Test acc76.44; Train loss: 0.0001595674341036515 Val loss: 0.8944956787109375
+INFO - evaluator.py - 2025-07-14 03:02:25,124 - Epoch: 45 Train acc: 100.0 Val acc: 76.52 Test acc76.9; Train loss: 0.00012430528918365864 Val loss: 0.88708779296875
+INFO - evaluator.py - 2025-07-14 03:03:07,608 - Epoch: 46 Train acc: 100.0 Val acc: 76.22 Test acc76.36; Train loss: 0.00010381926754701205 Val loss: 0.9189904296875
+INFO - evaluator.py - 2025-07-14 03:03:50,071 - Epoch: 47 Train acc: 100.0 Val acc: 77.53999999999999 Test acc77.71000000000001; Train loss: 7.198902777692473e-05 Val loss: 0.8596812866210938
+INFO - evaluator.py - 2025-07-14 03:04:32,523 - Epoch: 48 Train acc: 100.0 Val acc: 75.76 Test acc75.94999999999999; Train loss: 6.776287255660547e-05 Val loss: 0.9851545532226562
+INFO - evaluator.py - 2025-07-14 03:05:14,980 - Epoch: 49 Train acc: 100.0 Val acc: 77.18 Test acc77.38000000000001; Train loss: 5.602156439034099e-05 Val loss: 0.9191271118164063
+INFO - evaluator.py - 2025-07-14 03:05:14,984 - The best acc of synthetic images on sensitive val and the corresponding acc on test dataset from resnext is 81.82000000000001 and 81.85
+INFO - evaluator.py - 2025-07-14 03:05:14,984 - The best acc of synthetic images on noisy sensitive val and the corresponding acc on test dataset from resnext is 81.82000000000001 and 81.85
+INFO - evaluator.py - 2025-07-14 03:05:14,984 - The best acc test dataset from resnext is 81.85
+INFO - evaluator.py - 2025-07-14 03:05:15,008 - The best acc of accuracy (adding noise to the results on the sensitive set of validation set) of synthetic images from resnet, wrn, and resnext are [81.45, 83.39999999999999, 81.85].
+INFO - evaluator.py - 2025-07-14 03:05:15,008 - The average and std of accuracy of synthetic images are 82.23 and 0.84
+INFO - evaluator.py - 2025-07-14 03:07:23,432 - The FID of synthetic images is 27.83369366043206
+INFO - evaluator.py - 2025-07-14 03:07:23,736 - The Inception Score of synthetic images is 3.7977237701416016
+INFO - evaluator.py - 2025-07-14 03:07:23,736 - The Precision and Recall of synthetic images is 0.40953126549720764 and 0.30485454201698303
+INFO - evaluator.py - 2025-07-14 03:07:23,736 - The FLD of synthetic images is 10.36897897720337

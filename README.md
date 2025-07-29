@@ -62,18 +62,6 @@ Below is the directory structure of the DPImageBench project, which organizes it
 ```plaintext
 DPImageBench/
 ├── configs/                     # Configuration files for various DP image synthesis algorithms
-│   ├── DP-MERF      
-│   ├── DP-NTK       
-│   ├── DP-Kernel
-│   ├── PE            
-│   ├── DP-GAN         
-│   ├── DPDM        
-│   ├── PDP-Diffusion      
-│   ├── DP-LDM-SD
-│   ├── DP-LDM
-│   ├── DP-LORA
-│   ├── GS-WGAN
-│   └── PDP-Diffusion   
 ├── data/                       # Data Preparation for Our Benchmark
 │   ├── stylegan3
 │   ├── SpecificPlaces365.py
