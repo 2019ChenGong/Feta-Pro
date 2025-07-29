@@ -99,6 +99,7 @@ DPImageBench/
 │   ├── pe.py          
 │   └── synthesizer.py  
 ├── opacus/                     # Implementation of DPSGD
+├── results_demo/               # Demo of experimental results
 ├── plot/                       # Figures and plots in our paper
 │   ├── plot_eps_change.py                           # Plotting for Figure 5 and 10
 │   ├── plot_size_change.py                          # Plotting for Figure 6
