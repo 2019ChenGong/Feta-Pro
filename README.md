@@ -215,6 +215,8 @@ In RQ2, to investigate the benifits of frequency features, in Figure 5, we compa
 - `FETA-Pro_{mix}' means the synthesizers simultaneously learn the spatial and frequency domain knowledge.
 - `FETA-Pro_{f}' means the synthesizers solely learn the frequency domain knowledge for warm-up.
 
+Users can set the `pretrain.mode`=[`freq_time`, `mix`, `freq`] to choose the invariants. We provide example as follows, 
+
 ```
 python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretrain.mode=mix -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed mix
 ```
