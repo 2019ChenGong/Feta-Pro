@@ -263,30 +263,26 @@ For example,
 
 #### 4.3.3 How to run (Experiments in Discussions)
 
-#### 
+#### FETA-Pro without privacy protection
+
+Test the classification algorithm on the sensitive images without DP.
+```
+python ./scripts/test_classifier.py --method PDP-Diffusion --data_name mnist_28 --epsilon 10.0  -ed no-dp-mnist_28
+```
+The results are recorded in `exp/pdp-diffusion/<the-name-of-file>no-dp-mnist_28/stdout.txt`. This process is independent of `--method` and uses of `--epsilon`.
+
+#### FETA-Pro leveraging public images
 
 > [!Note]
 >
-> If users wish to combine warm-up training in DP-FETA with other methods, you should set the `public_data.name=central_mean`.
+> If users wish to combine warm-up training in FETA-Pro with other methods using public images, you should set the `public_data.name=central_mean`.
 
 
-DPImageBench also supports training synthesizers from the checkpoints. As mentioned in the [results structure](#451-results-structure), we provide `snapshot_checkpoint.pth` to store the synthesizer's parameters at the current epoch after each iteration. If users wish to finetune the synthesizers using pretrained models, they should: (1) set `public_data.name=null`, and (2) load the pretrained synthesizers through `model.ckpt`. For example, the pretrained synthesizer can be sourced from other algorithms. Readers can refer to the [file structure](./exp/README.md) for more details about loading pretrained models like
-
-```
-python run.py setup.n_gpus_per_node=3 public_data.name=null eval.mode=val \
- model.ckpt=./exp/pdp-diffusion/<the-name-of-scripts>/pretrain/checkpoints/snapshot_checkpoint.pth \
- --method PDP-Diffusion --data_name fmnist_28 --epsilon 10.0 --exp_description <any-notes>
-```
-
-If users wish to continue the pretraining using checkpoints, you just need to set the `public_data.name` as usual like
+We also support training synthesizers from the checkpoints. If users wish to finetune the synthesizers using pretrained models, they should: (1) set `public_data.name=null`, and (2) load the pretrained synthesizers through `model.ckpt`. For example, the pretrained synthesizer can be sourced from other algorithms. Readers can refer to the [file structure](./exp/README.md) for more details about loading pretrained models like
 
 ```
-python run.py setup.n_gpus_per_node=3 public_data.name=imagenet eval.mode=val \
- model.ckpt=./exp/pdp-diffusion/<the-name-of-scripts>/pretrain/checkpoints/snapshot_checkpoint.pth \
- --method PDP-Diffusion --data_name fmnist_28 --epsilon 10.0 --exp_description <any-notes>
+xxxxx
 ```
-
-Currently, only diffuisn-based methods are supported, because GAN-based methods usually do not benefit from pretraining and their training is fast.
 
 
 ### 4.4 Results
@@ -366,13 +362,6 @@ INFO - evaluator.py - 2024-11-12 05:54:26,463 - The best acc test dataset from w
 ```
 These results represent the best accuracy achieved by: (1) using the sensitive validation set (63.99%), (2) adding noise to the validation results of the sensitive dataset (`model.eval = val`), and the accuracy is 63.87%, and (3) using the sensitive test set for classifier selection (64.12%). 
 
-If synthetic images are used as the validation set (`model.eval = syn`), the results after each classifier training would be:
-```
-INFO - evaluator.py - 2024-10-24 06:45:11,042 - The best acc of synthetic images on val (synthetic images) and the corresponding acc on test dataset from wrn is 63.175 and 56.22
-INFO - evaluator.py - 2024-10-24 06:45:11,042 - The best acc test dataset from wrn is 64.22
-```
-These results present that the best accuracy achieved by: (1) using the synthetic images for validation set (56.22%) and (2) using the sensitive test set for classifier selection (64.22%).
-
 The following results can be found at the end of the log file:
 ``` 
 INFO - evaluator.py - 2024-11-13 21:19:44,813 - The best acc of accuracy (adding noise to the results on the sensitive set of validation set) of synthetic images from resnet, wrn, and resnext are [61.6, 64.36, 59.31999999999999].
@@ -384,10 +373,6 @@ INFO - evaluator.py - 2024-11-13 21:50:27,200 - The FLD of synthetic images is 7
 ```
 The first line shows the accuracy of the downstream task when noise is added to the validation results of the sensitive dataset for classifier selection (`model.eval = val`), across three studied classification outcomes. 
 
-If synthetic images are used as the validation set (`model.eval = syn`), the first line would be:
-```
-INFO - evaluator.py - 2024-11-12 09:06:18,148 - The best acc of accuracy (using synthetic images as the validation set) of synthetic images from resnet, wrn, and resnext are [59.48, 63.99, 59.53].
-```
 The synthetic images can be found at the `./exp/<algorithm_name>/<file_name>/gen/gen.npz`.
 
 ### 4.5 Results Visualization
