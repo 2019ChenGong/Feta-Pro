@@ -209,11 +209,11 @@ For Figure3 and Figure4, please refer to `plot/visualization.py` and `plot/fid_c
 
 #### For the implementation of the results reported in Table 4 and Figures 5 (RQ2).
 
-In RQ2, to investigate the benifits of frequency features, we compare the performance of DP-FETA-Pro with three invariants,
+In RQ2, to investigate the benifits of frequency features, in Figure 5, we compare the performance of DP-FETA-Pro with three invariants,
 
-- `$FETA-Pro_{ft}$' denotes a synthesizer that prioritizes learning spatial domain knowledge from sensitive datasets before acquiring frequency domain knowledge.
-- `$FETA-Pro_{mix}$' means the synthesizers simultaneously learn the spatial and frequency domain knowledge.
-- `$FETA-Pro_{f}$' means the synthesizers solely learn the frequency domain knowledge for warm-up.
+- `FETA-Pro_{ft}' denotes a synthesizer that prioritizes learning spatial domain knowledge from sensitive datasets before acquiring frequency domain knowledge.
+- `FETA-Pro_{mix}' means the synthesizers simultaneously learn the spatial and frequency domain knowledge.
+- `FETA-Pro_{f}' means the synthesizers solely learn the frequency domain knowledge for warm-up.
 
 ```
 python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretrain.mode=mix -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed mix
