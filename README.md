@@ -185,13 +185,13 @@ Users should first activate the conda environment.
 
 ```
 conda activate dpimagebench
-cd DP-FETA-Pro
+cd FETA-Pro
 ```
 #### For the implementation of results reported in Table 3, Figure 3 and 4 (RQ1). 
 
 We list an example as follows. Users can modify the configuration files in [configs](./configs) as their preference. 
 
-We provide an example of training a synthesizer using the DP-FETA-Pro method with 4 GPUs. The results reported in Table 3 were obtained by following the instructions provided. 
+The results reported in Table 3 were obtained by following the instructions provided. We provide an example of training a synthesizer using the DP-FETA-Pro method with 4 GPUs. 
 
 ```
 python run.py setup.n_gpus_per_node=4 --method DP-FETA-Pro --data_name mnist_28 -e 1.0 eval.mode=val
@@ -204,6 +204,7 @@ Besides, if users want to directly evaluate the synthetic images,
 python eval.py --method DP-FETA-Pro --data_name mnist_28 --epsilon 10.0 --exp_path exp/dp-feta-pro/<the-name-of-file>
 ```
 The results are recorded in `exp/pdp-diffusion/<the-name-of-file>/stdout.txt`.
+
 
 
 
