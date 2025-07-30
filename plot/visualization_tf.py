@@ -25,9 +25,9 @@ parser.add_argument('--config_suffix', '-cs', default="")
 opt, unknown = parser.parse_known_args()
 
 merf_path = {
-    'mnist_28': '/p/fzv6enresearch/PE-Refine/exp/dp-feta2/mnist_28_eps10.0val_time5_freq7.4_1merf-2025-07-12-19-00-19/gen_merf/gen.npz',
-    'fmnist_28': '/p/fzv6enresearch/PE-Refine/exp/dp-feta2/fmnist_28_eps10.0val_time5_freq7.4_1merf-2025-07-12-18-52-33/gen_merf/gen.npz',
-    'celeba_male_32': '/p/fzv6enresearch/PE-Refine/exp/dp-feta2/celeba_male_32_eps10.0val_time5_freq8.2_1merf-2025-07-15-09-05-10/gen_merf/gen.npz'
+    'mnist_28': '/p//PE-Refine/exp/dp-feta2/mnist_28_eps10.0val_time5_freq7.4_1merf-2025-07-12-19-00-19/gen_merf/gen.npz',
+    'fmnist_28': '/p//PE-Refine/exp/dp-feta2/fmnist_28_eps10.0val_time5_freq7.4_1merf-2025-07-12-18-52-33/gen_merf/gen.npz',
+    'celeba_male_32': '/p//PE-Refine/exp/dp-feta2/celeba_male_32_eps10.0val_time5_freq8.2_1merf-2025-07-15-09-05-10/gen_merf/gen.npz'
 }
 
 row_titles = ["Freq.", "Spat."]
