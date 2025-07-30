@@ -207,7 +207,7 @@ The results are recorded in `exp/pdp-diffusion/<the-name-of-file>/stdout.txt`.
 
 For Figure3 and Figure4, please refer to `plot/visualization.py` and `plot/fid_curve.py` and change the `log_files` in codes.
 
-For baselines, readers can select the options:  [`DP-NTK`, `DP-Kernel`, `DP-MERF`, `DPGAN`, `DP-LDM-SD`, `DP-LDM`, `DP-LORA`, `DPDM`, `PE`, `GS-WGAN`, `PDP-Diffusion`, `PrivImage`, `DP-FETA-Pro`]
+For baselines, readers can select the options `-m`: [`DP-NTK`, `DP-Kernel`, `DP-MERF`, `DPGAN`, `DP-LDM-SD`, `DP-LDM`, `DP-LORA`, `DPDM`, `PE`, `GS-WGAN`, `PDP-Diffusion`, `PrivImage`, `DP-FETA-Pro`], refering to implementations in [DPImageBench](https://github.com/2019ChenGong/DPImageBench).
 ```
 python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val -m DPDM -dn mnist_28 -e 1.0 -ed dpdm
 ```
