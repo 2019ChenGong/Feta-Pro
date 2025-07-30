@@ -154,10 +154,10 @@ def main(config):
 
 We list the key hyper-parameters below, including their explanations and available options.
 
-- `--data_name`: means the sensitive dataset; the option is [`mnist_28`, `fmnist_28`, `cifar10_32`, `cifar100_32`, `eurosat_32`, `celeba_male_32`, `camelyon_32`].
-- `--method`: the method to train the DP image synthesizers; the option is [`DP-NTK`, `DP-Kernel`, `DP-MERF`, `DPGAN`, `DP-LDM-SD`, `DP-LDM`, `DP-LORA`, `DPDM`, `PE`, `GS-WGAN`, `PDP-Diffusion`, `PrivImage`, `DP-FETA-Pro`].
-- `--epsilon`: the privacy budget 10.0; the option is [`1.0`, `10.0`].
-- `--exp_description`: the notes for the name of result folders.
+- `--data_name` (`-dn`): means the sensitive dataset; the option is [`mnist_28`, `fmnist_28`, `cifar10_32`, `cifar100_32`, `eurosat_32`, `celeba_male_32`, `camelyon_32`].
+- `--method` (`-m`): the method to train the DP image synthesizers; the option is [`DP-NTK`, `DP-Kernel`, `DP-MERF`, `DPGAN`, `DP-LDM-SD`, `DP-LDM`, `DP-LORA`, `DPDM`, `PE`, `GS-WGAN`, `PDP-Diffusion`, `PrivImage`, `DP-FETA-Pro`].
+- `--epsilon` (`-e`): the privacy budget 10.0; the option is [`1.0`, `10.0`].
+- `--exp_description` (`-ed`): the notes for the name of result folders.
 - `setup.n_gpus_per_node`: means the number of GPUs to be used for training.
 - `pretrain.cond`: specifies the mode of pretraining. The options are [`true`, `false`], where `true` indicates conditional pretraining and `false` indicates conditional pretraining.
 - `public_data.name`: the name of pretraining dataset; the option is [`null`, `imagenet`, `places365`, `emnist`], which mean that without pretraining, using ImageNet dataset as pretraining dataset, and using Places365 as pretraining dataset. It is notice that DPImageBench uses ImageNet as default pretraining dataset. If users use Places365 as pretraining dataset, please add `public_data.n_classes=365 public_data.train_path=dataset/places365`.
@@ -207,6 +207,11 @@ The results are recorded in `exp/pdp-diffusion/<the-name-of-file>/stdout.txt`.
 
 For Figure3 and Figure4, please refer to `plot/visualization.py` and `plot/fid_curve.py` and change the `log_files` in codes.
 
+For baselines, readers can select the options:  [`DP-NTK`, `DP-Kernel`, `DP-MERF`, `DPGAN`, `DP-LDM-SD`, `DP-LDM`, `DP-LORA`, `DPDM`, `PE`, `GS-WGAN`, `PDP-Diffusion`, `PrivImage`, `DP-FETA-Pro`]
+```
+python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val -m DPDM -dn mnist_28 -e 1.0 -ed dpdm
+```
+
 #### For the implementation of the results reported in Table 4 and Figures 5 (RQ2).
 
 In RQ2, to investigate the benifits of frequency features, in Figure 5, we compare the performance of DP-FETA-Pro with three invariants,
@@ -221,6 +226,18 @@ Users can set the `pretrain.mode`=[`freq_time`, `mix`, `freq`] to choose the inv
 python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretrain.mode=mix -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed mix
 ```
 
+To investigate the benifits of auxiliary generator, in Table 4, we compare the performance of DP-FETA-Pro with two invariants,
+
+- `FETA-Pro-No-Auxiliary' means directly warming up synthesizers on frequency domain features. 
+- `FETA-Pro-DM-Auxiliary' means using diffusion models as the auxiliary generator.
+
+Users can set the `pretrain.mode`=[`freq_time`, `mix`] to choose the invariants. We provide example as follows, 
+
+```
+python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretrain.mode=mix -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed mix
+```
+
+
 #### For the implementation of the results reported in RQ3.
 
 Users can set the `pretrain.cond` and `public_data.name` to choose between conditional and unconditional pretraining or to enable or disable pretraining. `public_data.name=null` indicates that pretraining is excluded. If users wish to use Places365 or a pretraining dataset, please take note of the following key parameters.
@@ -231,7 +248,7 @@ Users can set the `pretrain.cond` and `public_data.name` to choose between condi
 
 We use ImageNet as the default pretraining dataset, and these parameters are configured accordingly. We provide more implementation examples in the [scripts](./scripts/rq3.sh).
 
-For example,
+For example, 
 
 (1) Using ImageNet to pretrain DPGAN using conditional pretraining.
 ```
