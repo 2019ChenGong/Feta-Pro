@@ -278,10 +278,12 @@ The results are recorded in `exp/pdp-diffusion/<the-name-of-file>no-dp-mnist_28/
 > If users wish to combine warm-up training in FETA-Pro with other methods using public images, you should set the `public_data.name=central_mean`.
 
 
-We also support training synthesizers from the checkpoints. If users wish to finetune the synthesizers using pretrained models, they should: (1) set `public_data.name=null`, and (2) load the pretrained synthesizers through `model.ckpt`. For example, the pretrained synthesizer can be sourced from other algorithms. Readers can refer to the [file structure](./exp/README.md) for more details about loading pretrained models like
+We also support training synthesizers from the checkpoints. If users wish to finetune the synthesizers using pretrained models, they should load the pretrained synthesizers through `model.ckpt`. For example, the pretrained synthesizer can be sourced from other algorithms. Readers can refer to the [file structure](./exp/README.md) for more details about loading pretrained models like
 
 ```
-xxxxx
+python run.py setup.n_gpus_per_node=3 eval.mode=val \
+ model.ckpt=./exp/pdp-diffusion/<the-name-of-scripts>/pretrain/checkpoints/snapshot_checkpoint.pth \
+ --method DP-FETA-Pro --data_name fmnist_28 --epsilon 10.0 --exp_description <any-notes>
 ```
 
 
@@ -302,9 +304,8 @@ exp/
 │           │   └── sample.png 
 │           ├── gen_freq  
 │           │   ├── gen.npz 
-│           │   ├── pc.pth 
 │           │   └── sample.png 
-│           ├── pretrain  
+│           ├── pretrain_time  
 │           │   ├── checkpoints  
 │           │   │   ├── final_checkpoint.pth  
 │           │   │   └── snapshot_checkpoint.pth  
@@ -343,9 +344,12 @@ We introduce the files as follows,
 - `./gen/sample.png`: the samples of synthetic images.
 - `./gen_freq/gen.npz`: the synthetic images from the auxiliary generator using frequency features.
 - `./gen_freq/sample.png`: the sample of synthetic images from the auxiliary generator.
-- `./pretrain/checkpoints/final_checkpoint.pth`: the parameters of synthsizer at the final epochs.
-- `./pretrain/checkpoints/snapshot_checkpoint.pth`: we store the synthesizer's parameters at the current epoch after each iteration, deleting the previous parameters to manage storage efficiently.
-- `./pretrain/samples/iter_2000`: the synthetic images under 2000 iterations for pretraining on public datasets.
+- `./pretrain_time/checkpoints/final_checkpoint.pth`: the parameters of synthsizer pretrained using the time feature at the final epochs.
+- `./pretrain_time/checkpoints/snapshot_checkpoint.pth`: we store the synthesizer's parameters at the current epoch after each iteration, deleting the previous parameters to manage storage efficiently.
+- `./pretrain_time/samples/iter_2000`: the synthetic images under 2000 iterations for pretraining on the time feature.
+- `./pretrain_freq/checkpoints/final_checkpoint.pth`: the parameters of synthsizer pretrained using the frequency feature at the final epochs.
+- `./pretrain_freq/checkpoints/snapshot_checkpoint.pth`: we store the synthesizer's parameters at the current epoch after each iteration, deleting the previous parameters to manage storage efficiently.
+- `./pretrain_freq/samples/iter_2000`: the synthetic images under 2000 iterations for pretraining on the frequency feature.
 - `./train/checkpoints/final_checkpoint.pth`: the parameters of synthsizer at the final epochs.
 - `./train/checkpoints/snapshot_checkpoint.pth`: we store the synthesizer's parameters at the current epoch after each iteration, deleting the previous parameters to manage storage efficiently.
 - `./train/samples/iter_2000`: the synthetic images under 2000 iterations for training on sensitive datasets.

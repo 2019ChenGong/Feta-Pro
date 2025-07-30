@@ -24,17 +24,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config_dir', default="configs")
     parser.add_argument('--method', '-m', default="DP-MERF")
-    parser.add_argument('--epsilon', '-e', default="1.0")
-    parser.add_argument('--data_name', '-dn', default="mnist_28")
+    parser.add_argument('--epsilon', '-e', default="10.0")
+    parser.add_argument('--data_name', '-dn', default="cifar10_32")
     parser.add_argument('--exp_description', '-ed', default="")
     parser.add_argument('--resume_exp', '-re', default=None)
     parser.add_argument('--config_suffix', '-cs', default="")
     opt, unknown = parser.parse_known_args()
 
     config = parse_config(opt, unknown)
-    if opt.exp_description == "":
-        config.setup.workdir = "exp/{}/{}_eps{}".format(str.lower(opt.method), opt.data_name, opt.epsilon)
-    else:
-        config.setup.workdir = "exp/{}/{}".format(str.lower(opt.method), opt.exp_description)
 
     run(main, config)

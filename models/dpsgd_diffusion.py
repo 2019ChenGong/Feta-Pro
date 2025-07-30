@@ -300,35 +300,233 @@ class DP_Diffusion(DPSynther):
         # Clean up the model and free GPU memory.
         del model
         torch.cuda.empty_cache()
+    
+    def pretrain_merf(self, sensitive_dataloader, config):
+        """
+        Pre-trains the model using the provided public dataloader and configuration.
+
+        Args:
+            public_dataloader (DataLoader): The dataloader for the public dataset.
+            config (dict): Configuration dictionary containing various settings and hyperparameters.
+        """
+
+        # Set the CUDA device based on the local rank.
+        torch.cuda.device(self.local_rank)
+        self.device = 'cuda:%d' % self.local_rank
+
+        # Define directories for storing samples and checkpoints.
+        sample_dir = os.path.join(config.log_dir, 'samples')
+        checkpoint_dir = os.path.join(config.log_dir, 'checkpoints')
+
+        if self.global_rank == 0:
+            # Create necessary directories if the global rank is 0.
+            make_dir(config.log_dir)
+            make_dir(sample_dir)
+            make_dir(checkpoint_dir)
+
+        self.noise_factor = self.all_config.train.freq.dp.sigma
+        logging.info("The noise factor is {}".format(self.noise_factor))
+        
+        n_data = len(sensitive_dataloader.dataset)  # Number of data points in the sensitive dataset
+        rff_sigma = [float(sig) for sig in self.freq_model.rff_sigma.split(',')]
+        if self.global_rank == 0:
+            _, w_freq = get_rff_mmd_loss(self.freq_model.n_feat, self.freq_model.d_rff, rff_sigma[0], self.local_rank, self.freq_model.private_num_classes, self.noise_factor, sensitive_dataloader.batch_size, self.freq_model.mmd_type)
+
+            noisy_emb = noisy_dataset_embedding(sensitive_dataloader, w_freq, self.freq_model.d_rff, self.local_rank, self.freq_model.private_num_classes, self.noise_factor, self.freq_model.mmd_type, pca_vecs=None, cond=True)
+            torch.save({'w_freq': w_freq.w.cpu(), 'noisy_emb': noisy_emb.cpu()}, os.path.join(config.log_dir, 'freq_cache.pth'))
+
+ 
+        dist.barrier()
+        merf_cache = torch.load(os.path.join(config.log_dir, 'freq_cache.pth'))
+        w_freq, noisy_emb = merf_cache['w_freq'].to(self.local_rank), merf_cache['noisy_emb'].to(self.local_rank)
+        from collections import namedtuple
+        rff_param_tuple = namedtuple('rff_params', ['w', 'b'])
+        w_freq_param = rff_param_tuple(w=w_freq, b=None)
+
+        def rff_mmd_loss(gen_enc, gen_labels):
+            gen_emb = data_label_embedding(gen_enc, gen_labels, w_freq_param, self.freq_model.mmd_type)
+            return torch.sum((noisy_emb - gen_emb) ** 2)
+
+        # Wrap the model with DistributedDataParallel (DDP) for distributed training.
+        model = DDP(self.model, device_ids=[self.local_rank])
+        ema = ExponentialMovingAverage(model.parameters(), decay=self.ema_rate)
+
+        # Initialize the optimizer based on the configuration.
+        if config.optim.optimizer == 'Adam':
+            optimizer = torch.optim.Adam(model.parameters(), **config.optim.params)
+        elif config.optim.optimizer == 'SGD':
+            optimizer = torch.optim.SGD(model.parameters(), **config.optim.params)
+        else:
+            raise NotImplementedError("Optimizer not supported")
+
+        # Initialize the training state.
+        state = dict(model=model, ema=ema, optimizer=optimizer, step=0)
+
+        if self.global_rank == 0:
+            # Log the number of trainable parameters and training details if the global rank is 0.
+            model_parameters = filter(lambda p: p.requires_grad, model.parameters())
+            n_params = sum([np.prod(p.size()) for p in model_parameters])
+            logging.info('Number of trainable parameters in model: %d' % n_params)
+            logging.info('Number of total epochs: %d' % config.n_epochs)
+            logging.info('Starting training at step %d' % state['step'])
+        dist.barrier()
+
+        # Initialize the Inception model for feature extraction.
+        inception_model = InceptionFeatureExtractor()
+        inception_model.model = inception_model.model.to(self.device)
+
+        def sampler(x, y=None):
+            if self.sampler.type == 'ddim':
+                return ddim_sampler(x, y, model, **self.sampler)
+            elif self.sampler.type == 'edm':
+                return edm_sampler(x, y, model, **self.sampler)
+            else:
+                raise NotImplementedError("Sampler type not supported")
+
+        # Define the shape of the batches for sampling and FID computation.
+        snapshot_sampling_shape = (self.sampler.snapshot_batch_size,
+                                self.network.num_in_channels, 
+                                self.network.image_size, 
+                                self.network.image_size)
+        fid_sampling_shape = (self.sampler.fid_batch_size, 
+                            self.network.num_in_channels, 
+                            self.network.image_size, 
+                            self.network.image_size)
+
+        # Training loop over the specified number of epochs.
+        n_iter = n_data // config.batch_size
+        for epoch in range(config.n_epochs):
+            for batch_idx in range(n_iter):
+                # Prepare the input data for training.
+                gen_samples, gen_y = generate_batch_grad(sampler, (config.batch_size // self.global_size, self.network.num_in_channels, self.network.image_size, self.network.image_size), 
+                                            self.device, self.private_num_classes, self.private_num_classes)
+                gen_one_hots = torch.nn.functional.one_hot(gen_y, num_classes=self.private_num_classes)
+                gen_samples = gen_samples.reshape(config.batch_size // self.global_size, -1)
+                loss = rff_mmd_loss(gen_samples, gen_one_hots)
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+
+                # Log the loss at specified intervals.
+                if (state['step'] + 1) % config.log_freq == 0 and self.global_rank == 0:
+                    logging.info('Loss: %.4f, step: %d' % (loss, state['step'] + 1))
+                dist.barrier()
+
+                state['step'] += 1
+                state['ema'].update(model.parameters())
+            if self.global_rank == 0:
+                logging.info('Completed Epoch %d' % (epoch + 1))
+            
+            # Save snapshots and checkpoints at specified intervals.
+            if self.global_rank == 0:
+                logging.info('Saving snapshot checkpoint and sampling single batch at iteration %d.' % state['step'])
+
+                model.eval()
+                with torch.no_grad():
+                    ema.store(model.parameters())
+                    ema.copy_to(model.parameters())
+                    sample_random_image_batch(snapshot_sampling_shape, sampler, os.path.join(
+                        sample_dir, 'iter_%d' % state['step']), self.device, self.private_num_classes)
+                    ema.restore(model.parameters())
+                model.train()
+
+                save_checkpoint(os.path.join(checkpoint_dir, 'snapshot_checkpoint.pth'), state)
+            dist.barrier()
+
+            # Compute FID at specified intervals.
+            model.eval()
+            with torch.no_grad():
+                ema.store(model.parameters())
+                ema.copy_to(model.parameters())
+                fid = compute_fid(config.fid_samples, self.global_size, fid_sampling_shape, sampler, inception_model, self.fid_stats, self.device, self.private_num_classes)
+                ema.restore(model.parameters())
+
+                if self.global_rank == 0:
+                    logging.info('FID at iteration %d: %.6f' % (state['step'], fid))
+            model.train()
+            dist.barrier()
+
+        # Save the final checkpoint.
+        if self.global_rank == 0:
+            checkpoint_file = os.path.join(checkpoint_dir, 'final_checkpoint.pth')
+            save_checkpoint(checkpoint_file, state)
+            logging.info('Saving final checkpoint.')
+        dist.barrier()
+
+        # Apply the EMA weights to the model and store the EMA object.
+        ema.copy_to(self.model.parameters())
+        self.ema = ema
+
+        # Clean up the model and free GPU memory.
+        del model
+        torch.cuda.empty_cache()
         
     def warm_up(self, sensitive_train_loader, config):
-        if self.global_rank == 0:
-            # freq_model = Freq_Model(self.all_config.model.merf, self.device, self.all_config.train.sigma_sensitivity_ratio)
-            self.freq_model.train(sensitive_train_loader, self.all_config.train.freq)
-            syn_data, syn_labels = self.freq_model.generate(self.all_config.gen.freq)
-        dist.barrier()
-        # return config
-        syn = np.load(os.path.join(self.all_config.gen.freq.log_dir, 'gen.npz'))
-        syn_data, syn_labels = syn["x"], syn["y"]
+        if 'nogan' not in self.all_config.pretrain.mode:
+            if self.global_rank == 0:
+                # freq_model = Freq_Model(self.all_config.model.merf, self.device, self.all_config.train.sigma_sensitivity_ratio)
+                self.freq_model.train(sensitive_train_loader, self.all_config.train.freq)
+                syn_data, syn_labels = self.freq_model.generate(self.all_config.gen.freq)
+            dist.barrier()
+            # return config
+            syn = np.load(os.path.join(self.all_config.gen.freq.log_dir, 'gen.npz'))
+            syn_data, syn_labels = syn["x"], syn["y"]
+            freq_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
+            freq_train_loader = DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16)
         config.dp['privacy_history'].append([self.all_config.train.freq.dp.sigma, 1, 1])
-        freq_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
-        freq_train_loader = DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16)
 
         if self.all_config.pretrain.mode == 'freq_time':
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_freq'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
             self.pretrain(freq_train_loader, self.all_config.pretrain, run=True)
-            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir[:-5] + '_time'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
             self.pretrain(self.time_dataloader, self.all_config.pretrain, run=True)
         elif self.all_config.pretrain.mode == 'time_freq':
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
             self.pretrain(self.time_dataloader, self.all_config.pretrain, run=True)
-            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_freq'
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir[:-5] + '_freq'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
+            self.pretrain(freq_train_loader, self.all_config.pretrain, run=True)
+        elif self.all_config.pretrain.mode == 'time_freq_nogan1':
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
+            self.pretrain(self.time_dataloader, self.all_config.pretrain, run=True)
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir[:-5] + '_freq'
+            self.all_config.pretrain.n_epochs = self.all_config.train.freq.epochs
+            self.all_config.pretrain.batch_size = self.all_config.train.freq.batch_size
+            self.pretrain_merf(sensitive_train_loader, self.all_config.pretrain)
+        elif self.all_config.pretrain.mode == 'time_freq_nogan2':
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
+            self.pretrain(self.time_dataloader, self.all_config.pretrain, run=True)
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir[:-13] + 'gen_freq'
+            self.all_config.pretrain.n_epochs = self.all_config.train.freq.epochs
+            self.all_config.pretrain.batch_size = self.all_config.train.freq.batch_size
+            
+            from models.model_loader import load_model
+            model_sur, config_sur = load_model(self.all_config)
+            config_sur.gen.log_dir = self.all_config.pretrain.log_dir + "/gen"
+            model_sur.pretrain_merf(sensitive_train_loader, self.all_config.pretrain)
+            syn_data, syn_labels = model_sur.generate(config_sur.gen, config_sur.model.sampler)
+            del model_sur
+            dist.barrier()
+
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir[:-8] + 'pretrain_freq'
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
+
+            syn = np.load(os.path.join(config_sur.gen.log_dir, 'gen.npz'))
+            syn_data, syn_labels = syn["x"], syn["y"]
+            freq_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
+            freq_train_loader = torch.utils.data.DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16)
             self.pretrain(freq_train_loader, self.all_config.pretrain, run=True)
         elif self.all_config.pretrain.mode == 'freq':
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_freq'

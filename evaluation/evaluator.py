@@ -374,7 +374,7 @@ class Evaluator(object):
         return best_acc, best_test_acc_on_val, best_test_acc_on_test, best_noisy_acc, best_test_acc_on_noisy_val
     
     def cal_acc_no_dp(self, sensitive_train_loader, sensitive_test_loader):
-        if self.device != 0 or sensitive_test_loader is None or sensitive_train_loader is None:
+        if sensitive_test_loader is None or sensitive_train_loader is None:
             return
         
         batch_size = 128
@@ -411,7 +411,7 @@ class Evaluator(object):
                 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=60, gamma=0.2)
             else:
                 
-                batch_size = 126
+                batch_size = 256
                 max_epoch = 50
 
                 if model_name == "wrn":
@@ -444,7 +444,6 @@ class Evaluator(object):
                 for inputs, labels in train_loader:
                     inputs, labels = inputs.to(self.device), labels.to(self.device)
                     inputs = inputs.float() * 2. - 1.
-                    labels = torch.argmax(labels, dim=1)
                     # Zero the parameter gradients
                     optimizer.zero_grad()
                     # Forward pass
@@ -472,7 +471,6 @@ class Evaluator(object):
                     for inputs, labels in test_loader:
                         inputs, labels = inputs.to(self.device), labels.to(self.device)
                         inputs = inputs.float() * 2. - 1.
-                        labels = torch.argmax(labels, dim=1)
                         outputs = model(inputs)
                         _, predicted = outputs.max(1)
                         total += labels.size(0)
