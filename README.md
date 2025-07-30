@@ -55,7 +55,7 @@ We list the studied datasets as follows in our paper, which include five sensiti
   | Sensitive dataset | MNIST, FashionMNIST, CIFAR-10, CelebA, Camelyon |
 
 
-This repository is built upon DPImageBench. For more details, please refer to their [Repository](https://github.com/2019ChenGong/DPImageBench).
+This repository is built upon DPImageBench. Users can find more details about its functions in their [Repository](https://github.com/2019ChenGong/DPImageBench).
 
 ## 3. Repo Contents
 
@@ -64,14 +64,8 @@ Below is the directory structure of the DPImageBench project, which organizes it
 
 ```plaintext
 DPImageBench/
-├── configs/                     # Configuration files for various DP image synthesis algorithms
+├── configs/                    # Configuration files for various DP image synthesis algorithms
 ├── data/                       # Data Preparation for Our Benchmark
-│   ├── stylegan3
-│   ├── SpecificPlaces365.py
-│   ├── SpecificImagenet.py
-│   ├── SpecificEMNIST.py
-│   ├── dataset_loader.py
-│   └── preprocess_dataset.py 
 ├── dataset/                    # Datasets studied in the project
 ├── docker/                     # Docker file
 ├── exp/                        # The output of the training process and evaluation results.
@@ -84,45 +78,21 @@ DPImageBench/
 │   ├── ema.py 
 │   └── evaluator.py 
 ├── models/                     # Implementation framework for DP image synthesis algorithms
-│   ├── DP_Diffusion      
-│   ├── DP_GAN       
-│   ├── DP_LDM
-│   ├── DP_LORA     
-│   ├── DP_MERF
-│   ├── DP_NTK          
-│   ├── GS_WGAN       
-│   ├── PE     
-│   ├── PrivImage
-│   ├── dpsgd_diffusion.py
-│   ├── dpsgd_gan.py
-│   ├── dpsgd_ldm_sc.py
-│   ├── dpsgd_lora_sc.py
-│   ├── pretrained_models       # The pre-downloaed files for PE and PrivImage
-│   ├── model_loader.py  
-│   ├── pe.py          
-│   └── synthesizer.py  
 ├── opacus/                     # Implementation of DPSGD
 ├── results_demo/               # Demo of experimental results
 ├── plot/                       # Figures and plots in our paper
-│   ├── plot_eps_change.py                           # Plotting for Figure 5 and 10
-│   ├── plot_size_change.py                          # Plotting for Figure 6
-│   ├── plot_wo_pretrain_cond_cifar10.py             # Plotting for Figure 7
-│   ├── plot_wo_pretrain_cond_fmnist.py              # Plotting for Figure 9
-│   ├── plot_wo_pretrain_places_imagenet.py          # Plotting for Figure 8   
-│   └── visualization.py                             # Plotting for Figure 4 
-├── scripts/                    # Scripts for using DPImageBench
-│   ├── diffusion_size_change.py                    
-│   ├── download_dataset.sh                          
-│   ├── eps_change.sh.                               
-│   ├── gan_size_change.sh                           
-│   ├── pdp_diffusion.sh            
-│   ├── rq1.sh 
-│   ├── rq2.sh 
-│   ├── rq3.sh                  
-│   └── test_classifier.py                                            
+│   ├── ablation.py                           # Plotting for Figure 5 in RQ2
+│   ├── fid_curve.py                          # Plotting for Figure 4 in RQ1
+│   ├── plot_eps_changes.py                   # Plotting for Figure 7 in RQ3
+│   ├── plot_heatmap.py                       # Plotting for Figure 6 in RQ3
+│   ├── visualization_tf.py                   # Plotting for Figure 2   
+│   └── visualization.py                      # Plotting for Figure 3 in RQ1 
+├── scripts/                                  # Scripts for using DPImageBench
+│   └── script-feta-pro.sh                                                                    
 ├── utils/                      # Helper classes and functions supporting various operations
 │   └── utils.py                    
 ├── README.md                   # Main project documentation
+├── cal_privacy.py              # Calculate the privacy budget ratio in RDP
 └── requirements.txt            # Dependencies required for the project
 ```
 
