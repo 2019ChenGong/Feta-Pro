@@ -233,10 +233,10 @@ To investigate the benifits of auxiliary generator, in Table 4, we compare the p
 - `FETA-Pro-No-Auxiliary' means directly warming up synthesizers on frequency domain features. 
 - `FETA-Pro-DM-Auxiliary' means using diffusion models as the auxiliary generator.
 
-Users can set the `pretrain.mode`=[`freq_time`, `mix`] to choose the invariants. We provide example as follows, 
+Users can set the `pretrain.mode`=[`no_auxiliary`, `dm_auxiliary`] to choose the invariants. We provide example as follows, 
 
 ```
-python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretrain.mode=mix -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed mix
+python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretrain.mode=no_auxiliary -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed no_auxiliary
 ```
 
 #### For the implementation of the results reported in Figure 6 and 7 (RQ3).

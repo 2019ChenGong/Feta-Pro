@@ -301,7 +301,7 @@ class DP_Diffusion(DPSynther):
         del model
         torch.cuda.empty_cache()
     
-    def pretrain_merf(self, sensitive_dataloader, config):
+    def pretrain_freq(self, sensitive_dataloader, config):
         """
         Pre-trains the model using the provided public dataloader and configuration.
 
@@ -462,7 +462,7 @@ class DP_Diffusion(DPSynther):
         torch.cuda.empty_cache()
         
     def warm_up(self, sensitive_train_loader, config):
-        if 'nogan' not in self.all_config.pretrain.mode:
+        if 'auxiliary' not in self.all_config.pretrain.mode:
             if self.global_rank == 0:
                 # freq_model = Freq_Model(self.all_config.model.merf, self.device, self.all_config.train.sigma_sensitivity_ratio)
                 self.freq_model.train(sensitive_train_loader, self.all_config.train.freq)
@@ -493,7 +493,7 @@ class DP_Diffusion(DPSynther):
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
             self.pretrain(freq_train_loader, self.all_config.pretrain, run=True)
-        elif self.all_config.pretrain.mode == 'time_freq_nogan1':
+        elif self.all_config.pretrain.mode == 'no_auxiliary':
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
@@ -501,8 +501,8 @@ class DP_Diffusion(DPSynther):
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir[:-5] + '_freq'
             self.all_config.pretrain.n_epochs = self.all_config.train.freq.epochs
             self.all_config.pretrain.batch_size = self.all_config.train.freq.batch_size
-            self.pretrain_merf(sensitive_train_loader, self.all_config.pretrain)
-        elif self.all_config.pretrain.mode == 'time_freq_nogan2':
+            self.pretrain_freq(sensitive_train_loader, self.all_config.pretrain)
+        elif self.all_config.pretrain.mode == 'dm_auxiliary':
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
@@ -514,7 +514,7 @@ class DP_Diffusion(DPSynther):
             from models.model_loader import load_model
             model_sur, config_sur = load_model(self.all_config)
             config_sur.gen.log_dir = self.all_config.pretrain.log_dir + "/gen"
-            model_sur.pretrain_merf(sensitive_train_loader, self.all_config.pretrain)
+            model_sur.pretrain_freq(sensitive_train_loader, self.all_config.pretrain)
             syn_data, syn_labels = model_sur.generate(config_sur.gen, config_sur.model.sampler)
             del model_sur
             dist.barrier()
