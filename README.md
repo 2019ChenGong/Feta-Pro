@@ -185,7 +185,7 @@ Users should first activate the conda environment.
 
 ```
 conda activate dpimagebench
-cd DPImageBench
+cd DP-FETA-Pro
 ```
 #### For the implementation of results reported in Table 3, Figure 3 and 4 (RQ1). 
 
@@ -196,24 +196,15 @@ We provide an example of training a synthesizer using the DP-FETA-Pro method wit
 ```
 python run.py setup.n_gpus_per_node=4 --method DP-FETA-Pro --data_name mnist_28 -e 1.0 eval.mode=val
 ```
-The results reported in Table 5 were obtained by following the instructions below.
-```
-python run.py setup.n_gpus_per_node=4 --method PDP-Diffusion --data_name mnist_28 --epsilon 10.0 eval.mode=sen
-```
 
-We provide more examples in the `scripts/rq1.sh`, please refer to [scrips](scripts/rq1.sh).
+We provide more examples in the `scripts/script-feta-pro.sh`, please refer to [scrips](scripts/script-feta-pro.sh).
 
 Besides, if users want to directly evaluate the synthetic images,
 ```
-python eval.py --method PDP-Diffusion --data_name mnist_28 --epsilon 10.0 --exp_path exp/pdp-diffusion/<the-name-of-file>
+python eval.py --method DP-FETA-Pro --data_name mnist_28 --epsilon 10.0 --exp_path exp/dp-feta-pro/<the-name-of-file>
 ```
 The results are recorded in `exp/pdp-diffusion/<the-name-of-file>/stdout.txt`.
 
-Test the classification algorithm on the sensitive images without DP.
-```
-python ./scripts/test_classifier.py --method PDP-Diffusion --data_name mnist_28 --epsilon 10.0  -ed no-dp-mnist_28
-```
-The results are recorded in `exp/pdp-diffusion/<the-name-of-file>no-dp-mnist_28/stdout.txt`. This process is independent of `--method` and uses of `--epsilon`.
 
 
 ####  Only pretraining the synthesizer on public datasets and without finetuning on the sensitive datasets. 
@@ -230,7 +221,6 @@ CUDA_VISIBLE_DEVICES=0,1,2 python run.py \
 ```
 
 #### For the implementation of the results reported in Figures 5, 6, and Table 11 (RQ2), the performance is analyzed by varying the epsilon and model size.
-
 
 
 We provide more implementation examples of edit the model size of synthesizers in the [scripts](./scripts/rq2.sh).
