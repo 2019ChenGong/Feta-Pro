@@ -103,7 +103,7 @@ DPImageBench/
 Clone repo and setup the environment:
 
  ```
-git clone git@github.com:2019ChenGong/Feta-Pro.git
+git clone git@github.com:/Feta-Pro.git
 sh install.sh
  ```
 
