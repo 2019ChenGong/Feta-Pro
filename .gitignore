@@ -69,7 +69,6 @@ mnist
 login_rivana.sh
 
 fid_curve.pdf
-fid_curve.py
 test.png
 
 w_freq_10.pt

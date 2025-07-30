@@ -6,23 +6,12 @@ import mpl_toolkits.axisartist as axisartist
 
 fontsize=19
 matplotlib.rcParams.update({'font.size': fontsize, 'font.weight': 'normal'})
-#matplotlib.rcParams.update({'font.size': 18, 'font.family': 'Times New Roman'})
 
 colors = ['#FFBE7A', '#8ECFC9', '#82B0D2', '#E0CBEF', '#FA7F6F', '#F7B7D2']
 def create_multi_bars(ax, labels, datas, method, tick_step=1, group_gap=0.2, bar_gap=0, metric='fid'):
 
     ax.grid(color='lightgrey', linewidth=1, zorder=0)
     bwith = 0.7
-    #ax = plt.gca()#获取边框
-    
-    # ax.axis["bottom"].set_axisline_style("->", size = 1)
-    # ax.axis["left"].set_axisline_style("->", size = 1)
-    # ax.axis['right'].set_visible(False)
-    # ax.axis['top'].set_visible(False)
-
-    # ax.spines['right'].set_visible(False)
-    # ax.spines['top'].set_visible(False)
-
 
     ticks = np.arange(len(labels)) * tick_step
     group_num = len(datas)
@@ -36,30 +25,9 @@ def create_multi_bars(ax, labels, datas, method, tick_step=1, group_gap=0.2, bar
     else:
         best_idx = np.argmax(datas[:, 0])
     for index, y in enumerate(datas):
-        # error_params=dict(elinewidth=1.5,ecolor=edge_colors[method[index]],capsize=5)
-        # error_params=dict(elinewidth=1,ecolor='black',capsize=5)
-        # ax.bar(baseline_x + index*bar_span, y, bar_width, label=method[index], color=colors[method[index]], 
-        #         zorder=100, edgecolor=edge_colors[method[index]],
-        #         yerr=error[index], error_kw=error_params, hatch=hatches[index])
-        # ax.bar(baseline_x + index*bar_span, y, bar_width, label=method[index], color=colors[method[index]], 
-        #         zorder=100, edgecolor='black', hatch=hatches[method[index]])
         ax.bar(baseline_x + index*bar_span, y, bar_width*0.7, label=method[index], color=colors[index], 
                 zorder=200, edgecolor='black')
-        # if index != 0:
-        #     if metric == 'fid':
-        #         improve = (datas[index, 0] - datas[0, 0]) / datas[0, 0] * 100
-        #         improve = str(int(improve)) + '%'
-        #         x_shift = 0.06
-        #     else:
-        #         improve = (datas[index, 0] - datas[0, 0])
-        #         improve = str(round(improve, 1)) + '%'
-        #         x_shift = 0.07
-        #     if improve[0] != '-':
-        #         improve = '+' + improve
-        #     if index == best_idx:
-        #         ax.text(baseline_x + index*bar_span - x_shift, y+1.0, str(improve), fontsize=13, fontweight='bold')
-        #     else:
-        #         ax.text(baseline_x + index*bar_span - x_shift, y+1.0, str(improve), fontsize=13)
+
         if metric == 'fid':
             improve = datas[index, 0]
             if improve < 10:
@@ -68,8 +36,6 @@ def create_multi_bars(ax, labels, datas, method, tick_step=1, group_gap=0.2, bar
                 x_shift = 0.05
         else:
             improve = datas[index, 0]
-            # improve = (datas[index, 0] - datas[0, 0])
-            # improve = str(round(improve, 1)) + '%'
             x_shift = 0.05
         if metric == 'fid':
             y_shift = 1.3
@@ -77,8 +43,6 @@ def create_multi_bars(ax, labels, datas, method, tick_step=1, group_gap=0.2, bar
                 y_shift = 3
         else:
             y_shift = 0.8
-        # if improve[0] != '-':
-        #     improve = '+' + improve
         if index == best_idx:
             ax.text(baseline_x + index*bar_span - x_shift, y+y_shift, str(improve), fontsize=13, fontweight='bold')
         else:
@@ -92,9 +56,6 @@ def create_multi_bars(ax, labels, datas, method, tick_step=1, group_gap=0.2, bar
     ax.spines['right'].set_linewidth(bwith)
     for spine in ax.spines.values():
         spine.set_zorder(300)
-
-# plt.tight_layout()
-# plt.subplots_adjust(left=None, bottom=None, right=None, top=0.75, wspace=0.2, hspace=0.3)
 
 methods = ['DPDM', 'DP-FETA', 'FETA-Pro$_f$', 'FETA-Pro$_{mix}$', 'FETA-Pro$_{ft}$', 'FETA-Pro']
 colors = ['#FFBE7A', '#E0CBEF', '#82B0D2', '#8ECFC9', '#FA7F6F', '#F7B7D2']
@@ -203,9 +164,6 @@ axes[1, 1].set_ylim([75, 90])
 axes[1, 2].set_ylim([70, 100])
 axes[1, 3].set_ylim([75, 90])
 
-# leg = fig.legend(lines, labels, loc='upper center', ncol=8, facecolor='white', edgecolor='black', shadow=True, columnspacing=3, borderaxespad=0.1)
-# for legobj in leg.legendHandles:
-#     legobj.set_linewidth(3.0)
 leg = fig.legend(lines, labels, loc='upper center', ncol=6, facecolor='white', edgecolor='black', shadow=True, columnspacing=1, borderaxespad=0.4, fontsize=20)
 for legobj in leg.legendHandles:
     legobj.set_linewidth(1.0)
