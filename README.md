@@ -205,26 +205,15 @@ python eval.py --method DP-FETA-Pro --data_name mnist_28 --epsilon 10.0 --exp_pa
 ```
 The results are recorded in `exp/pdp-diffusion/<the-name-of-file>/stdout.txt`.
 
+For Figure3 and Figure4, please refer to `plot/visualization.py` and `plot/fid_curve.py` and change the `log_files` in codes.
 
-
-
-####  Only pretraining the synthesizer on public datasets and without finetuning on the sensitive datasets. 
-
-Please set sensitive_data.name=null and eval.mode=sen. For example, to use ImageNet for pretraining:
-```
-CUDA_VISIBLE_DEVICES=0,1,2 python run.py \
- sensitive_data.name=null eval.mode=sen \ 
- setup.n_gpus_per_node=3 \ 
- public_data.name=imagenet \ 
- pretrain.cond=true --method PDP-Diffusion \
- --data_name cifar10_32 --epsilon 10.0 \ 
- --exp_description pretrain_imagenet32
-```
-
-#### For the implementation of the results reported in Figures 5, 6, and Table 11 (RQ2), the performance is analyzed by varying the epsilon and model size.
-
+#### For the implementation of the results reported in Table 4 and Figures 5 (RQ2).
 
 We provide more implementation examples of edit the model size of synthesizers in the [scripts](./scripts/rq2.sh).
+
+```
+python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretrain.mode=mix -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed mix
+```
 
 #### For the implementation of the results reported in RQ3.
 
