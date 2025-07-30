@@ -103,7 +103,7 @@ DPImageBench/
 Clone repo and setup the environment:
 
  ```
-git clone git@github.com:2019ChenGong/DPImageBench.git
+git clone git@github.com:2019ChenGong/Feta-Pro.git
 sh install.sh
  ```
 
@@ -155,7 +155,7 @@ def main(config):
 We list the key hyper-parameters below, including their explanations and available options.
 
 - `--data_name`: means the sensitive dataset; the option is [`mnist_28`, `fmnist_28`, `cifar10_32`, `cifar100_32`, `eurosat_32`, `celeba_male_32`, `camelyon_32`].
-- `--method`: the method to train the DP image synthesizers; the option is [`DP-NTK`, `DP-Kernel`, `DP-MERF`, `DPGAN`, `DP-LDM-SD`, `DP-LDM`, `DP-LORA`, `DPDM`, `PE`, `GS-WGAN`, `PDP-Diffusion`, `PrivImage`].
+- `--method`: the method to train the DP image synthesizers; the option is [`DP-NTK`, `DP-Kernel`, `DP-MERF`, `DPGAN`, `DP-LDM-SD`, `DP-LDM`, `DP-LORA`, `DPDM`, `PE`, `GS-WGAN`, `PDP-Diffusion`, `PrivImage`, `DP-FETA-Pro`].
 - `--epsilon`: the privacy budget 10.0; the option is [`1.0`, `10.0`].
 - `--exp_description`: the notes for the name of result folders.
 - `setup.n_gpus_per_node`: means the number of GPUs to be used for training.
@@ -167,16 +167,11 @@ We list the key hyper-parameters below, including their explanations and availab
 - `train.n_epochs`: the number of epoch for finetuning on sensitive datasets.
 - `train.dp.n_split`: the number of gradient accumulations for saving GPU memory usage.
 
-> [!Note]
->
-> DP-LDM originally uses a latent diffusion model as the DP synthesizer. For a fair comparison, we now use a standard diffusion model, just like other diffusion-based models, which we call `DP-LDM-SD`. In addition, `DP-LDM` means using latent diffusion models (i.e., stabel diffusion) as synthesizers.
-
 > [!Tip]
 >
-> Experiments such as pretraining or using DPSGD require significant computational resources, as shown in Table 17 of our paper. We recommend to use 4 NVIDIA GeForce A6000 Ada GPUs and 512GB of memory. Here are some tips to help users efficiently reduce computational resource usage and running time in an appropriate way:
+> Experiments such as pretraining or using DPSGD require significant computational resources. We recommend to use 4 NVIDIA GeForce A6000 Ada GPUs and 512GB of memory. Here are some tips to help users efficiently reduce computational resource usage and running time in an appropriate way:
 > - Reduce `pretrain.n_epochs` and `train.n_epochs`: Reducing the number of pretraining and fine-tuning steps can decrease running time but may also impact the performance of synthetic images.
 > - Increase `train.dp.n_split`: Increasing `train.dp.n_split` enables jobs to run even when GPU memory is insufficient. However, this adjustment will lead to longer running times.
-> - Share the pretraing models: Some algorithms can share the same pretrained models, `PDP-Diffusion` and `DP-LDM-SD`, as well as `DP-LoRA and DP-LDM`. Additionally, for certain algorithms, different sensitive datasets can also share the same pretrained model. For detailed instructions on using pretrained synthesizers, please refer to the section "Directly use the pretrained synthesizers" in [4.3.2 How to run](#432-how-to-run). Sharing pretrained models eliminates the need for additional pretraining, helping to save computational resources.
 
 
 > [!Warning]
@@ -192,28 +187,20 @@ Users should first activate the conda environment.
 conda activate dpimagebench
 cd DPImageBench
 ```
-#### For the implementation of results reported in Table 6, 7, 8, 9 and 10 (RQ1). 
+#### For the implementation of results reported in Table 3, Figure 3 and 4 (RQ1). 
 
 We list an example as follows. Users can modify the configuration files in [configs](./configs) as their preference. 
 
-We provide an example of training a synthesizer using the PDP-Diffusion method with 4 GPUs. The results reported in Table 6 were obtained by following the instructions provided. Additionally, the results (fidelity evaluations) reported in Table 7 were obtained using the default settings.
+We provide an example of training a synthesizer using the DP-FETA-Pro method with 4 GPUs. The results reported in Table 3 were obtained by following the instructions provided. 
+
 ```
-python run.py setup.n_gpus_per_node=4 --method PDP-Diffusion --data_name mnist_28 --epsilon 10.0 eval.mode=val
+python run.py setup.n_gpus_per_node=4 --method DP-FETA-Pro --data_name mnist_28 -e 1.0 eval.mode=val
 ```
 The results reported in Table 5 were obtained by following the instructions below.
 ```
 python run.py setup.n_gpus_per_node=4 --method PDP-Diffusion --data_name mnist_28 --epsilon 10.0 eval.mode=sen
 ```
 
-> [!Note]
->
-> It is noted that the default resolution for pretraining is 28x28 when --data_name is set to `mnist_28` or `fmnist_28`, but 32x32 for other datasets. we provide synthetic images for `celeba` in resolutions of 64x64 and 128x128 as follows.
-
-
-The results presented in Table 9, which explore synthetic images at different resolutions for `celeba`, are obtained by following the instructions below.
-```
-python run.py setup.n_gpus_per_node=4 --method PDP-Diffusion --data_name celeba_male_64 --epsilon 10.0 eval.mode=val
-```
 We provide more examples in the `scripts/rq1.sh`, please refer to [scrips](scripts/rq1.sh).
 
 Besides, if users want to directly evaluate the synthetic images,
