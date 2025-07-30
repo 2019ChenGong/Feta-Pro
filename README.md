@@ -239,7 +239,7 @@ python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretr
 
 #### For the implementation of the results reported in Figure 6 and 7 (RQ3).
 
-To obtain the results in Figure 6, users can set the `train.sigma_freq` and `train.sigma_time` to change the privacy budget allocation plans.
+To obtain the results in Figure 6, users can set the `train.sigma_freq` and `train.sigma_time` to change the privacy budget allocation plans. The algorithm will try different noise scales for DP-SGD to obtain the corresponding privacy budget settings (controlled by `-e`).
 
 - `train.sigma_freq`: the noise scale of frequency domain features.
 - `train.sigma_time`: the noise scale of time domain features.
