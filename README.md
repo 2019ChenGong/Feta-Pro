@@ -241,14 +241,12 @@ python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretr
 
 Users can set the `` and `public_data.name` to choose between conditional and unconditional pretraining or to enable or disable pretraining. `public_data.name=null` indicates that pretraining is excluded. If users wish to use Places365 or a pretraining dataset, please take note of the following key parameters.
 
-- `train.sigma_freq`: the number of categories for pretraining dataset (e.g., 365 for Places365).
-- `train.sigma_time`: [`null`, `imagenet`, `places365`].
-- `public_data.train_path`: the path to pretraining dataset.
+- `train.sigma_freq`: the noise scale of frequency domain features.
+- `train.sigma_time`: the noise scale of time domain features.
 
-
-‘’‘
+```
 python run.py setup.n_gpus_per_node=4 --method DP-FETA-Pro --data_name mnist_28 -e 1.0 eval.mode=val train.sigma_freq=26.6 train.sigma_time=20
-’‘’
+```
 
 
 > [!Note]
