@@ -248,6 +248,12 @@ To obtain the results in Figure 6, users can set the `train.sigma_freq` and `tra
 python run.py setup.n_gpus_per_node=4 --method DP-FETA-Pro --data_name mnist_28 -e 1.0 eval.mode=val train.sigma_freq=26.6 train.sigma_time=20
 ```
 
+For results in Figure 7, users can adjust `-e`, `train.sigma_freq` and `train.sigma_time`, to run DP-FETA-Pro with varying privacy budget. 
+For example,
+
+```
+python run.py setup.n_gpus_per_node=4 --method DP-FETA-Pro --data_name mnist_28 -e 10.0 eval.mode=val train.sigma_freq=7.4 train.sigma_time=5
+```
 
 > [!Note]
 >
