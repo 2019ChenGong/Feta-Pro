@@ -306,13 +306,11 @@ class DP_Diffusion(DPSynther):
             # freq_model = Freq_Model(self.all_config.model.merf, self.device, self.all_config.train.sigma_sensitivity_ratio)
             self.freq_model.train(sensitive_train_loader, self.all_config.train.freq)
             syn_data, syn_labels = self.freq_model.generate(self.all_config.gen.freq)
-            torch.save(torch.tensor([self.freq_model.noise_factor]), os.path.join(self.all_config.gen.freq.log_dir, 'pc.pth'))
         dist.barrier()
         # return config
         syn = np.load(os.path.join(self.all_config.gen.freq.log_dir, 'gen.npz'))
         syn_data, syn_labels = syn["x"], syn["y"]
-        if torch.load(os.path.join(self.all_config.gen.freq.log_dir, 'pc.pth')).item() != 0:
-            config.dp['privacy_history'].append([torch.load(os.path.join(self.all_config.gen.freq.log_dir, 'pc.pth')).item(), 1, 1])
+        config.dp['privacy_history'].append([self.all_config.train.freq.dp.sigma, 1, 1])
         freq_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
         freq_train_loader = DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16)
 

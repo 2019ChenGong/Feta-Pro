@@ -239,7 +239,7 @@ python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretr
 
 #### For the implementation of the results reported in Figure 6 and 7 (RQ3).
 
-Users can set the `` and `public_data.name` to choose between conditional and unconditional pretraining or to enable or disable pretraining. `public_data.name=null` indicates that pretraining is excluded. If users wish to use Places365 or a pretraining dataset, please take note of the following key parameters.
+To obtain the results in Figure 6, users can set the `train.sigma_freq` and `train.sigma_time` to change the privacy budget allocation plans.
 
 - `train.sigma_freq`: the noise scale of frequency domain features.
 - `train.sigma_time`: the noise scale of time domain features.
