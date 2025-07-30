@@ -212,7 +212,7 @@ For baselines, readers can select the options `-m`: [`DP-NTK`, `DP-Kernel`, `DP-
 python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val -m DPDM -dn mnist_28 -e 1.0 -ed dpdm
 ```
 
-#### For the implementation of the results reported in Table 4 and Figures 5 (RQ2).
+#### For the implementation of the results reported in Table 4 and Figure 5 (RQ2).
 
 In RQ2, to investigate the benifits of frequency features, in Figure 5, we compare the performance of DP-FETA-Pro with three invariants,
 
@@ -237,57 +237,19 @@ Users can set the `pretrain.mode`=[`freq_time`, `mix`] to choose the invariants.
 python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretrain.mode=mix -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed mix
 ```
 
+#### For the implementation of the results reported in Figure 6 and 7 (RQ3).
 
-#### For the implementation of the results reported in RQ3.
+Users can set the `` and `public_data.name` to choose between conditional and unconditional pretraining or to enable or disable pretraining. `public_data.name=null` indicates that pretraining is excluded. If users wish to use Places365 or a pretraining dataset, please take note of the following key parameters.
 
-Users can set the `pretrain.cond` and `public_data.name` to choose between conditional and unconditional pretraining or to enable or disable pretraining. `public_data.name=null` indicates that pretraining is excluded. If users wish to use Places365 or a pretraining dataset, please take note of the following key parameters.
-
-- `public_data.n_classes`: the number of categories for pretraining dataset (e.g., 365 for Places365).
-- `public_data.name`: [`null`, `imagenet`, `places365`].
+- `train.sigma_freq`: the number of categories for pretraining dataset (e.g., 365 for Places365).
+- `train.sigma_time`: [`null`, `imagenet`, `places365`].
 - `public_data.train_path`: the path to pretraining dataset.
 
-We use ImageNet as the default pretraining dataset, and these parameters are configured accordingly. We provide more implementation examples in the [scripts](./scripts/rq3.sh).
 
-For example, 
+‘’‘
+python run.py setup.n_gpus_per_node=4 --method DP-FETA-Pro --data_name mnist_28 -e 1.0 eval.mode=val train.sigma_freq=26.6 train.sigma_time=20
+’‘’
 
-(1) Using ImageNet to pretrain DPGAN using conditional pretraining.
-```
-python run.py setup.n_gpus_per_node=4 --method DPGAN --data_name mnist_28 \
- --epsilon 10.0 eval.mode=val \
- public_data.name=imagenet \
- pretrain.cond=true \
- --exp_description pretrain_imagenet_conditional 
-```
-
-(2) Using Places365 to pretrain DPGAN using conditional pretraining.
-```
-python run.py setup.n_gpus_per_node=4 --method DPGAN --data_name mnist_28 \ 
- --epsilon 10.0 eval.mode=val \
- public_data.name=places365 public_data.n_classes=365 public_data.train_path=dataset/places365 \
- pretrain.cond=true \
- --exp_description pretrain_places365_conditional 
-```
-
-(3) Using Places365 to pretrain DPGAN using unconditional pretraining.
-```shell
-python run.py setup.n_gpus_per_node=4 --method DPGAN --data_name mnist_28 \ 
- --epsilon 10.0 eval.mode=val \
- public_data.name=places365 public_data.n_classes=365 public_data.train_path=dataset/places365 \
- pretrain.cond=False \
- --exp_description pretrain_places365_unconditional 
-```
-
-If users wish to use select the public dataset for pretraining like PrivImage in Table 12, you should set the `public_data.selective.ratio`.
-
-For example, use 5% ImageNet to pretrain DPDM.
-```
-python run.py setup.n_gpus_per_node=4 --method DPDM --data_name cifar10_32 \
- --epsilon 10.0 eval.mode=val \
- public_data.name=imagenet \
- public_data.selective.ratio=0.05 \
- pretrain.cond=true \
- --exp_description pretrain_imagenet_5perc 
-```
 
 > [!Note]
 >
