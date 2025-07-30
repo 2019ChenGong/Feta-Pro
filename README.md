@@ -255,6 +255,10 @@ For example,
 python run.py setup.n_gpus_per_node=4 --method DP-FETA-Pro --data_name mnist_28 -e 10.0 eval.mode=val train.sigma_freq=7.4 train.sigma_time=5
 ```
 
+For the results in Table 11, we can run `cal_privacy.py` to obtain the DP cost ratios of spatial feature / frequency feature / DP-SGD in FETA-Pro based on `train.sigma_freq`, `train.sigma_time`, and `epsilon`.
+
+For example,
+
 > [!Note]
 >
 > If users wish to combine warm-up training in DP-FETA with other methods, you should set the `public_data.name=central_mean`.
