@@ -24,8 +24,8 @@ We conduct experiments to show that across five sensitive image datasets, FETA-P
     - [4.2 Prepare Dataset](#42-prepare-dataset)
     - [4.3 Running](#43-running)
       - [4.3.1 Key hyper-parameter introductions](#431-key-hyper-parameter-introductions)
-      - [4.3.2 How to run](#432-how-to-run)
-      - [4.3.3 Training using checkpoints](#433-training-using-checkpoints)
+      - [4.3.2 How to run (RQ1, RQ2, and RQ3)](#432-how-to-run-rq1-rq2-and-rq3)
+      - [4.3.3 How to run (Experiments in discussions)](#433-how-to-run-experiments-in-discussions)
     - [4.4 Results](#44-results)
       - [4.4.1 Results Structure](#441-results-structure)
       - [4.4.2 Results Explanation](#442-results-explanation)
@@ -166,6 +166,8 @@ We list the key hyper-parameters below, including their explanations and availab
 - `pretrain.n_epochs`: the number of epoch for pretraining.
 - `train.n_epochs`: the number of epoch for finetuning on sensitive datasets.
 - `train.dp.n_split`: the number of gradient accumulations for saving GPU memory usage.
+- `train.sigma_freq`: the noise scale of frequency domain features.
+- `train.sigma_time`: the noise scale of time domain features.
 
 > [!Tip]
 >
@@ -179,7 +181,7 @@ We list the key hyper-parameters below, including their explanations and availab
 > It is a common [issue](https://pytorch.org/docs/stable/distributed.html) that we can not run a distributed process under a `setup.master_port=6026`. If you intend to run multiple distributed processes on the same machine, please consider using a different `setup.master_port`, such as 6027.
 
 
-#### 4.3.2 How to run
+#### 4.3.2 How to run (RQ1, RQ2, and RQ3)
 
 Users should first activate the conda environment.
 
@@ -259,11 +261,14 @@ For the results in Table 11, we can run `cal_privacy.py` to obtain the DP cost r
 
 For example,
 
+#### 4.3.3 How to run (Experiments in Discussions)
+
+#### 
+
 > [!Note]
 >
 > If users wish to combine warm-up training in DP-FETA with other methods, you should set the `public_data.name=central_mean`.
 
-#### 4.3.3 Training Using Checkpoints
 
 DPImageBench also supports training synthesizers from the checkpoints. As mentioned in the [results structure](#451-results-structure), we provide `snapshot_checkpoint.pth` to store the synthesizer's parameters at the current epoch after each iteration. If users wish to finetune the synthesizers using pretrained models, they should: (1) set `public_data.name=null`, and (2) load the pretrained synthesizers through `model.ckpt`. For example, the pretrained synthesizer can be sourced from other algorithms. Readers can refer to the [file structure](./exp/README.md) for more details about loading pretrained models like
 
