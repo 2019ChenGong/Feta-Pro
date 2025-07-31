@@ -1,14 +1,16 @@
 from typing import List, Optional, Tuple, Union
 import numpy as np
 from scipy.optimize import root_scalar
-import scipy
+import argparse
 
 from opacus.accountants.accountant import IAccountant
 from opacus.accountants.analysis import rdp as privacy_analysis
 from opacus.accountants.utils import get_noise_multiplier
 from typing import Optional
+from utils.utils import initialize_environment, run, parse_config
 
 from opacus.accountants import create_accountant
+from data.dataset_loader import load_data
 
 
 MAX_SIGMA = 1e6
@@ -60,8 +62,8 @@ class RDPAccountant(IAccountant):
         if not flag:
             # print(rdp)
             ratio = list(np.array(rdp) / sum(rdp) * 100)
-            ratio = [str(round(float(ratio_i), 2)) for ratio_i in ratio]
-            print('RDP cost ratio: ' + ' / '.join(ratio))
+            ratio = [str(round(float(ratio_i), 2))+'%' for ratio_i in ratio]
+            print('RDP cost ratio of time, frequency, and dpsgd: ' + ' / '.join(ratio))
         rdp = sum(rdp)
         eps, best_alpha = privacy_analysis.get_privacy_spent(
             orders=alphas, rdp=rdp, delta=delta
@@ -89,17 +91,40 @@ class RDPAccountant(IAccountant):
     def mechanism(cls) -> str:
         return "rdp"
 
+def main(config):
+    sensitive_train_loader, _, _, _, config = load_data(config)
+    accountant = RDPAccountant()
 
-accountant = RDPAccountant()
-data_num = 55000
-delta = 1 / (data_num * np.log(data_num))
+    sigma_f = config.train.sigma_freq
+    sigma_t = config.train.sigma_time
+    accountant.history = [(sigma_t, config.public_data.central.batch_size/len(sensitive_train_loader.dataset), config.public_data.central.sample_num), (sigma_f, 1., 1)]
+    sample_rate = 1 / len(sensitive_train_loader)
+    sigma_sgd = get_noise_multiplier(
+                target_epsilon=config.train.dp.epsilon,
+                target_delta=config.train.dp.delta,
+                sample_rate=sample_rate,
+                epochs=config.train.n_epochs,
+                accountant=accountant.mechanism(),
+                account_history=accountant.history,
+            )
+    accountant.history.append((sigma_sgd, sample_rate, int(config.train.n_epochs / sample_rate)))
 
+    eps, alpha = accountant.get_privacy_spent(delta=config.train.dp.delta)
+    eps, alpha = accountant.get_privacy_spent(delta=config.train.dp.delta, alphas=alpha)
 
-sigma_f = 20
-sigma_t = 2
-sigma_sgd = 152
-accountant.history = [(sigma_t, 6000/data_num, 5), (sigma_f, 1., 1)]
-accountant.history.append((sigma_sgd, 4096/data_num, data_num//4096*150))
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config_dir', default="configs")
+    parser.add_argument('--method', '-m', default="DP-FETA-Pro")
+    parser.add_argument('--epsilon', '-e', default="10.0")
+    parser.add_argument('--data_name', '-dn', default="mnist_28")
+    parser.add_argument('--exp_description', '-ed', default="")
+    parser.add_argument('--resume_exp', '-re', default=None)
+    parser.add_argument('--config_suffix', '-cs', default="")
+    opt, unknown = parser.parse_known_args()
 
-eps, alpha = accountant.get_privacy_spent(delta=delta)
-eps, alpha = accountant.get_privacy_spent(delta=delta, alphas=alpha)
+    config = parse_config(opt, unknown)
+    config.setup.n_gpus_per_node = 1
+    config.setup.run_type = 'normal'
+
+    run(main, config)

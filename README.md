@@ -261,6 +261,16 @@ For the results in Table 11, we can run `cal_privacy.py` to obtain the DP cost r
 
 For example,
 
+```
+python cal_privacy.py setup.n_gpus_per_node=1 --method DP-FETA-Pro --data_name mnist_28 -e 1.0 eval.mode=val train.sigma_freq=26.6 train.sigma_time=20
+```
+
+You will get the DP cost ratios in the terminal,
+
+```
+RDP cost ratio of time, frequency, and dpsgd: 0.3% / 2.79% / 96.91%
+```
+
 #### 4.3.3 How to run (Experiments in Discussions)
 
 #### FETA-Pro without privacy protection
@@ -329,10 +339,7 @@ exp/
 │           ├── train_freq
 │           │   ├── checkooints  
 │           │   │   ├── final_checkpoint.pth  
-│           │   │   └── snapshot_checkpoint.pth    
-│           │   └── samples 
-│           │       ├── iter_2000 
-│           │       └── ... 
+│           │   │   └── noisy_emb.pt   
 │           └──stdout.txt   
 ├── pe/ 
 └── privimage/  
@@ -353,6 +360,8 @@ We introduce the files as follows,
 - `./train/checkpoints/final_checkpoint.pth`: the parameters of synthsizer at the final epochs.
 - `./train/checkpoints/snapshot_checkpoint.pth`: we store the synthesizer's parameters at the current epoch after each iteration, deleting the previous parameters to manage storage efficiently.
 - `./train/samples/iter_2000`: the synthetic images under 2000 iterations for training on sensitive datasets.
+- `./train_freq/checkpoints/final_checkpoint.pth`: the parameters of the auxiliary generator using frequency features.
+- `./train_freq/checkpoints/noisy_emb.pt`: the noisy frequency feature.
 - `./stdout.txt`: the file used to record the training and evaluation results.
 
 #### 4.4.2 Results Explanation
