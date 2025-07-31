@@ -32,10 +32,10 @@ matplotlib.rcParams.update({'font.size': fontsize, 'font.weight': 'normal'})
 fig = plt.figure(figsize=(20, 4))
 axes = fig.subplots(1, 5)
 
-log_files = ['/p/fzv6enresearch/DPImageBench/exp/dpgan/mnist_28_eps1.0trainval-2024-10-22-17-08-37/stdout.txt',
-            '/p/fzv6enresearch/DPImageBench/exp/dpdm/mnist_28_eps1.0trainval-2024-10-23-00-58-27/stdout.txt',
-            '/p/fzv6enresearch/DPImageBench/exp/dp-feta/mnist_28_eps1.0val_central_mean-2025-03-19-07-56-01/stdout.txt',
-            '/p/fzv6enresearch/PE-Refine/exp/dp-feta2/mnist_28_eps1.0val_merfeps10.0_fetasigma20_merf0.25-2025-05-25-23-57-45/stdout.txt',]
+log_files = ['DPImageBench/exp/dpgan/mnist_28_eps1.0trainval-2024-10-22-17-08-37/stdout.txt',
+            'DPImageBench/exp/dpdm/mnist_28_eps1.0trainval-2024-10-23-00-58-27/stdout.txt',
+            'DPImageBench/exp/dp-feta/mnist_28_eps1.0val_central_mean-2025-03-19-07-56-01/stdout.txt',
+            'PE-Refine/exp/dp-feta2/mnist_28_eps1.0val_merfeps10.0_fetasigma20_merf0.25-2025-05-25-23-57-45/stdout.txt',]
 fid_list = []
 for log in log_files:
     with open(log, 'r') as f:
@@ -55,19 +55,13 @@ for i, fids in enumerate(fid_list):
     x = x[::2]  # Take every 2nd point
     fids = fids[::2]  # Take every 2nd point
     axes[0].plot(x, fids, label=method_name[i], marker=marker_shapes[i], markersize=ms, color=colors[i], zorder=100)
-    # if i == 0:
-    #     baseline_fid = fids[-1]
-    #     # axes[0].axhline(y=fids[-1], color='black', linestyle='--', zorder=0)
-    # else:
-    #     for j in range(len(fids)-1):
-    #         if fids[j] >= baseline_fid and fids[j+1] <= baseline_fid and x[j] < small_x:
-    #             small_x = x[j]
+
 print(x[-1], small_x, small_x/x[-1])
 
-log_files = ['/p/fzv6enresearch/DPImageBench/exp/dpgan/fmnist_28_eps1.0trainval-2024-10-22-15-52-27/stdout.txt',
-            '/p/fzv6enresearch/DPImageBench/exp/dpdm/fmnist_28_eps1.0trainval-2024-10-23-23-32-54/stdout.txt',
-            '/p/fzv6enresearch/DPImageBench/exp/dp-feta/fmnist_28_eps1.0val_central_mean-2025-03-20-23-02-01/stdout.txt',
-            '/p/fzv6enresearch/PE-Refine/exp/dp-feta2/fmnist_28_eps1.0val_merfeps1.0_fetasigma20_merf0.25-2025-05-26-16-18-46/stdout.txt',
+log_files = ['DPImageBench/exp/dpgan/fmnist_28_eps1.0trainval-2024-10-22-15-52-27/stdout.txt',
+            'DPImageBench/exp/dpdm/fmnist_28_eps1.0trainval-2024-10-23-23-32-54/stdout.txt',
+            'DPImageBench/exp/dp-feta/fmnist_28_eps1.0val_central_mean-2025-03-20-23-02-01/stdout.txt',
+            'PE-Refine/exp/dp-feta2/fmnist_28_eps1.0val_merfeps1.0_fetasigma20_merf0.25-2025-05-26-16-18-46/stdout.txt',
             ]
 fid_list = []
 for log in log_files:
@@ -99,10 +93,10 @@ for i, fids in enumerate(fid_list):
     #             small_x = x[j]
 print(x[-1], small_x, small_x/x[-1])
 
-log_files = ['/p/fzv6enresearch/DPImageBench/exp/dpgan/cifar10_32_eps1.0trainval-2024-10-22-21-23-15/stdout.txt',
-            '/p/fzv6enresearch/DPImageBench/exp/dpdm/cifar10_32_eps1.0trainval-2024-10-23-14-01-14/stdout.txt',
-            '/p/fzv6enresearch/DPImageBench/exp/dp-feta/cifar10_32_eps1.0val_central_mean-2025-03-23-07-48-09/stdout.txt',
-            '/p/fzv6enresearch/PE-Refine/exp/dp-feta2/cifar10_32_eps1.0val_merfeps1.0_fetasigma15_merf0.2-2025-05-29-13-52-20/stdout.txt',
+log_files = ['DPImageBench/exp/dpgan/cifar10_32_eps1.0trainval-2024-10-22-21-23-15/stdout.txt',
+            'DPImageBench/exp/dpdm/cifar10_32_eps1.0trainval-2024-10-23-14-01-14/stdout.txt',
+            'DPImageBench/exp/dp-feta/cifar10_32_eps1.0val_central_mean-2025-03-23-07-48-09/stdout.txt',
+            'PE-Refine/exp/dp-feta2/cifar10_32_eps1.0val_merfeps1.0_fetasigma15_merf0.2-2025-05-29-13-52-20/stdout.txt',
             ]
 fid_list = []
 for log in log_files:
@@ -133,10 +127,10 @@ for i, fids in enumerate(fid_list):
                 small_x = x[j]
 print(x[-1], small_x, small_x/x[-1])
 
-log_files = ['/p/fzv6enresearch/DPImageBench/exp/dpgan/celeba_male_32_eps1.0trainval-2024-10-22-23-05-09/stdout.txt',
-            '/p/fzv6enresearch/DPImageBench/exp/dpdm/celeba_male_32_eps1.0trainval-2024-10-24-00-50-04/stdout.txt',
-            '/p/fzv6enresearch/DPImageBench/exp/dp-feta/celeba_male_32_eps1.0sen_central_mean-2025-03-18-02-23-26/stdout.txt',
-            '/p/fzv6enresearch/PE-Refine/exp/dp-feta2/celeba_male_32_eps1.0val_merfeps10.0_fetasigma15_merf0.15-2025-05-29-09-37-02/stdout.txt',
+log_files = ['DPImageBench/exp/dpgan/celeba_male_32_eps1.0trainval-2024-10-22-23-05-09/stdout.txt',
+            'DPImageBench/exp/dpdm/celeba_male_32_eps1.0trainval-2024-10-24-00-50-04/stdout.txt',
+            'DPImageBench/exp/dp-feta/celeba_male_32_eps1.0sen_central_mean-2025-03-18-02-23-26/stdout.txt',
+            'PE-Refine/exp/dp-feta2/celeba_male_32_eps1.0val_merfeps10.0_fetasigma15_merf0.15-2025-05-29-09-37-02/stdout.txt',
             ]
 fid_list = []
 for log in log_files:
@@ -172,10 +166,10 @@ for i, fids in enumerate(fid_list):
                 small_x = x[j]
 print(x[-1], small_x, small_x/x[-1])
 
-log_files = ['/p/fzv6enresearch/DPImageBench/exp/dpgan/camelyon_32_eps1.0trainval-2024-10-22-21-20-01/stdout.txt',
-            '/p/fzv6enresearch/DPImageBench/exp/dpdm/camelyon_32_eps1.0trainval-2024-10-24-08-46-55/stdout.txt',
-            '/p/fzv6enresearch/DPImageBench/exp/dp-feta/camelyon_32_eps1.0val_central_mean-2025-03-21-05-02-55/stdout.txt',
-            '/p/fzv6enresearch/PE-Refine/exp/dp-feta2/camelyon_32_eps1.0val_merfeps1.0_fetasigma10_merf0.15-2025-05-27-20-59-08/stdout.txt',
+log_files = ['DPImageBench/exp/dpgan/camelyon_32_eps1.0trainval-2024-10-22-21-20-01/stdout.txt',
+            'DPImageBench/exp/dpdm/camelyon_32_eps1.0trainval-2024-10-24-08-46-55/stdout.txt',
+            'DPImageBench/exp/dp-feta/camelyon_32_eps1.0val_central_mean-2025-03-21-05-02-55/stdout.txt',
+            'PE-Refine/exp/dp-feta2/camelyon_32_eps1.0val_merfeps1.0_fetasigma10_merf0.15-2025-05-27-20-59-08/stdout.txt',
             ]
 fid_list = []
 for log in log_files:
@@ -253,35 +247,3 @@ axes[4].set_yticks([35, 70, 105, 140], ['35', '70', '105', '140'])
 plt.tight_layout()
 plt.savefig('test.png')
 plt.savefig('fid_curve.pdf')
-
-# axes[0, 0].set_xlim([0, 74000/32])
-# axes[0, 1].set_xlim([0, 74000/32])
-# axes[1, 0].set_xlim([0, 440000/32])
-# axes[1, 1].set_xlim([0, 48000/32])
-# axes[0, 0].set_ylim([10, 240])
-# axes[0, 1].set_ylim([30, 280])
-# axes[1, 0].set_ylim([45, 370])
-# axes[1, 1].set_ylim([48, 110])
-# axes[0, 0].xaxis.set_major_locator(MultipleLocator(500)) 
-# axes[0, 1].xaxis.set_major_locator(MultipleLocator(500)) 
-# axes[1, 0].xaxis.set_major_locator(MultipleLocator(3000)) 
-# axes[1, 1].xaxis.set_major_locator(MultipleLocator(500)) 
-# axes[0, 0].set_xticks([0, 20000, 40000, 60000], ['0', '20', '40', '60'])
-# axes[0, 1].set_xticks([0, 20000, 40000, 60000], ['0', '20', '40', '60'])
-# axes[1, 0].set_xticks([0, 100000, 200000, 300000, 400000], ['0', '100', '200', '300', '400'])
-# axes[1, 1].set_xticks([0, 10000, 20000, 30000, 40000], ['0', '10', '20', '30', '40'])
-# axes[0, 3].set_yticks([100, 200, 300, 400], ['100', '200', '300', '400'])
-# axes[0, 1].set_yticks([30, 100, 200], ['30', '100', '200'])
-# axes[0, 1].set_xticks([0, 20000, 40000, 60000], ['0', '20', '40', '60'])
-# axes[1, 0].set_xticks([0, 100000, 200000, 300000, 400000], ['0', '100', '200', '300', '400'])
-# axes[1, 1].set_xticks([0, 10000, 20000, 30000, 40000], ['0', '10', '20', '30', '40'])
-
-# axes[0].grid(color='lightgrey', linewidth=1, zorder=0)
-# axes[1].grid(color='lightgrey', linewidth=1, zorder=0)
-# axes[2].grid(color='lightgrey', linewidth=1, zorder=0)
-# axes[3].grid(color='lightgrey', linewidth=1, zorder=0)
-# axes[4].grid(color='lightgrey', linewidth=1, zorder=0)
-
-# plt.tight_layout()
-# plt.savefig('test.png')
-# plt.savefig('fid_curve.pdf')

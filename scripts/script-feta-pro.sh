@@ -10,6 +10,5 @@ python run.py setup.n_gpus_per_node=1 setup.master_port=6662 eval.mode=val -m DP
 # DPDM
 python run.py setup.n_gpus_per_node=3 setup.master_port=6662 eval.mode=val -m DPDM -dn mnist_28 -e 1.0 -ed val_test
 
-
 # RQ3, change the privacy allocation plans
 python run.py setup.n_gpus_per_node=4 --method DP-FETA-Pro --data_name mnist_28 -e 1.0 eval.mode=val train.sigma_freq=26.6 train.sigma_time=20

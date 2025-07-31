@@ -100,7 +100,7 @@ def get_single_sigma_losses(train_loader, d_enc, d_rff, rff_sigma, device, n_lab
 
   noisy_emb = noisy_dataset_embedding(train_loader, w_freq, d_rff, device, n_labels, noise_factor, mmd_type, pca_vecs=pca_vecs, cond=cond)
   # pt.save(w_freq.w.detach().cpu(), 'w_freq_10.pt')
-  # noisy_emb = pt.load('/p/fzv6enresearch/PE-Refine/exp/dp-feta2/cifar10_32_eps1.0val_time15_freq32.6_1merf_emb10_noDM-2025-07-23-07-58-05/train_merf/checkpoints/noisy_emb.pt').to(device)
+  # noisy_emb = pt.load('exp/dp-feta2/cifar10_32_eps1.0val_time15_freq32.6_1merf_emb10_noDM-2025-07-23-07-58-05/train_merf/checkpoints/noisy_emb.pt').to(device)
   # w_freq = pt.load('w_freq_10.pt').to(device)
   # w_freq = rff_param_tuple(w=w_freq, b=None)
 
