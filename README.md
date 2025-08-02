@@ -285,7 +285,13 @@ The results are recorded in `exp/pdp-diffusion/<the-name-of-file>no-dp-mnist_28/
 
 > [!Note]
 >
-> If users wish to combine warm-up training in FETA-Pro with other methods using public images, you should set the `public_data.name=central_mean`.
+> If users wish to combine warm-up training in FETA-Pro with other methods using public images, you should set the `pretrain.mode=time_freq`.
+For example,
+
+```
+python run.py setup.n_gpus_per_node=3 pretrain.mode=time_freq --method PDP-Diffusion --data_name mnist_28 -e 10.0 eval.mode=val
+```
+
 
 
 We also support training synthesizers from the checkpoints. If users wish to finetune the synthesizers using pretrained models, they should load the pretrained synthesizers through `model.ckpt`. For example, the pretrained synthesizer can be sourced from other algorithms. Readers can refer to the [file structure](./exp/README.md) for more details about loading pretrained models like

@@ -24,6 +24,7 @@ from torch.utils.data import random_split, TensorDataset, Dataset, DataLoader, C
 
 from models.DP_Diffusion.rnd import Rnd
 from models.DP_MERF.rff_mmd_approx import data_label_embedding, get_rff_mmd_loss, noisy_dataset_embedding
+from data.dataset_loader import CentralDataset
 
 
 import importlib
@@ -72,7 +73,7 @@ class DP_Diffusion(DPSynther):
         label_dim = max(self.private_num_classes, self.public_num_classes)  # Determine the maximum label dimension
         self.network.label_dim = label_dim  # Set the label dimension for the network
 
-        if 'mode' in self.all_config.pretrain:
+        if 'mode' in self.all_config.pretrain and self.all_config.pretrain.mode != 'time':
             self.freq_model = Freq_Model(self.all_config.model.freq, self.device, self.all_config.train.sigma_sensitivity_ratio)
 
         # Initialize the denoiser based on the specified name and network
@@ -127,9 +128,6 @@ class DP_Diffusion(DPSynther):
         if public_dataloader is None:
             # If no public dataloader is provided, set pretraining flag to False and return.
             self.is_pretrain = False
-            return
-        if 'mode' in self.all_config.pretrain and not run:
-            self.time_dataloader = public_dataloader
             return
         
         # Set the number of classes in the loss function to the number of private classes.
@@ -278,7 +276,7 @@ class DP_Diffusion(DPSynther):
 
                 # Log the loss at specified intervals.
                 if (state['step'] + 1) % config.log_freq == 0 and self.global_rank == 0:
-                    logging.info('Loss: %.4f, step: %d' % (loss, state['step'] + 1))
+                    logging.info('Loss: %.4f, step: %d' % (loss.item(), state['step'] + 1))
                 dist.barrier()
 
                 state['step'] += 1
@@ -409,7 +407,7 @@ class DP_Diffusion(DPSynther):
 
                 # Log the loss at specified intervals.
                 if (state['step'] + 1) % config.log_freq == 0 and self.global_rank == 0:
-                    logging.info('Loss: %.4f, step: %d' % (loss, state['step'] + 1))
+                    logging.info('Loss: %.4f, step: %d' % (loss.item(), state['step'] + 1))
                 dist.barrier()
 
                 state['step'] += 1
@@ -462,7 +460,13 @@ class DP_Diffusion(DPSynther):
         torch.cuda.empty_cache()
         
     def warm_up(self, sensitive_train_loader, config):
-        if 'auxiliary' not in self.all_config.pretrain.mode:
+        time_set = CentralDataset(sensitive_train_loader.dataset, num_classes=self.all_config.sensitive_data.n_classes, **self.all_config.public_data.central)
+        time_dataloader = torch.utils.data.DataLoader(dataset=time_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size_time, num_workers=0)
+        if time_set.privacy_history[0] != 0:
+            config.dp['privacy_history'] = [time_set.privacy_history]
+        if self.global_rank == 0:
+            logging.info("Additional privacy cost: {}".format(str(time_set.privacy_history)))
+        if 'auxiliary' not in self.all_config.pretrain.mode and self.all_config.pretrain.mode != 'time':
             if self.global_rank == 0:
                 # freq_model = Freq_Model(self.all_config.model.merf, self.device, self.all_config.train.sigma_sensitivity_ratio)
                 self.freq_model.train(sensitive_train_loader, self.all_config.train.freq)
@@ -472,8 +476,9 @@ class DP_Diffusion(DPSynther):
             syn = np.load(os.path.join(self.all_config.gen.freq.log_dir, 'gen.npz'))
             syn_data, syn_labels = syn["x"], syn["y"]
             freq_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
-            freq_train_loader = DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16)
-        config.dp['privacy_history'].append([self.all_config.train.freq.dp.sigma, 1, 1])
+            freq_train_loader = DataLoader(dataset=freq_train_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size_freq, num_workers=16)
+        if self.all_config.pretrain.mode != 'time':
+            config.dp['privacy_history'].append([self.all_config.train.freq.dp.sigma, 1, 1])
 
         if self.all_config.pretrain.mode == 'freq_time':
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_freq'
@@ -483,12 +488,12 @@ class DP_Diffusion(DPSynther):
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir[:-5] + '_time'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
-            self.pretrain(self.time_dataloader, self.all_config.pretrain, run=True)
+            self.pretrain(time_dataloader, self.all_config.pretrain, run=True)
         elif self.all_config.pretrain.mode == 'time_freq':
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
-            self.pretrain(self.time_dataloader, self.all_config.pretrain, run=True)
+            self.pretrain(time_dataloader, self.all_config.pretrain, run=True)
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir[:-5] + '_freq'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
@@ -497,7 +502,7 @@ class DP_Diffusion(DPSynther):
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
-            self.pretrain(self.time_dataloader, self.all_config.pretrain, run=True)
+            self.pretrain(time_dataloader, self.all_config.pretrain, run=True)
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir[:-5] + '_freq'
             self.all_config.pretrain.n_epochs = self.all_config.train.freq.epochs
             self.all_config.pretrain.batch_size = self.all_config.train.freq.batch_size
@@ -506,7 +511,7 @@ class DP_Diffusion(DPSynther):
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
-            self.pretrain(self.time_dataloader, self.all_config.pretrain, run=True)
+            self.pretrain(time_dataloader, self.all_config.pretrain, run=True)
             self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir[:-13] + 'gen_freq'
             self.all_config.pretrain.n_epochs = self.all_config.train.freq.epochs
             self.all_config.pretrain.batch_size = self.all_config.train.freq.batch_size
@@ -533,6 +538,11 @@ class DP_Diffusion(DPSynther):
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
             self.pretrain(freq_train_loader, self.all_config.pretrain, run=True)
+        elif self.all_config.pretrain.mode == 'time':
+            self.all_config.pretrain.log_dir = self.all_config.pretrain.log_dir + '_time'
+            self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_time
+            self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_time
+            self.pretrain(time_dataloader, self.all_config.pretrain, run=True)
         elif self.all_config.pretrain.mode == 'mix':
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
@@ -736,7 +746,7 @@ class DP_Diffusion(DPSynther):
                     if (state['step'] + 1) % config.log_freq == 0 and self.global_rank == 0:
                         # Log the loss at regular intervals.
                         logging.info('Loss: %.4f, step: %d' %
-                                    (loss, state['step'] + 1))
+                                    (loss.item(), state['step'] + 1))
                     dist.barrier()
 
                     state['step'] += 1

@@ -315,42 +315,15 @@ def load_data(config):
                 public_train_set = public_train_set_
             else:
                 public_train_set = SpecificClassEMNIST(public_train_set_, specific_class)
-        elif "central" in config.public_data.name:
-            if 'central' in config.public_data:
-                public_train_set = CentralDataset(sensitive_train_loader.dataset, num_classes=config.sensitive_data.n_classes, c_type=config.public_data.name.split('_')[-1], **config.public_data.central)
-            else:
-                public_train_set = CentralDataset(sensitive_train_loader.dataset, num_classes=config.sensitive_data.n_classes, c_type=config.public_data.name.split('_')[-1])
-            if public_train_set.privacy_history[0] != 0:
-                config.train.dp['privacy_history'] = [public_train_set.privacy_history]
-            if config.setup.global_rank == 0:
-                logging.info("Additional privacy cost: {}".format(str(public_train_set.privacy_history)))
         elif config.public_data.name == "npz":
             syn = np.load(config.public_data.train_path)
             syn_data, syn_labels = syn["x"], syn["y"]
             public_train_set = TensorDataset(torch.from_numpy(syn_data).float(), torch.from_numpy(syn_labels).long())
-        elif config.public_data.name in ["cen_merf", "merf_cen"]:
-
-            if 'central' in config.public_data:
-                central_train_set = CentralDataset(sensitive_train_loader.dataset, num_classes=config.sensitive_data.n_classes, c_type=config.public_data.name.split('_')[-1], **config.public_data.central)
-            else:
-                central_train_set = CentralDataset(sensitive_train_loader.dataset, num_classes=config.sensitive_data.n_classes, c_type=config.public_data.name.split('_')[-1])
-            config.train.dp['privacy_history'] = [central_train_set.privacy_history]
-            if config.setup.global_rank == 0:
-                logging.info("Additional privacy cost: {}".format(str(central_train_set.privacy_history)))
-            
-            syn = np.load(config.public_data.train_path)
-            syn_data, syn_labels = syn["x"], syn["y"]
-            merf_train_set = TensorDataset(torch.from_numpy(syn_data).float(), syn_labels)
 
         else:
             raise NotImplementedError('public data {} is not yet implemented.'.format(config.public_data.name))
 
-        if config.public_data.name == "cen_merf":
-            public_train_loader = (torch.utils.data.DataLoader(dataset=central_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16), torch.utils.data.DataLoader(dataset=merf_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16))
-        elif config.public_data.name == "merf_cen":
-            public_train_loader = (torch.utils.data.DataLoader(dataset=merf_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16), torch.utils.data.DataLoader(dataset=central_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16))
-        else:
-            public_train_loader = torch.utils.data.DataLoader(dataset=public_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16)
+        public_train_loader = torch.utils.data.DataLoader(dataset=public_train_set, shuffle=True, drop_last=True, batch_size=config.pretrain.batch_size, num_workers=16)
 
     if config.sensitive_data.name is None:
         sensitive_train_loader = None

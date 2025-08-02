@@ -62,7 +62,7 @@ class RDPAccountant(IAccountant):
         if not flag:
             # print(rdp)
             ratio = list(np.array(rdp) / sum(rdp) * 100)
-            ratio = [str(round(float(ratio_i), 2))+'%' for ratio_i in ratio]
+            ratio = [str(round(float(ratio_i), 2)) for ratio_i in ratio]
             print('RDP cost ratio of time, frequency, and dpsgd: ' + ' / '.join(ratio))
         rdp = sum(rdp)
         eps, best_alpha = privacy_analysis.get_privacy_spent(
