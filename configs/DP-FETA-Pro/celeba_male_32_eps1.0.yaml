@@ -154,8 +154,8 @@ train:
   n_splits: 64
   freq:
     epochs: 5
-    batch_size: 500
-    lr: 0.001
+    batch_size: 100
+    lr: 0.01
     lr_decay: 0.9
     log_interval: 10000
     log_dir: null
@@ -165,7 +165,7 @@ train:
       epsilon: 1.0
       delta: 1e-6
     n_splits: 1
-  sigma_freq: 25.0
+  sigma_freq: 38.6
   sigma_time: 15
   sigma_sensitivity_ratio: 0.5
 gen:

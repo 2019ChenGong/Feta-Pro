@@ -24,7 +24,7 @@ class random_aug(object):
         self.no = num_ops
     def __call__(self, img):
         mag = random.choice([i for i in range(1, self.mag+1)])
-        return img
+        # return img
         return transforms.RandAugment(num_ops=self.no, magnitude=mag)(img)
 
     def __repr__(self):
@@ -164,7 +164,7 @@ class CentralDataset(Dataset):
         dataloader = DPDataLoader.from_data_loader(dataloader)
         for _ in range(10000):
             for x, y in dataloader:
-                ds = 16 / x.shape[-1]
+                # ds = 16 / x.shape[-1]
                 for cls in range(num_classes):
                     
                     x_cls = x if num_classes==1 else x[y==cls]
@@ -200,7 +200,7 @@ class CentralDataset(Dataset):
         dataloader = DPDataLoader.from_data_loader(dataloader)
         for _ in range(10000):
             for x, y in dataloader:
-                ds = 16 / x.shape[-1]
+                # ds = 16 / x.shape[-1]
                 if x.shape[-1] == 28:
                     bins = 2
                 else:
