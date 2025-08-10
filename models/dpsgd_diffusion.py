@@ -125,7 +125,7 @@ class DP_Diffusion(DPSynther):
             public_dataloader (DataLoader): The dataloader for the public dataset.
             config (dict): Configuration dictionary containing various settings and hyperparameters.
         """
-        if public_dataloader is None:
+        if public_dataloader is None or config.n_epochs == 0:
             # If no public dataloader is provided, set pretraining flag to False and return.
             self.is_pretrain = False
             return
@@ -564,13 +564,13 @@ class DP_Diffusion(DPSynther):
         Returns:
             None
         """
-
-        if 'mode' in self.all_config.pretrain:
-            config = self.warm_up(sensitive_dataloader, config)
         
         if sensitive_dataloader is None or config.n_epochs == 0:
             # If the dataloader is not provided or the number of epochs is zero, exit early.
             return
+
+        if 'mode' in self.all_config.pretrain:
+            config = self.warm_up(sensitive_dataloader, config)
         
         set_seeds(self.global_rank, config.seed)
         # Set the CUDA device based on the local rank.
