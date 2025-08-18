@@ -164,7 +164,6 @@ class CentralDataset(Dataset):
         dataloader = DPDataLoader.from_data_loader(dataloader)
         for _ in range(10000):
             for x, y in dataloader:
-                # ds = 16 / x.shape[-1]
                 for cls in range(num_classes):
                     
                     x_cls = x if num_classes==1 else x[y==cls]
@@ -190,7 +189,7 @@ class CentralDataset(Dataset):
             if c == sample_num:
                 break
         
-        return torch.cat(central_x), torch.tensor(central_y).long()
+        return torch.cat(central_x), central_y
 
     def query_mode_image(self, sensitive_dataset, sample_num, sigma, batch_size, num_classes):
         c = 0
@@ -200,7 +199,6 @@ class CentralDataset(Dataset):
         dataloader = DPDataLoader.from_data_loader(dataloader)
         for _ in range(10000):
             for x, y in dataloader:
-                # ds = 16 / x.shape[-1]
                 if x.shape[-1] == 28:
                     bins = 2
                 else:

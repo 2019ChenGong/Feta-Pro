@@ -103,16 +103,19 @@ class DP_Diffusion(DPSynther):
 
         self.model = self.model.to(self.local_rank)  # Move the model to the specified device
         self.model.train()  # Set the model to training mode
-        self.ema = ExponentialMovingAverage(self.model.parameters(), decay=self.ema_rate)  # Initialize EMA for the model parameters
+        self.ema = None
 
         # Load checkpoint if provided
+        self.optimizer_state = None
         if config.ckpt is not None:
             state = torch.load(config.ckpt, map_location=self.device)  # Load the checkpoint
             new_state_dict = {}
             for k, v in state['model'].items():
                 new_state_dict[k[7:]] = v  # Adjust the keys to match the model's state dictionary
             logging.info(self.model.load_state_dict(new_state_dict, strict=True))  # Load the state dictionary into the model
+            self.ema = ExponentialMovingAverage(self.model.parameters(), decay=self.ema_rate)
             self.ema.load_state_dict(state['ema'])  # Load the EMA state dictionary
+            self.optimizer_state = state['optimizer']
             del state, new_state_dict  # Clean up memory
 
         self.is_pretrain = True  # Flag to indicate pretraining status
@@ -569,7 +572,7 @@ class DP_Diffusion(DPSynther):
             # If the dataloader is not provided or the number of epochs is zero, exit early.
             return
 
-        if 'mode' in self.all_config.pretrain:
+        if 'mode' in self.all_config.pretrain and self.all_config.pretrain.mode is not None:
             config = self.warm_up(sensitive_dataloader, config)
         
         set_seeds(self.global_rank, config.seed)
@@ -607,7 +610,7 @@ class DP_Diffusion(DPSynther):
         # Wrap the model with DPDDP for distributed training with differential privacy.
         model = DPDDP(self.model)
         # Initialize Exponential Moving Average (EMA) for model parameters.
-        ema = ExponentialMovingAverage(model.parameters(), decay=self.ema_rate)
+        ema = ExponentialMovingAverage(model.parameters(), decay=self.ema_rate) if self.ema is None else self.ema
 
         # Initialize the optimizer based on the configuration.
         if config.optim.optimizer == 'Adam':
@@ -618,6 +621,8 @@ class DP_Diffusion(DPSynther):
             raise NotImplementedError("Optimizer not supported")
 
         # Initialize the state dictionary to keep track of the training process.
+        if self.optimizer_state is not None:
+            optimizer.load_state_dict(self.optimizer_state)
         state = dict(model=model, ema=ema, optimizer=optimizer, step=0)
 
         if self.global_rank == 0:
@@ -636,21 +641,34 @@ class DP_Diffusion(DPSynther):
             account_history = None
 
         # Make the model, optimizer, and data loader private.
-        model, optimizer, dataset_loader = privacy_engine.make_private_with_epsilon(
+        if 'noise_multiplier' in config:
+            model, optimizer, dataset_loader = privacy_engine.make_private(
             module=model,
             optimizer=optimizer,
             data_loader=sensitive_dataloader,
-            target_delta=config.dp.delta,
-            target_epsilon=config.dp.epsilon,
-            epochs=config.n_epochs,
+            noise_multiplier=config.noise_multiplier,
             max_grad_norm=config.dp.max_grad_norm,
             noise_multiplicity=config.loss.n_noise_samples,
-            account_history=account_history,
         )
+        else:
+            model, optimizer, dataset_loader = privacy_engine.make_private_with_epsilon(
+                module=model,
+                optimizer=optimizer,
+                data_loader=sensitive_dataloader,
+                target_delta=config.dp.delta,
+                target_epsilon=config.dp.epsilon,
+                epochs=config.n_epochs,
+                max_grad_norm=config.dp.max_grad_norm,
+                noise_multiplicity=config.loss.n_noise_samples,
+                account_history=account_history,
+            )
 
         # Initialize the loss function based on the configuration.
         if config.loss.version == 'edm':
-            loss_fn = EDMLoss(**config.loss).get_loss
+            if 'cut_noise' in config:
+                loss_fn = EDMLoss(**config.loss).get_loss_stage2
+            else:
+                loss_fn = EDMLoss(**config.loss).get_loss
         elif config.loss.version == 'vpsde':
             loss_fn = VPSDELoss(**config.loss).get_loss
         elif config.loss.version == 'vesde':
@@ -739,7 +757,10 @@ class DP_Diffusion(DPSynther):
 
                     # Perform a forward pass and backpropagation.
                     optimizer.zero_grad(set_to_none=True)
-                    loss = torch.mean(loss_fn(model, x, y))
+                    if 'cut_noise' in config:
+                        loss = torch.mean(loss_fn(model, x, y, max_sigma=config.cut_noise))
+                    else:
+                        loss = torch.mean(loss_fn(model, x, y))
                     loss.backward()
                     optimizer.step()
 
