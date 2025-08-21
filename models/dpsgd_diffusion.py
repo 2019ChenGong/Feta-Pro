@@ -71,6 +71,11 @@ class DP_Diffusion(DPSynther):
         self.private_num_classes = config.private_num_classes  # Number of private classes
         self.public_num_classes = config.public_num_classes  # Number of public classes
         label_dim = max(self.private_num_classes, self.public_num_classes)  # Determine the maximum label dimension
+        if config.ckpt is not None:
+            state = torch.load(config.ckpt, map_location=self.device)
+            for k, v in state['model'].items():
+                label_dim = v.shape[0]-1
+                break
         self.network.label_dim = label_dim  # Set the label dimension for the network
 
         if 'mode' in self.all_config.pretrain and self.all_config.pretrain.mode != 'time':
@@ -634,7 +639,7 @@ class DP_Diffusion(DPSynther):
             logging.info('Starting training at step %d' % state['step'])
 
         # Initialize the Privacy Engine for differential privacy.
-        privacy_engine = PrivacyEngine()
+        privacy_engine = PrivacyEngine(accountant='rdp' if 'accountant' not in config else config.accountant)
         if 'privacy_history' in config.dp and config.dp.privacy_history is not None:
             account_history = [tuple(item) for item in config.dp.privacy_history]
         else:
