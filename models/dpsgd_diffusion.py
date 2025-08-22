@@ -301,7 +301,7 @@ class DP_Diffusion(DPSynther):
 
         # Apply the EMA weights to the model and store the EMA object.
         ema.copy_to(self.model.parameters())
-        self.ema = ema
+        # self.ema = ema
 
         # Clean up the model and free GPU memory.
         del model

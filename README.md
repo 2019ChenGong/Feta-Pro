@@ -168,6 +168,7 @@ We list the key hyper-parameters below, including their explanations and availab
 - `train.dp.n_split`: the number of gradient accumulations for saving GPU memory usage.
 - `train.sigma_freq`: the noise scale of frequency domain features.
 - `train.sigma_time`: the noise scale of time domain features.
+- `train.accountant`: the privacy budget accounting mehtods. `train.accountant=prv` means using `prv` to account the privacy budget. The default setting is `rdp`.
 
 > [!Tip]
 >
@@ -189,7 +190,7 @@ Users should first activate the conda environment.
 conda activate dpimagebench
 cd FETA-Pro
 ```
-#### For the implementation of results reported in Table 3, Figure 3 and 4 (RQ1). 
+#### For the implementation of results reported in Table 4, Figure 3 and 4 (RQ1). 
 
 We list an example as follows. Users can modify the configuration files in [configs](./configs) as their preference. 
 
@@ -214,7 +215,7 @@ For baselines, readers can select the options `-m`: [`DP-NTK`, `DP-Kernel`, `DP-
 python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val -m DPDM -dn mnist_28 -e 1.0 -ed dpdm
 ```
 
-#### For the implementation of the results reported in Table 4 and Figure 5 (RQ2).
+#### For the implementation of the results reported in Table 5 and Figure 5 (RQ2).
 
 In RQ2, to investigate the benifits of frequency features, in Figure 5, we compare the performance of DP-FETA-Pro with three invariants,
 
@@ -292,8 +293,6 @@ For example,
 python run.py setup.n_gpus_per_node=3 pretrain.mode=time_freq --method PDP-Diffusion --data_name mnist_28 -e 10.0 eval.mode=val
 ```
 
-
-
 We also support training synthesizers from the checkpoints. If users wish to finetune the synthesizers using pretrained models, they should load the pretrained synthesizers through `model.ckpt`. For example, the pretrained synthesizer can be sourced from other algorithms. Readers can refer to the [file structure](./exp/README.md) for more details about loading pretrained models like
 
 ```
@@ -302,6 +301,13 @@ python run.py setup.n_gpus_per_node=3 eval.mode=val \
  --method DP-FETA-Pro --data_name fmnist_28 --epsilon 10.0 --exp_description <any-notes>
 ```
 
+#### FETA-Pro leveraging PRV privacy budget accounting method
+
+The `train.accountant=prv` means using `prv` to account the privacy budget. 
+
+```
+python run.py setup.n_gpus_per_node=3 setup.master_port=6662 train.accountant=prv eval.mode=val -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed val_test_prv
+```
 
 ### 4.4 Results
 We can find the `stdout.txt` files in the result folder, which record the training and evaluation processes. The results for utility and fidelity evaluations are available in `stdout.txt`. The result folder name consists of `<data_name>_eps<epsilon><notes>-<starting-time>`, e.g., `mnist_28_eps1.0-2024-10-25-23-09-18`.
