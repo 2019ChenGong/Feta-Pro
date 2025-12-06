@@ -112,7 +112,7 @@ We also provide the [Docker](./docker/Dockerfile) file.
 ### 4.2 Prepare Dataset
 
  ```
-sh scripts/data_preparation.sh
+bash data_preparation.sh
  ```
 
 After running, we can found the folder `dataset`:
