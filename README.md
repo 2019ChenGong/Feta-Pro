@@ -112,6 +112,7 @@ We also provide the [Docker](./docker/Dockerfile) file.
 ### 4.2 Prepare Dataset
 
  ```
+conda activate dpimagebench
 bash data_preparation.sh
  ```
 
