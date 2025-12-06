@@ -2,7 +2,7 @@ INFO - utils.py - 2025-07-13 16:04:55,602 - {'setup': {'method': 'dpsgd-diffusio
 INFO - dataset_loader.py - 2025-07-13 16:04:58,617 - train size: 269538 val size: 32898
 INFO - dataset_loader.py - 2025-07-13 16:04:58,617 - delta is reset as 2.966981886419575e-07
 INFO - dataset_loader.py - 2025-07-13 16:18:51,061 - Additional privacy cost: [5, 0.044520624179150994, 250]
-INFO - dp_merf.py - 2025-07-13 16:18:51,731 - Number of trainable parameters in model: 3965604
+INFO - dp_merf.py - 2025-07-13 16:18:51,731 - Number of trainable parameters in model: 3965604        # auxiliary generator training
 INFO - dp_merf.py - 2025-07-13 16:18:51,737 - The noise factor is 8.4
 INFO - dp_merf.py - 2025-07-13 16:20:09,726 - Train Epoch: 1 [0/269538]	Loss: 0.194376
 INFO - dp_merf.py - 2025-07-13 16:22:20,411 - Train Epoch: 2 [0/269538]	Loss: 0.007119
@@ -10,7 +10,7 @@ INFO - dp_merf.py - 2025-07-13 16:24:31,104 - Train Epoch: 3 [0/269538]	Loss: 0.
 INFO - dp_merf.py - 2025-07-13 16:26:41,804 - Train Epoch: 4 [0/269538]	Loss: 0.014368
 INFO - dp_merf.py - 2025-07-13 16:28:52,413 - Train Epoch: 5 [0/269538]	Loss: 0.003763
 INFO - dpsgd_diffusion.py - 2025-07-13 16:31:19,705 - Number of trainable parameters in model: 3835363
-INFO - dpsgd_diffusion.py - 2025-07-13 16:31:19,706 - Number of total epochs: 1000
+INFO - dpsgd_diffusion.py - 2025-07-13 16:31:19,706 - Number of total epochs: 1000                     # time domain feature warm-up
 INFO - dpsgd_diffusion.py - 2025-07-13 16:31:19,706 - Starting training at step 0
 INFO - dpsgd_diffusion.py - 2025-07-13 16:31:22,515 - Completed Epoch 1
 INFO - dpsgd_diffusion.py - 2025-07-13 16:31:23,114 - Completed Epoch 2
@@ -1126,7 +1126,7 @@ INFO - dpsgd_diffusion.py - 2025-07-13 16:44:25,263 - Loss: 0.0917, step: 10000
 INFO - dpsgd_diffusion.py - 2025-07-13 16:44:25,271 - Completed Epoch 1000
 INFO - dpsgd_diffusion.py - 2025-07-13 16:44:25,953 - Saving final checkpoint.
 INFO - dpsgd_diffusion.py - 2025-07-13 16:44:26,020 - Number of trainable parameters in model: 3835363
-INFO - dpsgd_diffusion.py - 2025-07-13 16:44:26,020 - Number of total epochs: 10
+INFO - dpsgd_diffusion.py - 2025-07-13 16:44:26,020 - Number of total epochs: 10                        # frequency domain feature warm-up
 INFO - dpsgd_diffusion.py - 2025-07-13 16:44:26,020 - Starting training at step 0
 INFO - dpsgd_diffusion.py - 2025-07-13 16:44:34,037 - Loss: 0.0315, step: 100
 INFO - dpsgd_diffusion.py - 2025-07-13 16:44:41,274 - Loss: 0.0243, step: 200
@@ -1166,7 +1166,7 @@ INFO - dpsgd_diffusion.py - 2025-07-13 16:47:53,293 - Loss: 0.0103, step: 2300
 INFO - dpsgd_diffusion.py - 2025-07-13 16:47:56,193 - Completed Epoch 10
 INFO - dpsgd_diffusion.py - 2025-07-13 16:47:56,870 - Saving final checkpoint.
 INFO - dpsgd_diffusion.py - 2025-07-13 16:47:56,958 - Number of trainable parameters in model: 3835363
-INFO - dpsgd_diffusion.py - 2025-07-13 16:47:56,958 - Number of total epochs: 50
+INFO - dpsgd_diffusion.py - 2025-07-13 16:47:56,958 - Number of total epochs: 50                        # DPSGD finetuning on sensitive images
 INFO - dpsgd_diffusion.py - 2025-07-13 16:47:56,958 - Starting training at step 0
 INFO - dpsgd_diffusion.py - 2025-07-13 16:49:44,087 - Loss: 0.3295, step: 100
 INFO - dpsgd_diffusion.py - 2025-07-13 16:51:13,789 - Loss: 0.2518, step: 200
