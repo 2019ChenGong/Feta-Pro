@@ -104,6 +104,7 @@ Clone repo and setup the environment:
 
  ```
 git clone git@github.com:2019ChenGong/Feta-Pro.git
+cd Feta-Pro
 bash install.sh
  ```
 
@@ -189,7 +190,6 @@ Users should first activate the conda environment.
 
 ```
 conda activate dpimagebench
-cd FETA-Pro
 ```
 #### For the implementation of results reported in Table 4, Figure 3 and 4 (RQ1). 
 
