@@ -1,5 +1,0 @@
-sphinx
-sphinx-autodoc-typehints
-bs4
-nbformat
-nbconvert

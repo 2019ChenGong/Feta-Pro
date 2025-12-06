@@ -1,5 +1,0 @@
-blank_issues_enabled: true
-contact_links:
-  - name: Questions
-    url: https://discuss.pytorch.org/c/opacus/29
-    about: Ask questions and discuss with other community members
