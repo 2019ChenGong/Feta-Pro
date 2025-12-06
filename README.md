@@ -104,7 +104,7 @@ Clone repo and setup the environment:
 
  ```
 git clone git@github.com:2019ChenGong/Feta-Pro.git
-sh install.sh
+bash install.sh
  ```
 
 We also provide the [Docker](./docker/Dockerfile) file.
