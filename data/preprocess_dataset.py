@@ -307,6 +307,8 @@ def main(config):
                 # _ = torchvision.datasets.Places365(root=data_dir, small=True, download=True)
                 resize_images(os.path.join(data_dir, "data_256_standard"), os.path.join(data_dir, "data_{}_standard".format(config.resolution)), (config.resolution, config.resolution))
                 return
+            elif data_name == "imagenet":
+                return
             elif data_name == "emnist":
                 _ = torchvision.datasets.EMNIST(root=data_dir, train=True, split="letters", download=True)
                 return
