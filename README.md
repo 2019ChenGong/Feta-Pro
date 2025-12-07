@@ -133,6 +133,12 @@ The training and evaluatin codes are `run.py` and `eval.py`.
 
 The core codes of `run.py` are present as follows.
 
+We provide an example of training a synthesizer using the DP-FETA-Pro method with 4 GPUs. 
+
+```
+python run.py setup.n_gpus_per_node=4 --method DP-FETA-Pro --data_name mnist_28 -e 1.0 eval.mode=val
+```
+
 ```python
 def main(config):
 
@@ -157,7 +163,7 @@ def main(config):
 We list the key hyper-parameters below, including their explanations and available options.
 
 - `--data_name` (`-dn`): means the sensitive dataset; the option is [`mnist_28`, `fmnist_28`, `cifar10_32`, `cifar100_32`, `eurosat_32`, `celeba_male_32`, `camelyon_32`].
-- `--method` (`-m`): the method to train the DP image synthesizers; the option is [`DP-NTK`, `DP-Kernel`, `DP-MERF`, `DPGAN`, `DP-LDM-SD`, `DP-LDM`, `DP-LORA`, `DPDM`, `PE`, `GS-WGAN`, `PDP-Diffusion`, `PrivImage`, `DP-FETA-Pro`].
+- `--method` (`-m`): the method to train the DP image synthesizers; the option is [`DP-NTK`, `DP-Kernel`, `DP-MERF`, `DPGAN`, `DP-LDM-SD`, `DP-LDM`, `DP-LORA`, `DPDM`, `PE`, `GS-WGAN`, `PDP-Diffusion`, `PrivImage`, `DP-FETA`, `DP-FETA-Pro`].
 - `--epsilon` (`-e`): the privacy budget 10.0; the option is [`1.0`, `10.0`].
 - `--exp_description` (`-ed`): the notes for the name of result folders.
 - `setup.n_gpus_per_node`: means the number of GPUs to be used for training.
@@ -285,7 +291,7 @@ RDP cost ratio of time, frequency, and dpsgd: 0.3% / 2.79% / 96.91%
 
 Test the classification algorithm on the sensitive images without DP.
 ```
-python ./scripts/test_classifier.py --method PDP-Diffusion --data_name mnist_28 --epsilon 10.0  -ed no-dp-mnist_28
+python ./scripts/test_classifier.py --data_name mnist_28 --epsilon 10.0  -ed no-dp-mnist_28
 ```
 The results are recorded in `exp/pdp-diffusion/<the-name-of-file>no-dp-mnist_28/stdout.txt`. This process is independent of `--method` and uses of `--epsilon`.
 
