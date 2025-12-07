@@ -258,7 +258,8 @@ def fid_save(fid_path, dataset, batch_size):
 def main(config):
     for data_name in config.data_name:
         if data_name == 'celeba':
-            res_list = [32, 64, 128]
+            res_list = [32]
+            # res_list = [32, 64, 128]
         elif 'mnist' in data_name:
             res_list = [28]
         else:
@@ -356,7 +357,7 @@ def main(config):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_name', nargs="*", default=["mnist", "fmnist", "cifar10", "cifar100", "celeba", "camelyon", "imagenet", "places365", "emnist", "lsun"], help='List of datasets to use. Default is all provided datasets.')
+    parser.add_argument('--data_name', nargs="*", default=["mnist", "fmnist", "cifar10", "celeba", "camelyon", "imagenet"], help='List of datasets to use. Default is all provided datasets.')
     parser.add_argument('--resolution', default=32, type=int, help='Resolution of the images. Default is 32.')
     parser.add_argument('--c', default=3, type=int, help='Number of color channels in the images. Default is 3 (RGB).')
     parser.add_argument('--fid_batch_size', default=500, type=int, help='Batch size for FID calculation. Default is 500.')
