@@ -133,7 +133,7 @@ If you want to quickly test your implementation or perform preliminary experimen
 bash data_preparation_quick.sh
 ```
 
-This will only prepare MNIST, Fashion-MNIST, and CIFAR-10, allowing you to validate your pipeline, hyperparameters, or DP configurations in minutes rather than hours.
+This will only prepare MNIST and Fashion-MNIST, allowing you to validate your pipeline, hyperparameters, or DP configurations in minutes rather than hours.
 
 ### 4.3 Running
 
@@ -170,13 +170,13 @@ def main(config):
 
 We list the key hyper-parameters below, including their explanations and available options.
 
-- `--data_name` (`-dn`): means the sensitive dataset; the option is [`mnist_28`, `fmnist_28`, `cifar10_32`, `cifar100_32`, `eurosat_32`, `celeba_male_32`, `camelyon_32`].
+- `--data_name` (`-dn`): means the sensitive dataset; the option is [`mnist_28`, `fmnist_28`, `cifar10_32`, `celeba_male_32`, `camelyon_32`].
 - `--method` (`-m`): the method to train the DP image synthesizers; the option is [`DP-NTK`, `DP-Kernel`, `DP-MERF`, `DPGAN`, `DP-LDM-SD`, `DP-LDM`, `DP-LORA`, `DPDM`, `PE`, `GS-WGAN`, `PDP-Diffusion`, `PrivImage`, `DP-FETA`, `DP-FETA-Pro`].
 - `--epsilon` (`-e`): the privacy budget 10.0; the option is [`1.0`, `10.0`].
 - `--exp_description` (`-ed`): the notes for the name of result folders.
 - `setup.n_gpus_per_node`: means the number of GPUs to be used for training.
 - `pretrain.cond`: specifies the mode of pretraining. The options are [`true`, `false`], where `true` indicates conditional pretraining and `false` indicates conditional pretraining.
-- `public_data.name`: the name of pretraining dataset; the option is [`null`, `imagenet`, `places365`, `emnist`], which mean that without pretraining, using ImageNet dataset as pretraining dataset, and using Places365 as pretraining dataset. It is notice that DPImageBench uses ImageNet as default pretraining dataset. If users use Places365 as pretraining dataset, please add `public_data.n_classes=365 public_data.train_path=dataset/places365`.
+- `public_data.name`: the name of pretraining dataset; the option is [`null`, `imagenet`], which mean that without pretraining, using ImageNet dataset as pretraining dataset, and using Places365 as pretraining dataset. It is notice that DPImageBench uses ImageNet as default pretraining dataset. 
 - `eval.mode`: the mode of evaluations; the option is [`val`, `syn`] which means that using part of sensitive images and directly using the synthetic images as the validation set for model selection, respectively. The default setting is `val`.
 - `setup.master_port`: a configuration parameter specifying the port number on the master node (or primary process) that other processes or nodes use to communicate within a distributed system.
 - `pretrain.n_epochs`: the number of epoch for pretraining.
