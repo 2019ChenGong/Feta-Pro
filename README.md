@@ -127,6 +127,14 @@ dataset/
 ...
 ```
 
+If you want to quickly test your implementation or perform preliminary experiments, you can run:
+
+```bash
+bash data_preparation_quick.sh
+```
+
+This will only prepare MNIST, Fashion-MNIST, and CIFAR-10, allowing you to validate your pipeline, hyperparameters, or DP configurations in minutes rather than hours.
+
 ### 4.3 Running
 
 The training and evaluatin codes are `run.py` and `eval.py`.
