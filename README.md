@@ -221,7 +221,7 @@ Besides, if users want to directly evaluate the synthetic images,
 ```
 python eval.py --method DP-FETA-Pro --data_name mnist_28 --epsilon 10.0 --exp_path exp/dp-feta-pro/<the-name-of-file>
 ```
-The results are recorded in `exp/pdp-diffusion/<the-name-of-file>/stdout.txt`.
+The results are recorded in `exp/pdp-diffusion/<the-name-of-file>/stdout.txt`. Besides, these files also record the IS, Precision, Recall, and FLD of our method and seven baselines, as shown in Table 10.
 
 For Figure3 and Figure4, please refer to `plot/visualization.py` and `plot/fid_curve.py` and change the `log_files` in codes.
 
@@ -250,7 +250,7 @@ Users can set the `pretrain.mode`=[`freq_time`, `mix`, `freq`] to choose the inv
 python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val pretrain.mode=mix -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed mix
 ```
 
-To investigate the benifits of auxiliary generator, in Table 4, we compare the performance of DP-FETA-Pro with two invariants,
+To investigate the benifits of auxiliary generator, in Table 5, we compare the performance of DP-FETA-Pro with two invariants,
 
 - `FETA-Pro-No-Auxiliary' means directly warming up synthesizers on frequency domain features. 
 - `FETA-Pro-DM-Auxiliary' means using diffusion models as the auxiliary generator.
@@ -293,7 +293,7 @@ You will get the DP cost ratios in the terminal,
 RDP cost ratio of time, frequency, and dpsgd: 0.3% / 2.79% / 96.91%
 ```
 
-#### 4.3.3 How to run (Experiments in Discussions)
+#### 4.3.3 How to run (Experiments in Discussions, Table 6 and Table 7)
 
 #### FETA-Pro without privacy protection
 
