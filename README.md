@@ -230,7 +230,7 @@ For baselines, readers can select the options `-m`: [`DP-NTK`, `DP-Kernel`, `DP-
 python run.py setup.n_gpus_per_node=4 setup.master_port=6662 eval.mode=val -m DPDM -dn mnist_28 -e 1.0 -ed dpdm
 ```
 
-The `train.accountant=prv` means using `prv` to account the privacy budget. To obtain results in Appendix E.3, please run the following code,
+The `train.accountant=prv` means using `prv` to account the privacy budget. To obtain results in Appendix E.3, Table 13, please run the following code,
 
 ```
 python run.py setup.n_gpus_per_node=3 setup.master_port=6662 train.accountant=prv eval.mode=val -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed val_test_prv
