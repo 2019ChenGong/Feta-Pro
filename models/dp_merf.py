@@ -19,6 +19,32 @@ from models.synthesizer import DPSynther
 from models.DP_MERF.rff_mmd_approx import get_rff_losses
 from models.DP_GAN.generator import Generator
 
+import torch
+import torch.nn as nn
+
+class ParameterizedImageGenerator(nn.Module):
+    def __init__(self, num_images, img_channels, img_height, img_width, initial_images=None):
+        super(ParameterizedImageGenerator, self).__init__()
+        
+        self.num_images = num_images
+        self.img_shape = (img_channels, img_height, img_width)
+        self.z_dim = 5
+
+        if initial_images is not None:
+            if initial_images.shape != (num_images, img_channels, img_height, img_width):
+                raise ValueError(f"initial_images shape {initial_images.shape} does not match "
+                                 f"expected shape ({num_images}, {img_channels}, {img_height}, {img_width})")
+            # 将提供的初始图片作为模型参数
+            self.images = nn.Parameter(initial_images.clone())
+        else:
+            # 随机初始化图片参数
+            self.images = nn.Parameter(torch.randn(num_images, img_channels, img_height, img_width))
+        
+        self.labels = None
+
+    def forward(self, x=None, y=None):
+        return self.images / 255 * 2 - 1
+    
 def get_noise_multiplier(epsilon, num_steps, delta, min_noise_multiplier=1e-1, max_noise_multiplier=500, max_epsilon=1e7):
 
     def delta_Gaussian(eps, mu):
@@ -67,7 +93,10 @@ class DP_MERF(DPSynther):
         self.sensitivity_ratio = sensitivity_ratio
 
         # Initialize the generator network
-        self.gen = Generator(img_size=self.img_size, num_classes=label_dim, **config.Generator).to(device)
+        if 'start_time' in config and config['start_time']:
+            self.gen = ParameterizedImageGenerator(num_images=config['num_images'], img_channels=1 if self.img_size == 28 else 3, img_height=self.img_size, img_width=self.img_size).to(device)
+        else:
+            self.gen = Generator(img_size=self.img_size, num_classes=label_dim, **config.Generator).to(device)
 
         if config.ckpt is not None:
             self.gen.load_state_dict(torch.load(config.ckpt))  # Load checkpoint if provided
@@ -102,9 +131,13 @@ class DP_MERF(DPSynther):
         torch.save(self.gen.state_dict(), os.path.join(config.log_dir, 'checkpoints', 'final_checkpoint.pth'))
 
     # Method for training using sensitive data with differential privacy
-    def train(self, sensitive_dataloader, config):
+    def train(self, sensitive_dataloader, config, start_images=None, start_labels=None):
         if sensitive_dataloader is None:
             return
+
+        if start_images is not None:
+            self.gen.images.data.copy_(start_images.to(self.device))
+            self.gen.labels = start_labels.to(self.device)
 
         os.mkdir(config.log_dir)  # Create a directory for logs
         os.mkdir(os.path.join(config.log_dir, "samples"))
@@ -125,7 +158,7 @@ class DP_MERF(DPSynther):
         logging.info("The noise factor is {}".format(self.noise_factor))
 
         n_data = len(sensitive_dataloader.dataset)  # Number of data points in the sensitive dataset
-        sr_loss, mb_loss, noisy_emb = get_rff_losses(sensitive_dataloader, self.n_feat, self.d_rff, self.rff_sigma, self.device, self.private_num_classes, self.noise_factor * self.sensitivity_ratio, self.mmd_type)
+        sr_loss, mb_loss, noisy_emb = get_rff_losses(sensitive_dataloader, self.n_feat, self.d_rff, self.rff_sigma, self.device, self.private_num_classes, self.noise_factor * self.sensitivity_ratio, self.mmd_type, image_size=self.img_size)
 
         torch.save(noisy_emb.detach().cpu(), os.path.join(config.log_dir, "checkpoints", 'noisy_emb.pt'))
 
@@ -147,7 +180,7 @@ class DP_MERF(DPSynther):
 
         # Generate synthetic data and labels
         syn_data, syn_labels = synthesize_with_uniform_labels(self.gen, self.device, gen_batch_size=config.batch_size, n_data=config.data_num, n_labels=self.private_num_classes)
-        syn_data = syn_data.reshape(syn_data.shape[0], config.num_channels, config.resolution, config.resolution)
+        syn_data = F.interpolate(syn_data, size=[config.resolution, config.resolution]).numpy()
         syn_labels = syn_labels.reshape(-1)
 
         # Save the generated data and labels
@@ -172,16 +205,20 @@ def synthesize_with_uniform_labels(gen, device, gen_batch_size=1000, n_data=6000
     n_iterations = n_data // gen_batch_size
 
     data_list = []
-    ordered_labels = torch.repeat_interleave(torch.arange(n_labels), gen_batch_size // n_labels)[:, None].to(device)
+    if hasattr(gen, 'images'):
+        ordered_labels = gen.labels
+        n_iterations = n_data // gen.labels.shape[0]
+    else:
+        ordered_labels = torch.repeat_interleave(torch.arange(n_labels), gen_batch_size // n_labels)[:, None].to(device)
     labels_list = [ordered_labels] * n_iterations
 
     with torch.no_grad():
         for idx in range(n_iterations):
             y = ordered_labels.view(-1)
             z = torch.randn(gen_batch_size, gen.z_dim).to(device)
-            gen_samples = gen(z, y).reshape(gen_batch_size, -1) / 2 + 0.5
+            gen_samples = gen(z, y) / 2 + 0.5
             data_list.append(gen_samples)
-    return torch.cat(data_list, dim=0).cpu().numpy(), torch.cat(labels_list, dim=0).cpu().numpy()
+    return torch.cat(data_list, dim=0).cpu(), torch.cat(labels_list, dim=0).cpu().numpy()
 
 # function to train the generator for a single release
 def train_single_release(gen, device, optimizer, epoch, rff_mmd_loss, log_interval, batch_size, n_data, num_classes, cond=True):
@@ -191,9 +228,12 @@ def train_single_release(gen, device, optimizer, epoch, rff_mmd_loss, log_interv
             y = torch.randint(num_classes, (batch_size,)).to(device)
         else:
             y = torch.zeros((batch_size,)).long().to(device)
+        if hasattr(gen, 'labels'):
+            y = gen.labels
         z = torch.randn(batch_size, gen.z_dim).to(device)
         gen_one_hots = F.one_hot(y, num_classes=num_classes)
-        gen_samples = gen(z, y).reshape(batch_size, -1) / 2 + 0.5
+        gen_samples = gen(z, y).reshape(y.shape[0], -1) / 2 + 0.5
+        # print(gen_samples.min(), gen_samples.max())
         loss = rff_mmd_loss(gen_samples, gen_one_hots)
         optimizer.zero_grad()
         loss.backward()

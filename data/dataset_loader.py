@@ -2,7 +2,7 @@ import os
 import torch
 import torch.nn.functional as F
 import torchvision
-from torch.utils.data import random_split, TensorDataset, Dataset, DataLoader, ConcatDataset
+from torch.utils.data import random_split, TensorDataset, Dataset, DataLoader, ConcatDataset, Subset
 from torchvision import transforms
 import numpy as np
 import logging
@@ -54,15 +54,21 @@ def load_sensitive_data(config):
         val_size = len(sensitive_train_set) - train_size
         torch.manual_seed(0)
         sensitive_train_set, sensitive_val_set = random_split(sensitive_train_set, [train_size, val_size])
-        sensitive_val_loader = torch.utils.data.DataLoader(dataset=sensitive_val_set, shuffle=False, drop_last=False, batch_size=config.eval.batch_size)
+        sensitive_val_loader = DataLoader(dataset=sensitive_val_set, shuffle=False, drop_last=False, batch_size=config.eval.batch_size)
         logging.info("train size: {} val size: {}".format(len(sensitive_train_set), len(sensitive_val_set)))
+        if 'downsample_rate' in config.sensitive_data:
+            num_total = len(sensitive_train_set)
+            num_samples = int(config.sensitive_data.downsample_rate * num_total)
+            generator = torch.Generator().manual_seed(42)
+            indices = torch.randperm(num_total, generator=generator)[:num_samples]
+            sensitive_train_set = Subset(sensitive_train_set, indices)
     else:
         sensitive_val_set = None
         sensitive_val_loader = None
     
 
-    sensitive_train_loader = torch.utils.data.DataLoader(dataset=sensitive_train_set, shuffle=True, drop_last=False, batch_size=config.train.batch_size)
-    sensitive_test_loader = torch.utils.data.DataLoader(dataset=sensitive_test_set, shuffle=False, drop_last=False, batch_size=config.eval.batch_size)
+    sensitive_train_loader = DataLoader(dataset=sensitive_train_set, shuffle=True, drop_last=False, batch_size=config.train.batch_size)
+    sensitive_test_loader = DataLoader(dataset=sensitive_test_set, shuffle=False, drop_last=False, batch_size=config.eval.batch_size)
 
     return sensitive_train_loader, sensitive_val_loader, sensitive_test_loader
 
@@ -167,7 +173,10 @@ class CentralDataset(Dataset):
                 for cls in range(num_classes):
                     
                     x_cls = x if num_classes==1 else x[y==cls]
-                    # logging.info('{} {} {}'.format(c, cls, x_cls.shape[0]))
+                    if x.shape[-1] == 64:
+                        ds = 1/4
+                    elif x.shape[-1] == 128:
+                        ds = 1/8
 
                     sensitivity_m = np.sqrt((ds**2) * np.prod(x_cls.shape[1:])) / (batch_size//num_classes)
 
