@@ -322,6 +322,20 @@ python run.py setup.n_gpus_per_node=3 eval.mode=val \
  --method DP-FETA-Pro --data_name fmnist_28 --epsilon 10.0 --exp_description <any-notes>
 ```
 
+#### 4.3.4 How to run (Experiments in Appendix, Table 14)
+
+For CelebA64, run:
+```
+python run.py setup.n_gpus_per_node=3 eval.mode=val \
+ --method DP-FETA-Pro --data_name celeba_male_64 --epsilon 10.0 --exp_description <any-notes>
+```
+
+For CelebA128, run:
+```
+python run.py setup.n_gpus_per_node=3 eval.mode=val \
+ --method DP-FETA-Pro --data_name celeba_male_128 --epsilon 10.0 --exp_description <any-notes>
+```
+
 
 ### 4.4 Results
 We can find the `stdout.txt` files in the result folder, which record the training and evaluation processes. The results for utility and fidelity evaluations are available in `stdout.txt`. The result folder name consists of `<data_name>_eps<epsilon><notes>-<starting-time>`, e.g., `mnist_28_eps1.0-2024-10-25-23-09-18`.
