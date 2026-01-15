@@ -3,7 +3,7 @@
 # From Easy to Hard++: Promoting Differentially Private Image Synthesis Through Time-Frequency Curriculum
 </div>
 
-This is the official implementation of paper FETA-Pro. FETA-Pro proposes a spatial-frequency curriculum, which leverages frequency domain features to capture global structures and textures of images, complementing spatial domain features. To address the challenges of learning caused by heterogeneity between spatial and frequency domain features, FETA-Pro extracts frequency domain features using the Fourier Transformer under DP, and introduces an __auxiliary generator__ to produce images aligned the noisy features. Then, DP synthesizers use synthetic images for warm-up. 
+This is the official implementation of paper [FETA-Pro](https://arxiv.org/abs/2601.06368). FETA-Pro proposes a spatial-frequency curriculum, which leverages frequency domain features to capture global structures and textures of images, complementing spatial domain features. To address the challenges of learning caused by heterogeneity between spatial and frequency domain features, FETA-Pro extracts frequency domain features using the Fourier Transformer under DP, and introduces an __auxiliary generator__ to produce images aligned the noisy features. Then, DP synthesizers use synthetic images for warm-up. 
 
 We conduct experiments to show that across five sensitive image datasets, FETA-Pro achieves, on average, 24.5\% higher fidelity and 2.8\% greater utility compared to the state-of-the-art method under a privacy budget of $\epsilon = 1$.
 
@@ -322,7 +322,7 @@ python run.py setup.n_gpus_per_node=3 eval.mode=val \
  --method DP-FETA-Pro --data_name fmnist_28 --epsilon 10.0 --exp_description <any-notes>
 ```
 
-#### 4.3.4 How to run (Experiments in Appendix, Table 14)
+#### 4.3.4 Experiments on High-resolution images CelebA64 and CelebA128 (Appendix, Table 14)
 
 For CelebA64, run:
 ```
@@ -439,6 +439,24 @@ We provide the plotting codes for results visualization in the folder `plot`.
 - `visualization_tf.py`: plotting for Figure 2.   
 - `visualization.py`: plotting for Figure 3 in RQ1. 
 
+## Contacts
+If you have any question about our work or this repository, please don't hesitate to contact us by emails or open an issue under this project.
+
+- Chen Gong (ChenG_abc@outlook.com)
+
+- Kecen Li (sunameizing@gmail.com)
+
+## Citation
+
+```text
+
+@article{gong2026easy,
+  title={From Easy to Hard++: Promoting Differentially Private Image Synthesis Through Spatial-Frequency Curriculum},
+  author={Gong, Chen and Li, Kecen and Lin, Zinan and Wang, Tianhao},
+  journal={arXiv preprint arXiv:2601.06368},
+  year={2026}
+}
+```
 
 ## Acknowledgement
  
