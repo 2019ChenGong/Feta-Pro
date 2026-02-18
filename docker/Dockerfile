@@ -1,4 +1,6 @@
 FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-devel
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
 RUN apt update
 RUN apt install -y screen
 RUN apt install -y zip
@@ -6,6 +8,7 @@ RUN apt install -y build-essential
 RUN apt-get -y update
 RUN apt-get -y install git
 RUN apt-get -y install wget
+RUN apt-get -y install ffmpeg libsm6 libxext6
 # RUN apt-get -y install libopenmpi-dev
 
 WORKDIR /workspace
