@@ -31,6 +31,8 @@ RUN pip install -e .
 WORKDIR /workspace/Feta-Pro/models/DP_LORA/peft
 RUN pip install -e .
 RUN pip install transformers==4.27.4
+RUN pip uninstall numpy -y
+RUN pip install numpy==1.26.4
 
 WORKDIR /workspace/Feta-Pro/models
 RUN gdown https://drive.google.com/uc?id=1yVTWzaSqJVDJy8CsZKtqDoBNeM6154D4
