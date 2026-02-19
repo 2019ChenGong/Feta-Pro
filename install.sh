@@ -13,4 +13,6 @@ cd models/PE; pip install improved-diffusion@git+https://github.com/fjxmlzn/impr
 cd models/PE; pip install git+https://github.com/openai/guided-diffusion.git; cd ..; cd ..
 cd models/DP_LORA/peft; pip install -e .; cd ..; cd ..; cd ..
 pip install transformers==4.27.4
+pip uninstall numpy -y
+pip install numpy==1.26.4
 cd models; gdown https://drive.google.com/uc?id=1yVTWzaSqJVDJy8CsZKtqDoBNeM6154D4; unzip pretrained_models.zip; cd ..
