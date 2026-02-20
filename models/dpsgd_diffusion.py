@@ -119,8 +119,6 @@ class DP_Diffusion(DPSynther):
                 new_state_dict[k[7:]] = v  # Adjust the keys to match the model's state dictionary
             logging.info(self.model.load_state_dict(new_state_dict, strict=True))  # Load the state dictionary into the model
             self.ema = ExponentialMovingAverage(self.model.parameters(), decay=self.ema_rate)
-            self.ema.load_state_dict(state['ema'])  # Load the EMA state dictionary
-            self.optimizer_state = state['optimizer']
             del state, new_state_dict  # Clean up memory
 
         self.is_pretrain = True  # Flag to indicate pretraining status
@@ -477,7 +475,10 @@ class DP_Diffusion(DPSynther):
         if 'auxiliary' not in self.all_config.pretrain.mode and self.all_config.pretrain.mode != 'time':
             if self.global_rank == 0:
                 # freq_model = Freq_Model(self.all_config.model.merf, self.device, self.all_config.train.sigma_sensitivity_ratio)
-                self.freq_model.train(sensitive_train_loader, self.all_config.train.freq)
+                if 'start_time' in self.all_config.model.freq:
+                    self.freq_model.train(sensitive_train_loader, self.all_config.train.freq, start_images=time_set.central_x, start_labels=torch.tensor(time_set.central_y).long())
+                else:
+                    self.freq_model.train(sensitive_train_loader, self.all_config.train.freq)
                 syn_data, syn_labels = self.freq_model.generate(self.all_config.gen.freq)
             dist.barrier()
             # return config
@@ -554,7 +555,7 @@ class DP_Diffusion(DPSynther):
         elif self.all_config.pretrain.mode == 'mix':
             self.all_config.pretrain.n_epochs = self.all_config.pretrain.n_epochs_freq
             self.all_config.pretrain.batch_size = self.all_config.pretrain.batch_size_freq
-            pretrain_set = ConcatDataset([freq_train_set, self.time_dataloader.dataset])
+            pretrain_set = ConcatDataset([freq_train_set, time_dataloader.dataset])
             self.pretrain(DataLoader(dataset=pretrain_set, shuffle=True, drop_last=True, batch_size=self.all_config.pretrain.batch_size, num_workers=16), self.all_config.pretrain, run=True)
         else:
             raise NotImplementedError
@@ -792,6 +793,111 @@ class DP_Diffusion(DPSynther):
 
         # Update the EMA.
         self.ema = ema
+    
+    def eval_mia(self, sensitive_train_dataloader, sensitive_test_dataloader, config):
+        """
+        Trains the model using the provided sensitive data loader and configuration.
+
+        Args:
+            sensitive_dataloader (DataLoader): DataLoader containing the sensitive data.
+            config (Config): Configuration object containing various settings for training.
+
+        Returns:
+            None
+        """
+        
+        set_seeds(self.global_rank, config.seed)
+        # Set the CUDA device based on the local rank.
+        torch.cuda.device(self.local_rank)
+        self.device = 'cuda:%d' % self.local_rank
+        # Set the number of classes for the loss function.
+        config.loss.n_classes = self.private_num_classes
+
+        model = self.model
+
+        # Initialize the loss function based on the configuration.
+        if config.loss.version == 'edm':
+            loss_fn = EDMLoss(**config.loss).get_loss_mia
+        elif config.loss.version == 'vpsde':
+            loss_fn = VPSDELoss(**config.loss).get_loss
+        elif config.loss.version == 'vesde':
+            loss_fn = VESDELoss(**config.loss).get_loss
+        elif config.loss.version == 'v':
+            loss_fn = VLoss(**config.loss).get_loss
+        else:
+            raise NotImplementedError("Loss function not supported")
+
+        # Start the training loop.
+        sigma_list = [0.07]
+        model.eval()
+        from sklearn.metrics import roc_curve
+        for sigma in sigma_list:
+            logging.info("sigma: {}".format(sigma))
+            losses = []
+            label = []
+            category = []
+            for train_x, train_y in sensitive_test_dataloader:
+                x = train_x.to(self.device) * 2. - 1.
+                x += torch.randn_like(x) * 0.008
+                y = train_y.to(self.device).long()
+                loss = loss_fn(model, x, y, sigma)
+                losses.append(list(loss.detach().cpu().numpy()))
+                label.append([1] * loss.shape[0])
+                category.append(list(y.detach().cpu().numpy()))
+
+            for train_x, train_y in sensitive_train_dataloader:
+                x = train_x.to(self.device) * 2. - 1.
+                y = train_y.to(self.device).long()
+                loss = loss_fn(model, x, y, sigma)
+                losses.append(list(loss.detach().cpu().numpy()))
+                label.append([0] * loss.shape[0])
+                category.append(list(y.detach().cpu().numpy()))
+                if sum([len(x) for x in label]) >= len(sensitive_test_dataloader.dataset):
+                    break
+            
+            all_losses = np.concatenate(losses)
+            all_labels = np.concatenate(label)  # 0 for train, 1 for test
+            all_categories = np.concatenate(category)
+
+            # 获取所有类别
+            unique_categories = np.unique(all_categories)
+
+            # 定义FPR阈值
+            fpr_threshold_list = [0.1, 0.01]
+            for cat in unique_categories:
+                # 找到当前类别的索引
+                cat_mask = (all_categories == cat)
+                cat_losses = all_losses[cat_mask]
+                cat_labels = all_labels[cat_mask]
+                
+                # 计算ROC曲线
+                fpr, tpr, thresholds = roc_curve(cat_labels, cat_losses)
+                
+                # 找到FPR最接近阈值的点
+                for fpr_threshold in fpr_threshold_list:
+                    idx = np.where(fpr >= fpr_threshold)[0]
+                    if len(idx) > 0:
+                        idx = idx[0]  # 第一个满足条件的点
+                        tpr_at_fpr = tpr[idx]
+                    else:
+                        # 如果没有FPR达到阈值，取最后一个点
+                        tpr_at_fpr = tpr[-1] if len(tpr) > 0 else 0.0
+                    
+                    logging.info(f"Category {cat}: TPR@FPR={fpr_threshold} = {tpr_at_fpr:.4f}")
+            fpr, tpr, thresholds = roc_curve(all_labels, all_losses)
+            
+            # 找到FPR最接近阈值的点
+            for fpr_threshold in fpr_threshold_list:
+                idx = np.where(fpr >= fpr_threshold)[0]
+                if len(idx) > 0:
+                    idx = idx[0]  # 第一个满足条件的点
+                    tpr_at_fpr = tpr[idx]
+                else:
+                    # 如果没有FPR达到阈值，取最后一个点
+                    tpr_at_fpr = tpr[-1] if len(tpr) > 0 else 0.0
+                
+                logging.info(f"All: TPR@FPR={fpr_threshold} = {tpr_at_fpr:.4f}")
+
 
     def generate(self, config, sampler_config=None):
         # Log the start of the generation process with the number of samples to be generated
