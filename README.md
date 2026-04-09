@@ -236,6 +236,8 @@ The `train.accountant=prv` means using `prv` to account the privacy budget. To o
 python run.py setup.n_gpus_per_node=3 setup.master_port=6662 train.accountant=prv eval.mode=val -m DP-FETA-Pro -dn mnist_28 -e 1.0 -ed val_test_prv
 ```
 
+We also provide the [checkpoints](https://huggingface.co/SunnierLeee/FETA-Pro) of FETA-Pro
+
 #### For the implementation of the results reported in Table 5 and Figure 5 (RQ2).
 
 In RQ2, to investigate the benifits of frequency features, in Figure 5, we compare the performance of DP-FETA-Pro with three invariants,
@@ -449,7 +451,6 @@ If you have any question about our work or this repository, please don't hesitat
 ## Citation
 
 ```text
-
 @article{gong2026easy,
   title={From Easy to Hard++: Promoting Differentially Private Image Synthesis Through Spatial-Frequency Curriculum},
   author={Gong, Chen and Li, Kecen and Lin, Zinan and Wang, Tianhao},
